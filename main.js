@@ -20,7 +20,9 @@ camera.position.set( 0, 0, 100 );
 // orbiting controls allow the user to move around the 3D space created. Reference: https://threejs.org/docs/#examples/en/controls/OrbitControls
 const controls = new OrbitControls( camera, renderer.domElement );
 camera.lookAt( 0, 0, 0 );
-
+// interita factors contribute to the smoothness of the camera movement controls. 
+controls.enableDamping = true;  // enables the inertia
+controls.dampingFactor = 0.1;   // sets the inerita value
 
 // the scene void that is visible
 const scene = new THREE.Scene();
