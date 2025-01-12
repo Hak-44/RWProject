@@ -53,6 +53,8 @@ var selectedObject = null;   /* this object is recorded whenever the mosue is ho
     when the object*/
 var lines;
 
+var objectName = document.getElementById('selected-object');
+
 /* Raycasting is the used for tracking the mouse picking and can be used to check if users are 
 hovering over 3D objects within the space. 
 
@@ -76,10 +78,13 @@ function MouseRaycast(){
     if(intersects.length > 0){
         selectedObject = intersects[0].object;
         selectedObject.material.color.set( 0xFFE59B );
+        objectName.innerText = selectedObject.name;
+        
     }else{
         if(selectedObject){
             selectedObject.material.color.set( 0xFFFFFF );
             selectedObject = null;
+            objectName.innerText = "";
         }
     }
     
@@ -106,6 +111,8 @@ function doSomething(){
     geometry.setFromPoints(points);
 
     lines = new THREE.Line( geometry, material );
+    // when creating the line, you can give it it's own properties, such as names, ids and so forth
+    lines.name = "Floor Plan";
 
     scene.add( lines );
 }
