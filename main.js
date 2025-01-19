@@ -26,10 +26,26 @@ controls.dampingFactor = 0.1;   // sets the inerita value
 
 // the scene void that is visible
 const scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x36454F ); // background colour of 3D env
+scene.background = new THREE.Color( 0xf8f8f8 ); // background colour of 3D env
+
+// adding gray colour fog to the scene allows better visibality with certain colours
+scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 250);
+
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
+
+const groundGeometry = new THREE.PlaneGeometry(10000, 10000)
+const groundMaterial = new THREE.MeshBasicMaterial({
+    color: 0xE5E4E2
+    
+})
+
+const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial)
+groundMesh.position.set(0, -2, 0)   // positioning at -2 places it downwards from starting view
+groundMesh.rotation.set(Math.PI / -2, 0, 0) // rotating to be flat on screen
+groundMesh.receiveShadow = true  // giving shadow to the object
+scene.add(groundMesh)
 
 
 
@@ -75,16 +91,17 @@ function MouseRaycast(){
         which will return an array of objects  */
 	var intersects = raycaster.intersectObjects( scene.children );
 
-    if(intersects.length > 0){
+    // currently checks if the object that is being hovered over is an actual mesh or not
+    if(intersects.length > 0 && intersects[0].object.name == "Floor Plan"){
         selectedObject = intersects[0].object;
-        selectedObject.material.color.set( 0xFFE59B );
+        selectedObject.material.color.set( 0x55E200 );  // yellow: 0xFFE59B
         objectName.innerText = selectedObject.name;
         
     }else{
         if(selectedObject){
-            selectedObject.material.color.set( 0xFFFFFF );
+            selectedObject.material.color.set( 0x000000 );  
             selectedObject = null;
-            objectName.innerText = "";
+            objectName.innerText = "";  // the small text gets removed
         }
     }
     
@@ -95,7 +112,7 @@ function MouseRaycast(){
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 function doSomething(){
     alert('did something');
-    const material = new THREE.LineBasicMaterial( { color: 0xFFFFFF } );
+    const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 
     // creating lines and giving their vector axes
     const points = [];
