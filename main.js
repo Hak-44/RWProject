@@ -29,7 +29,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xf8f8f8 ); // background colour of 3D env
 
 // adding gray colour fog to the scene allows better visibality with certain colours
-scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 250);
+scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 500);
 
 
 const raycaster = new THREE.Raycaster();
@@ -52,6 +52,7 @@ scene.add(groundMesh)
 // here is used to loop the scene so it keeps getting updated (siilar to update() in unity)
 function animate() {
     MouseRaycast();
+    CameraLeveling();
     controls.update();  // updating the controls from the camera
 	renderer.render( scene, camera );   // final render of the scene 
 }
@@ -107,6 +108,12 @@ function MouseRaycast(){
     
 
 	
+}
+
+/* this camera leveling makes sure the camera will not go beneath the plane, that way it is easier to track the
+  scene. */
+function CameraLeveling(){
+    if(camera.position.y < 0) camera.position.y = 0;
 }
 
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
