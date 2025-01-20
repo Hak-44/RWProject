@@ -119,8 +119,14 @@ function CameraLeveling(){
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 function doSomething(){
     alert('did something');
-    const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+    testingLines();
+    CreateDirectionSprites();
+    
+}
 
+function testingLines(){
+
+    const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
     // creating lines and giving their vector axes
     const points = [];
     points.push( new THREE.Vector3( 20, 0, 0 ) );
@@ -139,8 +145,15 @@ function doSomething(){
     lines.name = "Floor Plan";
 
     scene.add( lines );
-}
 
+    // code here creates a sprite into the scene, this follows the sprite orientation no matter the angle by default
+    const material1 = new THREE.SpriteMaterial({ size: 0.1, color: 0xADADAD })
+    const sprite1 = new THREE.Sprite(material1)
+    sprite1.position.copy(new THREE.Vector3(1,1,1))
+    scene.add(sprite1)
+
+    
+}
 
 
 
