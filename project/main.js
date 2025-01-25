@@ -1,13 +1,8 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
-import { mx_bilerp_0 } from 'three/src/nodes/materialx/lib/mx_noise.js';
 
-var wallCount = 0;
-
-function SetWallCount(count){
-    wallCount = count
-}
+import { generateWall } from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -125,7 +120,6 @@ function MouseRaycast(){
     }
     
 
-	
 }
 
 // the div will trigger the change in perspective, it will check the current view and will swap to the other accordingly. 
@@ -151,44 +145,26 @@ function CameraLeveling(){
   
 }
 
+
+
+
+
+
+
+
+// -------------------- ROOM DETAILS --------------------
+
+
+
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 function doSomething(){
     alert('did something');
-    testingLines();
-    CreateDirectionSprites();
-    
-}
-
-function testingLines(){
-
-    const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-    // creating lines and giving their vector axes
-    const points = [];
-    points.push( new THREE.Vector3( 20, 0, 0 ) );
-    points.push( new THREE.Vector3( 10, 0, 0 ) );
-    points.push( new THREE.Vector3( 5, 0, 0 ) );
-
-    // data that represents mesh, lines or point geometry data.
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
-
-    points[0].set(1, 0, 5);
-    points[1].set(1, 0, 90);
-    geometry.setFromPoints(points);
-
-    lines = new THREE.Line( geometry, material );
-    // when creating the line, you can give it it's own properties, such as names, ids and so forth
-    lines.name = "Floor Plan";
-
-    scene.add( lines );
-
-    // code here creates a sprite into the scene, this follows the sprite orientation no matter the angle by default
-    const material1 = new THREE.SpriteMaterial({ size: 0.1, color: 0xADADAD })
-    const sprite1 = new THREE.Sprite(material1)
-    sprite1.position.copy(new THREE.Vector3(1,1,1))
-    scene.add(sprite1)
+    generateWall(scene);    // passing the variable to the javascrpit folder so element can be added or removed
 
     
 }
+
+
 
 
 
