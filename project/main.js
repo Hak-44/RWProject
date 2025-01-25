@@ -3,6 +3,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
 
 import { generateWall } from './Room';
+import { or } from 'three/tsl';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -131,7 +132,7 @@ function changeCamPerspective(){
         is2D = true;
         currentCamera = skyCamera;
         skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
-
+        
         //skyCamera.position = orbitCamera.position;
         
 
