@@ -4,7 +4,19 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 var wallCount = 0;
 
 export function generateWall(scene){
+    testWalls(scene);
+    
+}
 
+export function getWallCount(){
+    return wallCount
+}
+
+export function setWallCount(count){
+    wallCount = count
+}
+
+function testWalls(scene){
     console.log("Wall is being generated");
     let lines;
     const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -33,14 +45,6 @@ export function generateWall(scene){
     sprite1.position.copy(new THREE.Vector3(1,1,1))
     scene.add(sprite1)
     console.log(scene)
-}
-
-export function getWallCount(){
-    return wallCount
-}
-
-export function setWallCount(count){
-    wallCount = count
 }
 
 

@@ -48,6 +48,8 @@ var currentCamera = orbitCamera;    // set camera is the
 
 // orbiting controls allow the user to move around the 3D space created. Reference: https://threejs.org/docs/#examples/en/controls/OrbitControls
 const controls = new OrbitControls( orbitCamera, renderer.domElement );
+/*skyControl orbiting will allow movement with the 2D perspective*/
+const skyControls = new OrbitControls( skyCamera, renderer.domElement );
 var is2D = false;   // the variable is checking whether the perspective of the 
 
 
@@ -128,9 +130,15 @@ function changeCamPerspective(){
     if(!is2D){
         is2D = true;
         currentCamera = skyCamera;
+        skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
+
+        //skyCamera.position = orbitCamera.position;
+        
+
     }else{
         is2D = false;
         currentCamera = orbitCamera;
+
     }
 
 }
@@ -149,9 +157,6 @@ function CameraLeveling(){
 
 
 
-
-
-
 // -------------------- ROOM DETAILS --------------------
 
 
@@ -161,7 +166,6 @@ function doSomething(){
     alert('did something');
     generateWall(scene);    // passing the variable to the javascrpit folder so element can be added or removed
 
-    
 }
 
 
