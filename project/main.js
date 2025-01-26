@@ -161,6 +161,7 @@ function CameraLeveling(){
 
 
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
+document.getElementById('new-room-button').addEventListener('click', createNewRoom);
 function doSomething(){
 
     // select the root within the CSS that contains colour variables
@@ -192,9 +193,11 @@ function doSomething(){
     // changes the colours accordingly.
     createRoom.style.backgroundColor = divBackgroundColour;
     createRoom.style.color = textColour;
-    
-    generateWall(scene);  
 
+}
+
+function createNewRoom(){
+    generateWall(scene);  
 }
 
 
