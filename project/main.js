@@ -157,15 +157,43 @@ function CameraLeveling(){
 
 
 
-
 // -------------------- ROOM DETAILS --------------------
-
 
 
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 function doSomething(){
-    alert('did something');
-    generateWall(scene);    // passing the variable to the javascrpit folder so element can be added or removed
+
+    // select the root within the CSS that contains colour variables
+    var root = document.querySelector(':root');
+
+    // gets the properties within the root style
+    // ref: http://w3schools.com/css/tryit.asp?filename=trycss3_var_js
+    var styleProperties = getComputedStyle(root)
+
+    // grabbing the elements by id
+    var createRoom = document.getElementById('createRoomDiv');
+    var roomOptions = document.getElementById('room-option-box');
+    
+    // if the room option is flex, then it will remove the highlight from the button and remove the options div
+    if(roomOptions.style.display == "flex"){
+        
+        //grabbing the correct colours form the :root
+        var divBackgroundColour = styleProperties.getPropertyValue('--divOptionColour');
+        var textColour = styleProperties.getPropertyValue('--regularTextColour')
+        roomOptions.style.display = "none"; // hides the div
+
+    }else{
+        
+        //grabbing the correct colours form the :root
+        var divBackgroundColour = styleProperties.getPropertyValue('--divSelectedColour');
+        var textColour = styleProperties.getPropertyValue('--selectedTextColour')
+        roomOptions.style.display = "flex"; // shows the div in flex mode
+    }
+    // changes the colours accordingly.
+    createRoom.style.backgroundColor = divBackgroundColour;
+    createRoom.style.color = textColour;
+    
+    generateWall(scene);  
 
 }
 

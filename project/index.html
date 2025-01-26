@@ -4,23 +4,63 @@
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
 		<style>
+
+			/* Root used for colours */
+			:root{
+				--divOptionColour:  rgb(14, 42, 65);
+				--divSelectedColour:  rgb(32, 81, 121);
+				--regularTextColour: rgba(240, 255, 255, 0.548);
+				--selectedTextColour: rgba(240, 255, 255, 0.945);
+			}
+
+			.left-boarder{
+				display: flex;
+				justify-content: center;
+        	}
+
+			/* Div that displays the options (new / load room) */
+			.room-option-div{
+				display: none;
+				background-position: center;
+				justify-content: center;
+				align-items: center;
+        	}
+
+			.new-room-div{
+				background-color: rgba(127, 136, 255, 0.719);
+        	}
+
+			.load-room-div{
+				background-color: rgb(80, 165, 180);
+        	}
+
 			body { margin: 0; }
 		</style>
 	</head>
 	<body>
 		<div id="left-boarder" style="position: absolute;">
 			
-			<div class="container" style="background-color: rgb(14, 42, 65);">
-				<span style="color: azure;">asdf</span>
-				<div id="changeCameraPerspectiveDiv" style="color: azure;" onclick="changeCamPerspective()">Overhead view</div>
-				<div id="createRoomDiv" style="color: azure;" onclick="doSomething()">Create room</div>
+			<div class="container" style="background-color: var(--divOptionColour)">
+				<div id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view</div>
+				<div id="createRoomDiv" style="color: var(--regularTextColour)" onclick="doSomething()">Create room</div>
+
+				
+
 			</div>
-			
+
+			<div class="room-option-div" id="room-option-box">
+				<div class="new-room-div" id="new-room-button">New room</div>
+				<div class="load-room-div" id="load-room-button">Load room</div>
+			</div>
+		
 			<div id="selected-container" style="background-color: rgb(209, 209, 209);">
 				<span id="selected-object" style="color: midnightblue;"></span>
 			</div>
 
 		</div>
+
+		
+
 		<script type="module" src="/main.js">
 		</script>
 	</body>
