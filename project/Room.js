@@ -3,8 +3,11 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 
 var wallCount = 0;
 const wallCoordinates = []; 
-let newWallButton = document
+let x_coordinates;
+let y_coordinates;
+
 let mainScene;
+
 
 export function SetUpWalls(scene){
     //testWalls(scene);
@@ -12,6 +15,13 @@ export function SetUpWalls(scene){
     
 }
 
+export function WallRayCast(scene, pointer, raycaster, currentCamera){
+
+    raycaster.setFromCamera( pointer, currentCamera );
+    pointer.x = x_coordinates;
+    pointer.y = y_coordinates;
+
+}
 
 export function getWallCount(){
     return wallCount

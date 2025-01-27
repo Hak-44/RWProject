@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
 
-import { SetUpWalls } from './Room';
+import { SetUpWalls, WallRayCast } from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -127,6 +127,13 @@ function onPointerMove(event){
 }
 
 function MouseRaycast(){
+
+    // if it's builder mode, it will do the operations within the Room
+    if(isBuildMode){
+        WallRayCast(scene, pointer, raycaster, currentCamera)
+        return;
+    }
+
     raycaster.setFromCamera( pointer, currentCamera );
 
 	/* calculate objects intersecting the picking ray (needs to be var since it will be constantly updated)
