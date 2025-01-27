@@ -9,6 +9,10 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+
+// -------------------- SCENE PLANE AND GENERAL ENVIRONMENT --------------------
+
+
 // the scene void that is visible
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xf8f8f8 ); // background colour of 3D env
@@ -30,6 +34,14 @@ groundMesh.position.set(0, -2, 0)   // positioning at -2 places it downwards fro
 groundMesh.rotation.set(Math.PI / -2, 0, 0) // rotating to be flat on screen
 groundMesh.receiveShadow = true  // giving shadow to the object
 scene.add(groundMesh)
+
+
+
+
+
+
+// -------------------- CAMERA CONTROLS --------------------
+
 
 
 // 3D orbiting camera setup for the scene
@@ -59,10 +71,24 @@ controls.enableDamping = true;  // enables the inertia
 controls.dampingFactor = 0.1;   // sets the inerita value
 
 
+/* this camera leveling makes sure the camera will not go beneath the plane, that way it is easier to track the
+  scene.  */
+function CameraLeveling(){
+
+    if(!is2D)
+        if(currentCamera.position.y < 0) currentCamera.position.y = 0;
+  
+}
+
+
+
+// -------------------- RAY CASTING (POINTING ON SCREEN WITH MOUSE) --------------------
+
+let isBuildMode;    // this boolean is used to notify if the user is using buildmod, which is for wall editing
+let isDesignMode;
+
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-
-
 
 // here is used to loop the scene so it keeps getting updated (siilar to update() in unity)
 function animate() {
@@ -127,14 +153,14 @@ function MouseRaycast(){
 // the div will trigger the change in perspective, it will check the current view and will swap to the other accordingly. 
 document.getElementById('changeCameraPerspectiveDiv').addEventListener('click', changeCamPerspective);
 function changeCamPerspective(){
-    if(!is2D){
+    
+    if(!is2D || isBuildMode){   // isBuldMode is the wall editing mode
         is2D = true;
         currentCamera = skyCamera;
         skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
         
         //skyCamera.position = orbitCamera.position;
         
-
     }else{
         is2D = false;
         currentCamera = orbitCamera;
@@ -144,23 +170,15 @@ function changeCamPerspective(){
 }
 
 
-/* this camera leveling makes sure the camera will not go beneath the plane, that way it is easier to track the
-  scene.  */
-function CameraLeveling(){
-
-    if(!is2D)
-        if(currentCamera.position.y < 0) currentCamera.position.y = 0;
-  
-}
 
 
 
-
-// -------------------- ROOM DETAILS --------------------
+// -------------------- BUTTON CLICKING --------------------
 
 
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
+document.getElementById('cancelWallButton').addEventListener('click', CancelWallSetup);
 function doSomething(){
 
     // select the root within the CSS that contains colour variables
@@ -198,7 +216,15 @@ function doSomething(){
 function createNewRoom(){
     changeCamPerspective(); // changing the perspective so drawing walls is easier. 
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
+    isBuildMode = true; // enables the lock on the skyCamera
     SetUpWalls(scene);  
+}
+
+function CancelWallSetup(){
+    console.log("Closing wall setup.");
+    document.getElementById("leftSidebar").style.width = "0px";
+    isBuildMode = false;    // disables the lock on the skyCamera
+    changeCamPerspective();
 }
 
 

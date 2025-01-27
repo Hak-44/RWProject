@@ -9,11 +9,6 @@ let mainScene;
 export function SetUpWalls(scene){
     //testWalls(scene);
     mainScene = scene;
-    ShowRelevantButtons();
-}
-
-function ShowRelevantButtons(){
-
     
 }
 
@@ -25,6 +20,8 @@ export function getWallCount(){
 export function setWallCount(count){
     wallCount = count
 }
+
+
 
 function testWalls(scene){
     console.log("Wall is being generated");
