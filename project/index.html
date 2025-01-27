@@ -24,6 +24,8 @@
 				background-position: center;
 				justify-content: center;
 				align-items: center;
+
+				
         	}
 
 			.new-room-div{
@@ -34,17 +36,72 @@
 				background-color: rgb(80, 165, 180);
         	}
 
+
+			.left-sidebar-div{
+				position: fixed;	/*places the bar exactly where it should be, preventing any movement when new elements are added */
+				display: flex;
+				/* places them in the center, so when adding new elements, will center
+					them in a column.*/
+				flex-direction: column;
+				justify-content: center;
+
+				width: 0px;
+				overflow-x: hidden;
+				height: 100vh;	/*covers the entire screen size*/
+				max-height: 80vh;          /* Places a maximun height of 80px, so any height larger that that gets capped */
+				margin-top: 50px;          /* Add space at the top of the sidebar */
+				margin-bottom: 50px;   
+
+				border-right-style: dotted;	/* temporary dots so I know where the border ends */
+				border-right-width: 1px;
+
+				transition: width 0.3s;	/* Transition of the appearance when the width changes on clicking the
+				new room button. This is the reason why its at 0. The transition between 0 and the set value in the javascript
+				will be done in the specified time above.*/
+					
+			}
+
+			.wallOptions{
+				padding: 5px;
+				margin: 10px;
+				display: flex;
+				flex-direction: column;
+      			gap: 10px; /* Adjust the value as needed */
+				
+				text-align: center;
+			}
+
+			.wallButton{
+				background-color: rgb(201, 231, 227);
+			}
+
 			body { margin: 0; }
 		</style>
 	</head>
 	<body>
+
 		<div id="left-boarder" style="position: absolute;">
+
+			<div class="wrap">
+				<!-- side bar that will dispaly the options -->
+				<div class="left-sidebar-div" id="leftSidebar">
+					
+					<!-- wall options for the side bar-->
+					<div class="wallOptions">
+						<!-- given the same class as they should be treated the same in terms of styling-->
+						<div class="wallButton" id="newWallButton">NEW WALL</div>
+						<div class="wallButton" id="removeWallButton">REMOVE WALL</div>
+						<div class="wallButton" id="newWallButton">CANCEL</div>
+		
+					</div>
+					
+			
+				</div>
+			</div>
 			
 			<div class="container" style="background-color: var(--divOptionColour)">
 				<div id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view</div>
 				<div id="createRoomDiv" style="color: var(--regularTextColour)" onclick="doSomething()">Create room</div>
-
-				
 
 			</div>
 

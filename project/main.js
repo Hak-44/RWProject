@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
 
-import { generateWall } from './Room';
-import { or } from 'three/tsl';
+import { SetUpWalls } from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -169,7 +168,7 @@ function doSomething(){
 
     // gets the properties within the root style
     // ref: http://w3schools.com/css/tryit.asp?filename=trycss3_var_js
-    var styleProperties = getComputedStyle(root)
+    var styleProperties = getComputedStyle(root);
 
     // grabbing the elements by id
     var createRoom = document.getElementById('createRoomDiv');
@@ -197,7 +196,9 @@ function doSomething(){
 }
 
 function createNewRoom(){
-    generateWall(scene);  
+    changeCamPerspective(); // changing the perspective so drawing walls is easier. 
+    document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
+    SetUpWalls(scene);  
 }
 
 

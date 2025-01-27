@@ -2,11 +2,21 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 
 var wallCount = 0;
+const wallCoordinates = []; 
+let newWallButton = document
+let mainScene;
 
-export function generateWall(scene){
-    testWalls(scene);
+export function SetUpWalls(scene){
+    //testWalls(scene);
+    mainScene = scene;
+    ShowRelevantButtons();
+}
+
+function ShowRelevantButtons(){
+
     
 }
+
 
 export function getWallCount(){
     return wallCount
@@ -24,13 +34,13 @@ function testWalls(scene){
     const points = [];
     points.push( new THREE.Vector3( 20, 0, 0 ) );
     points.push( new THREE.Vector3( 10, 0, 0 ) );
-    points.push( new THREE.Vector3( 5, 0, 0 ) );
+    points.push( new THREE.Vector3( 5, 0, 5 ) );
 
     // data that represents mesh, lines or point geometry data.
     const geometry = new THREE.BufferGeometry().setFromPoints( points );    
 
-    points[0].set(1, 0, 5);
-    points[1].set(1, 0, 90);
+    // points[0].set(1, 0, 5);
+    // points[1].set(1, 0, 90);
     geometry.setFromPoints(points);
 
     lines = new THREE.Line( geometry, material );
