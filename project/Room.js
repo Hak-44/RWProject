@@ -12,6 +12,7 @@ var y_coordinates;
 
 // placing points indicates if the user is defining the wall length or not
 export let isPlacingPoint = false;
+let phantomClick;
 
 let mainScene;
 
@@ -44,6 +45,12 @@ export function WallRayCast(scene, pointer, raycaster, currentCamera){
 
 
 export function AddPoint(scene){
+    /* due to the eventListener "click" triggers regardless on what is done on the screen, another flag
+    called phantomClick prevents the point being placed at the position of the "New Wall" button */ 
+    if(!phantomClick){
+        phantomClick = true;
+        return;
+    }
     if(wallCoordinates.length >= 1){
         // The points from now can be joined together as there is a previous point to connect to
         let wallLine;
