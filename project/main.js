@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
 
-import { SetUpWalls, WallRayCast } from './Room';
+import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint} from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -30,6 +30,7 @@ const groundMaterial = new THREE.MeshBasicMaterial({
 
 // plane rendering.
 const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial)
+groundMesh.name = "WorldPlane";
 groundMesh.position.set(0, -2, 0)   // positioning at -2 places it downwards from starting view
 groundMesh.rotation.set(Math.PI / -2, 0, 0) // rotating to be flat on screen
 groundMesh.receiveShadow = true  // giving shadow to the object
@@ -51,7 +52,7 @@ scene.add(orbitCamera);
 
 // adding sky camera for the overhead perspective
 const skyCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-skyCamera.position.set(1,100,1);    // the sky camera will be set above the plane from a reasonable distance
+skyCamera.position.set(0,100,0);    // the sky camera will be set above the plane from a reasonable distance
 skyCamera.lookAt(groundMesh.position);        // the camera is set to the same position as the plane location.
 skyCamera.name = "SkyCam";          // name for easy access
 scene.add(skyCamera);
@@ -88,7 +89,7 @@ let isBuildMode;    // this boolean is used to notify if the user is using build
 let isDesignMode;
 
 const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
+const pointer = new THREE.Vector3();
 
 // here is used to loop the scene so it keeps getting updated (siilar to update() in unity)
 function animate() {
@@ -107,10 +108,9 @@ window.addEventListener('resize', function() {
 });
 
 
+
 var selectedObject = null;   /* this object is recorded whenever the mosue is hovered over, that way 
     when the object*/
-var lines;
-
 var objectName = document.getElementById('selected-object');
 
 /* Raycasting is the used for tracking the mouse picking and can be used to check if users are 
@@ -120,10 +120,18 @@ ref:https://threejs.org/docs/index.html?q=ray#api/en/core/Raycaster
 
 */
 window.addEventListener( 'pointermove', onPointerMove );
+window.addEventListener( 'click', CheckMode );  // when clicking it will check the mode it is in
 
 function onPointerMove(event){
     pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+function CheckMode(){
+    console.log("running check")
+    if(isBuildMode && isPlacingPoint){
+        AddPoint(scene);
+    }
 }
 
 function MouseRaycast(){
@@ -182,9 +190,9 @@ function changeCamPerspective(){
 
 // -------------------- BUTTON CLICKING --------------------
 
-
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
+document.getElementById('newWallButton').addEventListener('click', EnablePlacement);    //
 document.getElementById('cancelWallButton').addEventListener('click', CancelWallSetup);
 function doSomething(){
 
@@ -224,12 +232,18 @@ function createNewRoom(){
     changeCamPerspective(); // changing the perspective so drawing walls is easier. 
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
     isBuildMode = true; // enables the lock on the skyCamera
-    SetUpWalls(scene);  
+    PassScene(scene);  
+}
+
+// triggers the placement boolean in the room script
+function EnablePlacement(){
+    if(isBuildMode) EnablePointPlacement();
+    console.log("Enabling pointer placements");
 }
 
 function CancelWallSetup(){
     console.log("Closing wall setup.");
-    document.getElementById("leftSidebar").style.width = "0px";
+    document.getElementById("leftSidebar").style.width = "0px"; 
     isBuildMode = false;    // disables the lock on the skyCamera
     changeCamPerspective();
 }

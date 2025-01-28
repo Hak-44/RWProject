@@ -3,13 +3,20 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 
 var wallCount = 0;
 const wallCoordinates = []; 
-let x_coordinates;
-let y_coordinates;
+const wallLines = [];
+const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+
+// capturing the x and y axis on the screen
+var x_coordinates;
+var y_coordinates;
+
+// placing points indicates if the user is defining the wall length or not
+export let isPlacingPoint = false;
 
 let mainScene;
 
 
-export function SetUpWalls(scene){
+export function PassScene(scene){
     //testWalls(scene);
     mainScene = scene;
     
@@ -17,20 +24,76 @@ export function SetUpWalls(scene){
 
 export function WallRayCast(scene, pointer, raycaster, currentCamera){
 
+    /* similar to how the general raycast works within /main.js, it will track the mouse position, but now against the worldPlane,
+        only. After finding the worldplane object, it will return the X and Z coordinates where the raycast has
+        collided with the plane. 
+    */
     raycaster.setFromCamera( pointer, currentCamera );
-    pointer.x = x_coordinates;
-    pointer.y = y_coordinates;
+    var intersects = raycaster.intersectObjects( scene.children );
+    if(intersects.length > 0 && intersects[0].object.name == "WorldPlane"){
+        x_coordinates = intersects[0].point.x;
+        // the Z coordinates is the y coordinates to the user as they are looking straight down towards the worldPlane
+        y_coordinates = intersects[0].point.z;
+        
+    }
 
+    
+    //console.log("Mouse X: "+ pointer.x + " | Mouse Y: " + pointer.y);
+
+}
+
+
+export function AddPoint(scene){
+    if(wallCoordinates.length >= 1){
+        // The points from now can be joined together as there is a previous point to connect to
+        let wallLine;
+        wallCount++;
+        wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates) );
+        
+        console.log("Wall point: " +wallCoordinates[0]);
+        console.log("Wall point: " +wallCoordinates[1]);
+        /*The .setFromPoints gets the values from the last point and the new point the user clicked on. Getting the last points location 
+        and the one before will draw a line geometry connecting the two. */
+        const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[wallCoordinates.length-2]] ); 
+        wallLine = new THREE.Line( geometry, material );
+
+        // Ref: https://threejs.org/docs/index.html?q=obje#api/en/core/Object3D.userData
+        wallLine.userData.objectID = 0;     // custom id that is used here is to distinguish the differnet objects on the scene. The unique object id for the wall lines will be 0.
+        wallLine.name = "Wall line " +wallCount;
+        wallLines.push(wallLine)
+        mainScene.add(wallLine);
+
+    }else{
+        /* place the point down and do nothing else, as this will be the first point for the first wall
+           to draw from.  */
+        wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
+        console.log("Point added");
+        console.log("Wall point: " +wallCoordinates[0]);
+        console.log("Total walls " +wallCount);
+    }
+}
+
+export function EnablePointPlacement(){
+    isPlacingPoint = true;
+
+}
+
+export function DisablePointPlacement(){
+    isPlacingPoint = false;
+}
+
+
+export function getPlacingPoint(){
+    return isPlacingPoint;
 }
 
 export function getWallCount(){
-    return wallCount
+    return wallCount;
 }
 
 export function setWallCount(count){
-    wallCount = count
+    wallCount = count;
 }
-
 
 
 function testWalls(scene){
