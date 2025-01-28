@@ -4,7 +4,10 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 var wallCount = 0;
 const wallCoordinates = []; 
 const wallLines = [];
+
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
+var phantomLineObject;
 
 // capturing the x and y axis on the screen
 var x_coordinates;
@@ -57,8 +60,8 @@ export function AddPoint(scene){
         wallCount++;
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates) );
         
-        console.log("Wall point: " +wallCoordinates[0]);
-        console.log("Wall point: " +wallCoordinates[1]);
+        console.log("Wall points: " +wallCoordinates);
+        console.log("Total walls " +wallCount);
         /*The .setFromPoints gets the values from the last point and the new point the user clicked on. Getting the last points location 
         and the one before will draw a line geometry connecting the two. */
         const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[wallCoordinates.length-2]] ); 
@@ -70,23 +73,63 @@ export function AddPoint(scene){
         wallLines.push(wallLine)
         mainScene.add(wallLine);
 
+        EnterAccurateLength();
+
     }else{
+        
         /* place the point down and do nothing else, as this will be the first point for the first wall
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
         console.log("Point added");
-        console.log("Wall point: " +wallCoordinates[0]);
         console.log("Total walls " +wallCount);
     }
 }
 
+function EnterAccurateLength(){
+    phantomClick = false;
+    alert("Enter the desired length or skip.");
+    /*NOTE FOR DEV (ME): COMMENT OUT PHANTOM CLICK WITHIN "DrawPhantomLine" TO DISABLE CONSECUTIVE WALL CLICKING. 
+     THEN REMOVE COMMENTED LINE BELOW, VICE VERSA */
+    //DisablePointPlacement();
+    
+}
+
+// The phantom line is used to draw a line that will represent the final line when the user clicks on the canvas the second time. 
+export function DrawPhantomLine(){
+    phantomClick = true;
+    RemovePreviousPhantomLine();
+    let phantomLine;
+    // checking if the length of the coordinate is greater than 0 will make sure the line is only drawn as long as there is a starting point
+    if(wallCoordinates.length > 0){
+        let mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
+        const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate]);
+        phantomLine = new THREE.Line( geometry, phantomLineMaterial );
+        phantomLine.name = "PhantomLine";
+
+        phantomLineObject = phantomLine;    // reference to the object is recorded down so it can be removed when no longer needed. 
+        mainScene.add(phantomLine);
+       
+    }
+}
+
+function RemovePreviousPhantomLine(){
+    // if there is a phantomline object once closing or quitting, then the object will be deleted. 
+    if(phantomLineObject){
+        mainScene.remove(phantomLineObject);
+    }
+    
+}
+
 export function EnablePointPlacement(){
     isPlacingPoint = true;
+    phantomClick = false;   // resets the phantomClick
 
 }
 
 export function DisablePointPlacement(){
     isPlacingPoint = false;
+    // removes the point placement flag and will remove the phantom line
+    RemovePreviousPhantomLine();
 }
 
 
@@ -94,11 +137,11 @@ export function getPlacingPoint(){
     return isPlacingPoint;
 }
 
-export function getWallCount(){
+function getWallCount(){
     return wallCount;
 }
 
-export function setWallCount(count){
+function setWallCount(count){
     wallCount = count;
 }
 
