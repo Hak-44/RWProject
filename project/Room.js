@@ -1,9 +1,13 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
+import { tan } from 'three/tsl';
+import { Vector3 } from 'three/webgpu';
 
 var wallCount = 0;
+let wallAngle;
 const wallCoordinates = []; 
 const wallLines = [];
+const wallAngles = [];
 
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
@@ -42,7 +46,7 @@ export function WallRayCast(scene, pointer, raycaster, currentCamera){
     }
 
     
-    //console.log("Mouse X: "+ pointer.x + " | Mouse Y: " + pointer.y);
+    //console.log("Mouse X: "+ x_coordinates + " | Mouse Y: " + y_coordinates);
 
 }
 
@@ -71,12 +75,12 @@ export function AddPoint(scene){
         wallLine.userData.objectID = 0;     // custom id that is used here is to distinguish the differnet objects on the scene. The unique object id for the wall lines will be 0.
         wallLine.name = "Wall line " +wallCount;
         wallLines.push(wallLine)
+        wallAngles.push(wallAngle); // pushing the angle to corresponding area
         mainScene.add(wallLine);
 
         EnterAccurateLength();
 
     }else{
-        
         /* place the point down and do nothing else, as this will be the first point for the first wall
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
@@ -87,7 +91,7 @@ export function AddPoint(scene){
 
 function EnterAccurateLength(){
     phantomClick = false;
-    alert("Enter the desired length or skip.");
+    //alert("Enter the desired length or skip.");
     /*NOTE FOR DEV (ME): COMMENT OUT PHANTOM CLICK WITHIN "DrawPhantomLine" TO DISABLE CONSECUTIVE WALL CLICKING. 
      THEN REMOVE COMMENTED LINE BELOW, VICE VERSA */
     //DisablePointPlacement();
@@ -107,8 +111,10 @@ export function DrawPhantomLine(){
         phantomLine.name = "PhantomLine";
 
         phantomLineObject = phantomLine;    // reference to the object is recorded down so it can be removed when no longer needed. 
+        wallAngle = CalculateLineEquations();   
+        if(wallCoordinates > 1)console.log("Angle: "+wallAngle);
         mainScene.add(phantomLine);
-       
+        
     }
 }
 
@@ -119,6 +125,40 @@ function RemovePreviousPhantomLine(){
     }
     
 }
+
+// this process is to show the angle of the walls for the user
+function CalculateLineEquations(){
+    // Getting the coordinates of the previous line, there needs to be more than one coordinate in the array
+    if(wallCoordinates.length > 1){
+
+        // gets the first starting coordinate for the most recent line drawn.
+        let recentLineCoordStart = wallCoordinates[wallCoordinates.length - 2];
+        /* Getting the shared coordinate for the line. This position is the end for the recent line
+        and the start for the phantom line */
+        let SharedCoord = wallCoordinates[wallCoordinates.length - 1];
+
+        // getting the end of the phantom line coordinate
+        let phantomLineCoordEnd = new THREE.Vector3(x_coordinates, 0, y_coordinates);
+
+        // get the direction between the coordinates
+        let firstDirection = new THREE.Vector3();
+        let secondDirection = new THREE.Vector3();
+        
+        // ref: https://threejs.org/docs/index.html?q=text#api/en/math/Vector3.angleTo
+        // using the built in functions for the equation.
+        /* to get the inner angle (acute) within both lines, sub vectors need to go in line order */
+        firstDirection = firstDirection.subVectors(SharedCoord, recentLineCoordStart);  // from last line start to current
+        secondDirection = secondDirection.subVectors(SharedCoord, phantomLineCoordEnd); // from current to phantom line end
+
+        var radianValue = firstDirection.angleTo(secondDirection);
+        var angleToDegree = radianValue * (180 / Math.PI);
+        var angle1dp = angleToDegree.toFixed(1); // fixed is used to convert the decimal to 1dp
+        return angle1dp;
+    }
+
+    
+}
+
 
 export function EnablePointPlacement(){
     isPlacingPoint = true;
