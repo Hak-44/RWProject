@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "three": "^0.172.0"
+    "three": "^0.172.0",
+    "troika-three-text": "^0.52.3"
   },
   "devDependencies": {
     "vite": "^6.0.6"

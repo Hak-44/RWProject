@@ -1,17 +1,26 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import { tan } from 'three/tsl';
-import { Vector3 } from 'three/webgpu';
+import { Text } from 'troika-three-text';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/Addons.js';
 
 var wallCount = 0;
 let wallAngle;
 const wallCoordinates = []; 
 const wallLines = [];
 const wallAngles = [];
+const angleObjects = [];
 
+const fontLoader = new FontLoader();
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
+let retrievedFont;
+
+
+let textFont = 12;
+// stores the phantomLineObject and angleTextObject so its easier to locate and remove
 var phantomLineObject;
+var angleTextObject;
 
 // capturing the x and y axis on the screen
 var x_coordinates;
@@ -23,6 +32,17 @@ let phantomClick;
 
 let mainScene;
 
+// fontLoader.load('/public/fonts/helvetiker_regular.typeface.json', 
+    
+//     function ( font ) {
+//         retrievedFont = font;
+
+//     },
+
+//     function ( err ) {
+// 		console.log( 'Failed to load font.' );
+// 	}
+// );
 
 export function PassScene(scene){
     //testWalls(scene);
@@ -103,6 +123,7 @@ export function DrawPhantomLine(){
     phantomClick = true;
     RemovePreviousPhantomLine();
     let phantomLine;
+    let phantomAngle;
     // checking if the length of the coordinate is greater than 0 will make sure the line is only drawn as long as there is a starting point
     if(wallCoordinates.length > 0){
         let mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
@@ -111,19 +132,36 @@ export function DrawPhantomLine(){
         phantomLine.name = "PhantomLine";
 
         phantomLineObject = phantomLine;    // reference to the object is recorded down so it can be removed when no longer needed. 
-        wallAngle = CalculateLineEquations();   
-        if(wallCoordinates > 1)console.log("Angle: "+wallAngle);
         mainScene.add(phantomLine);
+        wallAngle = CalculateLineEquations();   
+        if(wallCoordinates.length > 1){
+
+            phantomAngle = new Text();
+            phantomAngle.text = wallAngle;
+            phantomAngle.fontSize = 2
+            phantomAngle.position.x = -3
+            phantomAngle.rotation.x = -Math.PI / 2;
+            phantomAngle.color = 0xff00ff;
+            phantomAngle.name = "phantomAngle";
+            mainScene.add(phantomAngle);
+            
+            angleTextObject = phantomAngle;
+            console.log("Angle: "+wallAngle);
+        }
         
     }
 }
 
+
+
 function RemovePreviousPhantomLine(){
     // if there is a phantomline object once closing or quitting, then the object will be deleted. 
-    if(phantomLineObject){
+    if(phantomLineObject)
         mainScene.remove(phantomLineObject);
-    }
-    
+    if(angleTextObject){
+        mainScene.remove(angleTextObject);
+    } // removes the angle object is this also exists.
+
 }
 
 // this process is to show the angle of the walls for the user

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
-
+import { Text } from 'troika-three-text';
 import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement} from './Room';
 
 // initial setup for the three.js website
@@ -35,6 +35,7 @@ groundMesh.position.set(0, -2, 0)   // positioning at -2 places it downwards fro
 groundMesh.rotation.set(Math.PI / -2, 0, 0) // rotating to be flat on screen
 groundMesh.receiveShadow = true  // giving shadow to the object
 scene.add(groundMesh)
+
 
 
 
@@ -80,6 +81,17 @@ function CameraLeveling(){
         if(currentCamera.position.y < 0) currentCamera.position.y = 0;
   
 }
+
+
+
+// const troikaText = new Text();
+// troikaText.text = '40'
+// troikaText.fontSize = 2
+// troikaText.position.x = -3
+// troikaText.rotation.x = -Math.PI / 2;
+// troikaText.color = 0xff00ff
+// scene.add(troikaText);
+
 
 
 
