@@ -8,7 +8,6 @@ let wallAngle;
 const wallCoordinates = []; 
 const wallLines = [];
 const wallAngles = [];
-const angleObjects = [];
 
 const fontLoader = new FontLoader();
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -30,7 +29,7 @@ let phantomClick;
 let mainScene;
 
 const loader = new FontLoader();
-loader.load( 'public/droid_sans_bold.typeface.json', 
+loader.load( '/droid_sans_bold.typeface.json', 
         
     function ( font ) {
         // do something with the font
@@ -110,6 +109,7 @@ export function AddPoint(scene){
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
         console.log("Point added");
+        wallAngles.push(0);
         console.log("Total walls " +wallCount);
     }
 }
@@ -143,7 +143,7 @@ export function DrawPhantomLine(){
 
             const textGeometry = new TextGeometry( wallAngle+"°", {
                 font: retrievedFont,
-                size: 10,   // size of the text
+                size: 5,   // size of the text
                 depth: 0,  // depth of the text (which makes it 3D or not)
                 curveSegments: 12, // Details on the curvature of the font text
                 bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
@@ -156,13 +156,13 @@ export function DrawPhantomLine(){
         
             // Create the text mesh
             const phantomAngle = new THREE.Mesh(textGeometry, textMaterial);
-            phantomAngle.position.x = -3
+            phantomAngle.position.x = wallCoordinates[wallCoordinates.length-1].x;
+            phantomAngle.position.z = wallCoordinates[wallCoordinates.length-1].z;
             phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
             phantomAngle.name = "phantomAngle";
             mainScene.add(phantomAngle);
             
             angleTextObject = phantomAngle;
-            console.log("Angle: "+wallAngle);
         }
         
     }
