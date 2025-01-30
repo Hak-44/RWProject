@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import { Text } from 'troika-three-text';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/Addons.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 var wallCount = 0;
 let wallAngle;
@@ -16,8 +15,6 @@ const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
 let retrievedFont;
 
-
-let textFont = 12;
 // stores the phantomLineObject and angleTextObject so its easier to locate and remove
 var phantomLineObject;
 var angleTextObject;
@@ -32,21 +29,29 @@ let phantomClick;
 
 let mainScene;
 
-// fontLoader.load('/public/fonts/helvetiker_regular.typeface.json', 
-    
-//     function ( font ) {
-//         retrievedFont = font;
+const loader = new FontLoader();
+loader.load( 'public/droid_sans_bold.typeface.json', 
+        
+    function ( font ) {
+        // do something with the font
+        retrievedFont = font;
+    },
 
-//     },
+    // onProgress callback
+    function ( xhr ) {
+        console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+    },
 
-//     function ( err ) {
-// 		console.log( 'Failed to load font.' );
-// 	}
-// );
+    // onError callback
+    function ( err ) {
+        console.log( 'An error happened' );
+    }
+);
 
 export function PassScene(scene){
     //testWalls(scene);
     mainScene = scene;
+    
     
 }
 
@@ -136,12 +141,23 @@ export function DrawPhantomLine(){
         wallAngle = CalculateLineEquations();   
         if(wallCoordinates.length > 1){
 
-            phantomAngle = new Text();
-            phantomAngle.text = wallAngle;
-            phantomAngle.fontSize = 2
+            const textGeometry = new TextGeometry( wallAngle+"°", {
+                font: retrievedFont,
+                size: 10,   // size of the text
+                depth: 0,  // depth of the text (which makes it 3D or not)
+                curveSegments: 12, // Details on the curvature of the font text
+                bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+        
+            } );
+
+
+            // Create a material for the text
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+        
+            // Create the text mesh
+            const phantomAngle = new THREE.Mesh(textGeometry, textMaterial);
             phantomAngle.position.x = -3
-            phantomAngle.rotation.x = -Math.PI / 2;
-            phantomAngle.color = 0xff00ff;
+            phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
             phantomAngle.name = "phantomAngle";
             mainScene.add(phantomAngle);
             
