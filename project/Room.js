@@ -3,20 +3,31 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
+// used to track the values for the walls 
 var wallCount = 0;
 let wallAngle;
+let lineLength;
+let lineMidPoint;
+
 const wallCoordinates = []; 
 const wallLines = [];
 const wallAngles = [];
+const angleObjects = [];
+
+
+// objects that are displayed when walls are clicked
+let displayedAngleObject;
+let displayedLineLengthObject;
 
 const fontLoader = new FontLoader();
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
 let retrievedFont;
 
-// stores the phantomLineObject and angleTextObject so its easier to locate and remove
+// stores the phantomLineObject and phantomAngleTextObject so its easier to locate and remove
 var phantomLineObject;
-var angleTextObject;
+var phantomAngleTextObject;
+var phantomLengthTextObject;
 
 // capturing the x and y axis on the screen
 var x_coordinates;
@@ -28,8 +39,7 @@ let phantomClick;
 
 let mainScene;
 
-const loader = new FontLoader();
-loader.load( '/droid_sans_bold.typeface.json', 
+fontLoader.load( '/droid_sans_bold.typeface.json', 
         
     function ( font ) {
         // do something with the font
@@ -101,6 +111,7 @@ export function AddPoint(scene){
         wallLines.push(wallLine)
         wallAngles.push(wallAngle); // pushing the angle to corresponding area
         mainScene.add(wallLine);
+        angleObjects.push(phantomAngleTextObject);
 
         EnterAccurateLength();
 
@@ -138,7 +149,11 @@ export function DrawPhantomLine(){
 
         phantomLineObject = phantomLine;    // reference to the object is recorded down so it can be removed when no longer needed. 
         mainScene.add(phantomLine);
-        wallAngle = CalculateLineEquations();   
+
+        wallAngle = CalculateLineEquations();
+        lineLength = CalculateLineData(1);  // returns the line length from the method
+        lineMidPoint = CalculateLineData(2);    // returns the midpoint of the line
+        
         if(wallCoordinates.length > 1){
 
             const textGeometry = new TextGeometry( wallAngle+"°", {
@@ -150,7 +165,6 @@ export function DrawPhantomLine(){
         
             } );
 
-
             // Create a material for the text
             const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
         
@@ -161,10 +175,30 @@ export function DrawPhantomLine(){
             phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
             phantomAngle.name = "phantomAngle";
             mainScene.add(phantomAngle);
-            
-            angleTextObject = phantomAngle;
+            phantomAngleTextObject = phantomAngle;
+
         }
         
+        const textGeometry = new TextGeometry( lineLength, {
+            font: retrievedFont,
+            size: 2,   // size of the text
+            depth: 0,  // depth of the text (which makes it 3D or not)
+            curveSegments: 12, // Details on the curvature of the font text
+            bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+    
+        } );
+
+        const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+
+        // Create the text for the length
+        const phantomLength = new THREE.Mesh(textGeometry, textMaterial);
+        phantomLength.position.x = lineMidPoint.x;
+        phantomLength.position.z = lineMidPoint.z;
+        phantomLength.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
+        phantomLength.name = "phantomLength";
+        mainScene.add(phantomLength);
+        
+        phantomLengthTextObject = phantomLength;
     }
 }
 
@@ -174,10 +208,12 @@ function RemovePreviousPhantomLine(){
     // if there is a phantomline object once closing or quitting, then the object will be deleted. 
     if(phantomLineObject)
         mainScene.remove(phantomLineObject);
-    if(angleTextObject){
-        mainScene.remove(angleTextObject);
-    } // removes the angle object is this also exists.
-
+    if(phantomAngleTextObject){ // removes the angle text
+        mainScene.remove(phantomAngleTextObject);
+    } // removes the line length text
+    if(phantomLengthTextObject){
+        mainScene.remove(phantomLengthTextObject);
+    }
 }
 
 // this process is to show the angle of the walls for the user
@@ -210,6 +246,27 @@ function CalculateLineEquations(){
         return angle1dp;
     }
 
+
+}
+
+function CalculateLineData(data){
+    
+    // setting the line coordinates, the most recent point placed to the phantom line
+    let recentLineCoordinate = new THREE.Vector3(wallCoordinates[wallCoordinates.length - 1].x, 0 ,wallCoordinates[wallCoordinates.length - 1].z);
+    let phantomCoordinate = new THREE.Vector3(x_coordinates, 0, y_coordinates);
+
+    if(data == 1){
+        //line returns 
+        return recentLineCoordinate.distanceTo(phantomCoordinate).toFixed(2);
+    }else{
+        // calculates the mid point for the phantom line
+        let midpointX = (recentLineCoordinate.x + phantomCoordinate.x) / 2;
+        let midpointY = (recentLineCoordinate.z + phantomCoordinate.z) / 2;
+        
+        //let returningVector = new THREE.Vector3(midpointX, 0 , midpointY);
+        //console.log("MidpointX: "+JSON.stringify(returningVector))
+        return new THREE.Vector3(midpointX, 0, midpointY);
+    }
     
 }
 
