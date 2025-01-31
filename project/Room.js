@@ -30,12 +30,14 @@ var phantomAngleTextObject;
 var phantomLengthTextObject;
 
 // capturing the x and y axis on the screen
+var mouseCoordinate;
 var x_coordinates;
 var y_coordinates;
 
 // placing points indicates if the user is defining the wall length or not
 export let isPlacingPoint = false;
 let phantomClick;
+var originSnap = false;
 
 let mainScene;
 
@@ -96,11 +98,12 @@ export function AddPoint(scene){
         // The points from now can be joined together as there is a previous point to connect to
         let wallLine;
         wallCount++;
-        wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates) );
 
+        mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
         /*The .setFromPoints gets the values from the last point and the new point the user clicked on. Getting the last points location 
         and the one before will draw a line geometry connecting the two. */
-        const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[wallCoordinates.length-2]] ); 
+        const geometry = CheckDistanceBetweenOrigin(mouseCoordinate, wallCoordinates[0]); 
+        wallCoordinates.push( mouseCoordinate );
         wallLine = new THREE.Line( geometry, material );
 
         // Ref: https://threejs.org/docs/index.html?q=obje#api/en/core/Object3D.userData
@@ -164,8 +167,9 @@ export function DrawPhantomLine(){
     let phantomAngle;
     // checking if the length of the coordinate is greater than 0 will make sure the line is only drawn as long as there is a starting point
     if(wallCoordinates.length > 0){
-        let mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
-        const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate]);
+        mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
+        let geometry = CheckDistanceBetweenOrigin(mouseCoordinate, wallCoordinates[0]);
+        
         phantomLine = new THREE.Line( geometry, phantomLineMaterial );
         phantomLine.name = "PhantomLine";
 
@@ -173,63 +177,106 @@ export function DrawPhantomLine(){
         mainScene.add(phantomLine);
 
         wallAngle = CalculateLineEquations();
+        
         lineLength = CalculateLineData(1);  // returns the line length from the method
         lineMidPoint = CalculateLineData(2);    // returns the midpoint of the line
         
-        if(wallCoordinates.length > 1){
+        if(!originSnap){
+            /* due to the originSnap flag occuring at different times than the entire removal of the phantom data,
+                it has to be triggered once the originSnap flag is no longer true*/
+            RemovePreviousPhantomData();
+            if(wallCoordinates.length > 1){
 
-            const textGeometry = new TextGeometry( wallAngle+"°", {
-                font: retrievedFont,
-                size: 5,   // size of the text
-                depth: 0,  // depth of the text (which makes it 3D or not)
-                curveSegments: 12, // Details on the curvature of the font text
-                bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
-        
-            } );
+                const textGeometry = new TextGeometry( wallAngle+"°", {
+                    font: retrievedFont,
+                    size: 5,   // size of the text
+                    depth: 0,  // depth of the text (which makes it 3D or not)
+                    curveSegments: 12, // Details on the curvature of the font text
+                    bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+            
+                } );
+    
+                // Create a material for the text
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+            
+                // Create the text mesh
+                const phantomAngle = new THREE.Mesh(textGeometry, textMaterial);
+                phantomAngle.position.x = wallCoordinates[wallCoordinates.length-1].x;
+                phantomAngle.position.z = wallCoordinates[wallCoordinates.length-1].z;
+                phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
+                phantomAngle.name = "phantomAngle";
+                mainScene.add(phantomAngle);
+                phantomAngleTextObject = phantomAngle;
+    
+            }
 
-            // Create a material for the text
-            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
-        
-            // Create the text mesh
-            const phantomAngle = new THREE.Mesh(textGeometry, textMaterial);
-            phantomAngle.position.x = wallCoordinates[wallCoordinates.length-1].x;
-            phantomAngle.position.z = wallCoordinates[wallCoordinates.length-1].z;
-            phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
-            phantomAngle.name = "phantomAngle";
-            mainScene.add(phantomAngle);
-            phantomAngleTextObject = phantomAngle;
+            const phantomLength = CreatePhantomLength();
+            mainScene.add(phantomLength);
+            
+            phantomLengthTextObject = phantomLength;
 
+        }else{
+            /* if there is no snap within the distance between the two coordinates, just 
+                */
+            mainScene.add(phantomAngleTextObject);
+            mainScene.add(phantomLengthTextObject);
         }
         
-        const textGeometry = new TextGeometry( lineLength, {
-            font: retrievedFont,
-            size: 2,   // size of the text
-            depth: 0,  // depth of the text (which makes it 3D or not)
-            curveSegments: 12, // Details on the curvature of the font text
-            bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
-    
-        } );
-
-        const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
-
-        // Create the text for the length
-        const phantomLength = new THREE.Mesh(textGeometry, textMaterial);
-        phantomLength.position.x = lineMidPoint.x;
-        phantomLength.position.z = lineMidPoint.z;
-        phantomLength.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
-        phantomLength.name = "phantomLength";
-        mainScene.add(phantomLength);
         
-        phantomLengthTextObject = phantomLength;
+
+        
     }
 }
 
+// here will check the distance between the origin coordinate and the mouse coordinate
+function CheckDistanceBetweenOrigin(mouseCoordinate, originCoord){
 
+    /* If the mouse coordinate distance is lower than 5, then it will match the coordinate  
+        of the starting coordinate*/
+    if(mouseCoordinate.distanceTo(originCoord).toFixed(2) < 5){
+        console.log("its that close...");
+        mouseCoordinate = new THREE.Vector3(wallCoordinates[0]);
+        originSnap = true;  // flag for snapping to the origin
+        return new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[0]]);
+    }else{
+        console.log("nah too far...");
+        originSnap = false; // flag for snapping to the origin
+        return new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate]);
+    }
+}
+
+function CreatePhantomLength(){
+    const textGeometry = new TextGeometry( lineLength, {
+        font: retrievedFont,
+        size: 2,   // size of the text
+        depth: 0,  // depth of the text (which makes it 3D or not)
+        curveSegments: 12, // Details on the curvature of the font text
+        bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+
+    } );
+
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+
+    // Create the text for the length
+    const phantomLength = new THREE.Mesh(textGeometry, textMaterial);
+    phantomLength.position.x = lineMidPoint.x;
+    phantomLength.position.z = lineMidPoint.z;
+    phantomLength.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
+    phantomLength.name = "phantomLength";
+
+    return phantomLength;
+}
 
 function RemovePreviousPhantomLine(){
     // if there is a phantomline object once closing or quitting, then the object will be deleted. 
     if(phantomLineObject)
         mainScene.remove(phantomLineObject);
+    
+    
+}
+
+function RemovePreviousPhantomData(){
+    // removes the line length text, this is separate from the above due to sequence within the code
     if(phantomAngleTextObject){ // removes the angle text
         mainScene.remove(phantomAngleTextObject);
     } // removes the line length text
@@ -304,6 +351,7 @@ export function DisablePointPlacement(){
     // removes the point placement flag and will remove the phantom line
     //showObjs();
     RemovePreviousPhantomLine();
+    RemovePreviousPhantomData();
 }
 
 export function RemoveLastWall(){
