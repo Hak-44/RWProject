@@ -13,7 +13,7 @@ const wallCoordinates = [];
 const wallLines = [];
 const wallAngles = [];
 const angleObjects = [];
-
+const lengthObjects = [];
 
 // objects that are displayed when walls are clicked
 let displayedAngleObject;
@@ -97,9 +97,7 @@ export function AddPoint(scene){
         let wallLine;
         wallCount++;
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates) );
-        
-        console.log("Wall points: " +wallCoordinates);
-        console.log("Total walls " +wallCount);
+
         /*The .setFromPoints gets the values from the last point and the new point the user clicked on. Getting the last points location 
         and the one before will draw a line geometry connecting the two. */
         const geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[wallCoordinates.length-2]] ); 
@@ -108,10 +106,26 @@ export function AddPoint(scene){
         // Ref: https://threejs.org/docs/index.html?q=obje#api/en/core/Object3D.userData
         wallLine.userData.objectID = 0;     // custom id that is used here is to distinguish the differnet objects on the scene. The unique object id for the wall lines will be 0.
         wallLine.name = "Wall line " +wallCount;
-        wallLines.push(wallLine)
-        wallAngles.push(wallAngle); // pushing the angle to corresponding area
+        wallLine.userData.wallNumber = wallCount;
         mainScene.add(wallLine);
+
+        /* these below are ternary conditions, the variable is determined by the condition before the question mark,
+            if the statment is true, then the first value before the semi-colon is assigned, if false, then the 
+            value after is assigned.
+
+            This is done because there is no given angle when there is only 2 coordinates as it can't form one
+            yet. 3 coordinates or more will create an angle.
+        */
+        wallAngle = wallCount >= 2 ? wallAngle : 0;
+        phantomAngleTextObject = wallCount >= 2 ? phantomAngleTextObject : 0;
+
+        wallLines.push(wallLine);
+        wallAngles.push(wallAngle); // pushing the angle to corresponding area
+
         angleObjects.push(phantomAngleTextObject);
+        lengthObjects.push(phantomLengthTextObject);
+
+        console.log("Total walls " +wallCount);
 
         EnterAccurateLength();
 
@@ -119,9 +133,17 @@ export function AddPoint(scene){
         /* place the point down and do nothing else, as this will be the first point for the first wall
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
-        console.log("Point added");
+
+
+        wallLines.push(0);
         wallAngles.push(0);
+        angleObjects.push(0);
+        lengthObjects.push(0);
+        
+        console.log("Point added");
         console.log("Total walls " +wallCount);
+
+
     }
 }
 
@@ -130,13 +152,13 @@ function EnterAccurateLength(){
     //alert("Enter the desired length or skip.");
     /*NOTE FOR DEV (ME): COMMENT OUT PHANTOM CLICK WITHIN "DrawPhantomLine" TO DISABLE CONSECUTIVE WALL CLICKING. 
      THEN REMOVE COMMENTED LINE BELOW, VICE VERSA */
-    //DisablePointPlacement();
+    DisablePointPlacement();
     
 }
 
 // The phantom line is used to draw a line that will represent the final line when the user clicks on the canvas the second time. 
 export function DrawPhantomLine(){
-    phantomClick = true;
+    //phantomClick = true;
     RemovePreviousPhantomLine();
     let phantomLine;
     let phantomAngle;
@@ -280,9 +302,26 @@ export function EnablePointPlacement(){
 export function DisablePointPlacement(){
     isPlacingPoint = false;
     // removes the point placement flag and will remove the phantom line
+    //showObjs();
     RemovePreviousPhantomLine();
 }
 
+export function RemoveLastWall(){
+
+    // remove the objects first before removing the reference in th e
+    mainScene.remove(wallLines[wallLines.length-1]);
+    mainScene.remove(angleObjects[angleObjects.length-1]);
+    mainScene.remove(lengthObjects[lengthObjects.length-1]);
+
+    // remove them from the list
+    wallCoordinates.pop();
+    wallLines.pop();
+    wallAngles.pop();
+    angleObjects.pop();
+    lengthObjects.pop();
+
+
+}
 
 export function getPlacingPoint(){
     return isPlacingPoint;
@@ -296,6 +335,16 @@ function setWallCount(count){
     wallCount = count;
 }
 
+// loopoing through all the objects and adding them to the scene
+function showObjs(){
+    angleObjects.forEach(element => {
+        mainScene.add(element);
+    });
+
+    lengthObjects.forEach(element => {
+        mainScene.add(element);
+    });
+}
 
 function testWalls(scene){
     console.log("Wall is being generated");

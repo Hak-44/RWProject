@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
-import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement} from './Room';
+import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall} from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -205,7 +205,10 @@ function changeCamPerspective(){
 document.getElementById('createRoomDiv').addEventListener('click', doSomething);
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
 document.getElementById('newWallButton').addEventListener('click', EnablePlacement);    //
+document.getElementById('removeWallButton').addEventListener('click', RemovePreviousWall);
 document.getElementById('cancelWallButton').addEventListener('click', CancelWallSetup);
+
+
 function doSomething(){
 
     // select the root within the CSS that contains colour variables
@@ -251,6 +254,10 @@ function createNewRoom(){
 function EnablePlacement(){
     if(isBuildMode) EnablePointPlacement();
     console.log("Enabling pointer placements");
+}
+
+function RemovePreviousWall(){
+    RemoveLastWall();
 }
 
 function CancelWallSetup(){
