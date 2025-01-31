@@ -104,7 +104,7 @@ export function AddPoint(scene){
         mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
         /*The .setFromPoints gets the values from the last point and the new point the user clicked on. Getting the last points location 
         and the one before will draw a line geometry connecting the two. */
-        const geometry = CheckDistanceBetweenOrigin(mouseCoordinate, wallCoordinates[0]); 
+        const geometry = originSnap ? new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[0]]) : new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate])
         wallCoordinates.push( mouseCoordinate );
         wallLine = new THREE.Line( geometry, material );
 
@@ -147,6 +147,9 @@ export function AddPoint(scene){
         
         console.log("Point added");
         console.log("Total walls " +wallCount);
+        console.log( "wall angle: "+wallAngle);
+
+        console.log("line length: "+lineLength);
 
 
     }
@@ -166,11 +169,16 @@ export function DrawPhantomLine(){
     //phantomClick = true;
     RemovePreviousPhantomLine();
     let phantomLine;
-    let phantomAngle;
+
     // checking if the length of the coordinate is greater than 0 will make sure the line is only drawn as long as there is a starting point
     if(wallCoordinates.length > 0){
         mouseCoordinate = new THREE.Vector3( x_coordinates, 0, y_coordinates );
-        let geometry = CheckDistanceBetweenOrigin(mouseCoordinate, wallCoordinates[0]);
+        let geometry;
+        if(originSnap){
+            geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[0]]);
+        }else{
+            geometry = new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate]);
+        }
         
         phantomLine = new THREE.Line( geometry, phantomLineMaterial );
         phantomLine.name = "PhantomLine";
@@ -179,7 +187,7 @@ export function DrawPhantomLine(){
         mainScene.add(phantomLine);
 
         wallAngle = CalculateLineEquations();
-        
+    
         lineLength = CalculateLineData(1);  // returns the line length from the method
         lineMidPoint = CalculateLineData(2);    // returns the midpoint of the line
         
@@ -187,8 +195,9 @@ export function DrawPhantomLine(){
             /* due to the originSnap flag occuring at different times than the entire removal of the phantom data,
                 it has to be triggered once the originSnap flag is no longer true*/
             RemovePreviousPhantomData();
+    
             if(wallCoordinates.length > 1){
-
+    
                 const textGeometry = new TextGeometry( wallAngle+"°", {
                     font: retrievedFont,
                     size: 5,   // size of the text
@@ -211,41 +220,36 @@ export function DrawPhantomLine(){
                 phantomAngleTextObject = phantomAngle;
     
             }
-
+    
             const phantomLength = CreatePhantomLength();
             mainScene.add(phantomLength);
             
             phantomLengthTextObject = phantomLength;
-
-        }else{
-            /* if there is no snap within the distance between the two coordinates, just 
-                */
-            mainScene.add(phantomAngleTextObject);
-            mainScene.add(phantomLengthTextObject);
+     
         }
-        
-        
+    }
 
+    if(wallCount >= 2) {
+        
+        originSnap = CheckTheDistanceBetweenOrigin();
         
     }
+        
+    
 }
 
 // here will check the distance between the origin coordinate and the mouse coordinate
-function CheckDistanceBetweenOrigin(mouseCoordinate, originCoord){
+function CheckTheDistanceBetweenOrigin(){
 
     /* If the mouse coordinate distance is lower than 5, then it will match the coordinate  
         of the starting coordinate*/
-    if(mouseCoordinate.distanceTo(originCoord).toFixed(2) < 5){
-        console.log("its that close...");
-        mouseCoordinate = new THREE.Vector3(wallCoordinates[0]);
-        originSnap = true;  // flag for snapping to the origin
-        return new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], wallCoordinates[0]]);
-    }else{
-        console.log("nah too far...");
-        originSnap = false; // flag for snapping to the origin
-        return new THREE.BufferGeometry().setFromPoints( [wallCoordinates[wallCoordinates.length-1], mouseCoordinate]);
+    if(mouseCoordinate.distanceTo(wallCoordinates[0]).toFixed(2) < 5){
+        //console.log("its that close...");
+        return true;
     }
+    return false;
 }
+
 
 function CreatePhantomLength(){
     const textGeometry = new TextGeometry( lineLength, {
