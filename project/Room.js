@@ -37,6 +37,8 @@ var y_coordinates;
 // placing points indicates if the user is defining the wall length or not
 export let isPlacingPoint = false;
 let phantomClick;
+
+// used as a flag to determine whether the phantom line has snapped to the start point
 var originSnap = false;
 
 let mainScene;
@@ -352,6 +354,8 @@ export function DisablePointPlacement(){
     //showObjs();
     RemovePreviousPhantomLine();
     RemovePreviousPhantomData();
+
+    
 }
 
 export function RemoveLastWall(){
