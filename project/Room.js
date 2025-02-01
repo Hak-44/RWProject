@@ -104,6 +104,9 @@ export function AddPoint(scene){
         console.log("originSnap: " +originSnap);
         return;
     }
+
+    if(hasCompleteWalls) return;
+
     if(wallCoordinates.length >= 1){
         // The points from now can be joined together as there is a previous point to connect to
         let wallLine;
@@ -175,7 +178,6 @@ export function AddPoint(scene){
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
 
-
         wallLines.push(0);
         wallAngles.push(0);
         angleObjects.push(0);
@@ -227,6 +229,8 @@ function EnterAccurateLength(){
 // The phantom line is used to draw a line that will represent the final line when the user clicks on the canvas the second time. 
 export function DrawPhantomLine(){
     //phantomClick = true;
+
+    if(hasCompleteWalls) return;
     RemovePreviousPhantomLine();
     let phantomLine;
 
@@ -442,7 +446,9 @@ export function RemoveLastWall(){
     mainScene.remove(angleObjects[angleObjects.length-1]);
     mainScene.remove(lengthObjects[lengthObjects.length-1]);
 
+    // if a wall is removed, then revert the condition flags
     if(originSnap) originSnap = false;
+    if(hasCompleteWalls) hasCompleteWalls = false;
 
     // remove them from the list
     if(wallCount != 0){
