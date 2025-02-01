@@ -13,6 +13,7 @@ const wallCoordinates = [];
 const wallLines = [];
 const wallAngles = [];
 const angleObjects = [];
+const wallLengths = [];
 const lengthObjects = [];
 
 // objects that are displayed when walls are clicked
@@ -40,6 +41,8 @@ let phantomClick;
 
 // used as a flag to determine whether the phantom line has snapped to the start point
 var originSnap = false;
+//once the snap is made, then the configuration is complete unless the last wall is removed
+export var hasCompleteWalls = false;
 
 let mainScene;
 
@@ -94,6 +97,11 @@ export function AddPoint(scene){
     called phantomClick prevents the point being placed at the position of the "New Wall" button */ 
     if(!phantomClick){
         phantomClick = true;
+        console.log("-----------OTHER---------");
+        console.log("isPlacingPoint: " +isPlacingPoint);
+        console.log("Phantom click: " +phantomClick);
+        console.log("Has completed walls: " +hasCompleteWalls);
+        console.log("originSnap: " +originSnap);
         return;
     }
     if(wallCoordinates.length >= 1){
@@ -126,13 +134,41 @@ export function AddPoint(scene){
 
         wallLines.push(wallLine);
         wallAngles.push(wallAngle); // pushing the angle to corresponding area
+        wallLengths.push(lineLength);
 
         angleObjects.push(phantomAngleTextObject);
         lengthObjects.push(phantomLengthTextObject);
 
         console.log("Total walls " +wallCount);
 
-        EnterAccurateLength();
+        if(originSnap){
+            // re-calculates the last angle before joining back to the origin point
+            wallAngles.pop(wallAngle);
+            wallAngle = CalculateLineEquations();
+            wallAngles.push(wallAngle);
+
+            const textGeometry = new TextGeometry( wallAngle+"°", {
+                font: retrievedFont,
+                size: 5,   // size of the text
+                depth: 0,  // depth of the text (which makes it 3D or not)
+                curveSegments: 12, // Details on the curvature of the font text
+                bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+        
+            } );
+            phantomAngleTextObject.geometry = textGeometry;
+
+
+            //RemovePreviousPhantomData();
+            DisablePointPlacement();
+
+            hasCompleteWalls = true;
+            showObjs();
+        }else{
+            
+            EnterAccurateLength();
+            
+        }
+        
 
     }else{
         /* place the point down and do nothing else, as this will be the first point for the first wall
@@ -144,15 +180,39 @@ export function AddPoint(scene){
         wallAngles.push(0);
         angleObjects.push(0);
         lengthObjects.push(0);
-        
-        console.log("Point added");
-        console.log("Total walls " +wallCount);
-        console.log( "wall angle: "+wallAngle);
-
-        console.log("line length: "+lineLength);
-
 
     }
+    
+    // console.log("Point added");
+    // console.log("Total walls " +wallCount);
+    // console.log( "wall angle: "+wallAngle);
+
+    // console.log("line length: "+lineLength);
+
+
+    PrintLists();
+}
+
+
+function PrintLists(){
+
+    // pinting out information for dev purposes
+    console.log(" ");
+    console.log("-----------WALL INFO---------");
+    console.log("Wall count: "+wallCount);
+    console.log("wallcoordinates: " +wallCoordinates);
+    console.log("wall lines: " +wallLines);
+    console.log("wall angles: " +wallAngles);
+    console.log("angle objects: " +angleObjects);
+    console.log("wall lengths: " +wallLengths);
+    console.log("length objects: " +lengthObjects);
+    console.log(" ");
+    console.log("-----------OTHER---------");
+    console.log("isPlacingPoint: " +isPlacingPoint);
+    console.log("Phantom click: " +phantomClick);
+    console.log("Has completed walls: " +hasCompleteWalls);
+    console.log("originSnap: " +originSnap);
+    
 }
 
 function EnterAccurateLength(){
@@ -296,14 +356,26 @@ function CalculateLineEquations(){
     // Getting the coordinates of the previous line, there needs to be more than one coordinate in the array
     if(wallCoordinates.length > 1){
 
+        let recentLineCoordStart, SharedCoord, phantomLineCoordEnd;
         // gets the first starting coordinate for the most recent line drawn.
-        let recentLineCoordStart = wallCoordinates[wallCoordinates.length - 2];
+        recentLineCoordStart = wallCoordinates[wallCoordinates.length - 2];
         /* Getting the shared coordinate for the line. This position is the end for the recent line
         and the start for the phantom line */
-        let SharedCoord = wallCoordinates[wallCoordinates.length - 1];
+        SharedCoord = wallCoordinates[wallCoordinates.length - 1];
 
         // getting the end of the phantom line coordinate
-        let phantomLineCoordEnd = new THREE.Vector3(x_coordinates, 0, y_coordinates);
+        phantomLineCoordEnd = new THREE.Vector3(x_coordinates, 0, y_coordinates);
+        
+        /* IF this is the line that will connect to the origin, it will change the values, this is because
+            it needs to recorrect the final angle as the phantom angle isn't due to updating angle. This is a 
+            messy, bruteforce way of doing it, possibly sphagetti, but it works regardless.  
+        */
+        if(originSnap && wallCount >=2 ){
+            recentLineCoordStart = wallCoordinates[wallCoordinates.length - 3];
+
+            SharedCoord = wallCoordinates[wallCoordinates.length - 2];
+            phantomLineCoordEnd = wallCoordinates[0];
+        } 
 
         // get the direction between the coordinates
         let firstDirection = new THREE.Vector3();
@@ -364,17 +436,28 @@ export function DisablePointPlacement(){
 
 export function RemoveLastWall(){
 
+    RemovePreviousPhantomData();
     // remove the objects first before removing the reference in th e
     mainScene.remove(wallLines[wallLines.length-1]);
     mainScene.remove(angleObjects[angleObjects.length-1]);
     mainScene.remove(lengthObjects[lengthObjects.length-1]);
 
+    if(originSnap) originSnap = false;
+
     // remove them from the list
-    wallCoordinates.pop();
-    wallLines.pop();
-    wallAngles.pop();
-    angleObjects.pop();
-    lengthObjects.pop();
+    if(wallCount != 0){
+        wallCount--;
+        wallCoordinates.pop();
+        wallLines.pop();
+        wallAngles.pop();
+        angleObjects.pop();
+        wallLengths.pop();
+        lengthObjects.pop();
+
+    }
+    
+
+    PrintLists();
 
 
 }
@@ -394,12 +477,20 @@ function setWallCount(count){
 // loopoing through all the objects and adding them to the scene
 function showObjs(){
     angleObjects.forEach(element => {
-        mainScene.add(element);
+        if(element != 0){
+            mainScene.add(element);
+        }
     });
 
     lengthObjects.forEach(element => {
         mainScene.add(element);
     });
+
+    mainScene.traverse( function (element) {
+        if (element.name == "phantomAngle" || element.name == "phantomLength"){
+            element.material.color.set(0x24BA00);
+        }
+    } );
 }
 
 function testWalls(scene){
