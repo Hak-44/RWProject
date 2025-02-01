@@ -8,6 +8,7 @@ var wallCount = 0;
 let wallAngle;
 let lineLength;
 let lineMidPoint;
+let originAngle; // used for the origin angle
 
 const wallCoordinates = []; 
 const wallLines = [];
@@ -150,7 +151,7 @@ export function AddPoint(scene){
             wallAngle = CalculateLineEquations();
             wallAngles.push(wallAngle);
 
-            const textGeometry = new TextGeometry( wallAngle+"°", {
+            let textGeometry = new TextGeometry( wallAngle+"°", {
                 font: retrievedFont,
                 size: 5,   // size of the text
                 depth: 0,  // depth of the text (which makes it 3D or not)
@@ -160,6 +161,26 @@ export function AddPoint(scene){
             } );
             phantomAngleTextObject.geometry = textGeometry;
 
+            originAngle = CalculateLineEquations(true);
+            wallAngles[0] = originAngle;
+
+            textGeometry = new TextGeometry( originAngle+"°", {
+                font: retrievedFont,
+                size: 5,   // size of the text
+                depth: 0,  // depth of the text (which makes it 3D or not)
+                curveSegments: 12, // Details on the curvature of the font text
+                bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+        
+            } );
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+
+            const originAngleObject = new THREE.Mesh(textGeometry, textMaterial);
+            originAngleObject.position.x = wallCoordinates[0].x;
+            originAngleObject.position.z = wallCoordinates[0].z;
+            originAngleObject.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
+            originAngleObject.name = "phantomAngle";
+            mainScene.add(originAngleObject);
+            originAngle = originAngleObject;
 
             //RemovePreviousPhantomData();
             DisablePointPlacement();
@@ -356,30 +377,40 @@ function RemovePreviousPhantomData(){
 }
 
 // this process is to show the angle of the walls for the user
-function CalculateLineEquations(){
+function CalculateLineEquations(originAngle){
     // Getting the coordinates of the previous line, there needs to be more than one coordinate in the array
     if(wallCoordinates.length > 1){
 
-        let recentLineCoordStart, SharedCoord, phantomLineCoordEnd;
+        let firstCoord, SharedCoord, phantomCoord;
         // gets the first starting coordinate for the most recent line drawn.
-        recentLineCoordStart = wallCoordinates[wallCoordinates.length - 2];
+        firstCoord = wallCoordinates[wallCoordinates.length - 2];
         /* Getting the shared coordinate for the line. This position is the end for the recent line
         and the start for the phantom line */
         SharedCoord = wallCoordinates[wallCoordinates.length - 1];
 
         // getting the end of the phantom line coordinate
-        phantomLineCoordEnd = new THREE.Vector3(x_coordinates, 0, y_coordinates);
+        phantomCoord = new THREE.Vector3(x_coordinates, 0, y_coordinates);
         
         /* IF this is the line that will connect to the origin, it will change the values, this is because
             it needs to recorrect the final angle as the phantom angle isn't due to updating angle. This is a 
             messy, bruteforce way of doing it, possibly sphagetti, but it works regardless.  
         */
         if(originSnap && wallCount >=2 ){
-            recentLineCoordStart = wallCoordinates[wallCoordinates.length - 3];
+            firstCoord = wallCoordinates[wallCoordinates.length - 3];
 
             SharedCoord = wallCoordinates[wallCoordinates.length - 2];
-            phantomLineCoordEnd = wallCoordinates[0];
+            phantomCoord = wallCoordinates[0];
         } 
+
+        if(originAngle){
+            // the origin angle that completes the shape will add its own angle
+            firstCoord = wallCoordinates[wallCoordinates.length - 2];
+
+            SharedCoord = wallCoordinates[wallCoordinates.length - 1];
+            /* The last coordinate will be the first coordinate, this is because the first
+                coordinate is the same as the last. */
+            phantomCoord = wallCoordinates[1];  
+        }
 
         // get the direction between the coordinates
         let firstDirection = new THREE.Vector3();
@@ -388,8 +419,8 @@ function CalculateLineEquations(){
         // ref: https://threejs.org/docs/index.html?q=text#api/en/math/Vector3.angleTo
         // using the built in functions for the equation.
         /* to get the inner angle (acute) within both lines, sub vectors need to go in line order */
-        firstDirection = firstDirection.subVectors(SharedCoord, recentLineCoordStart);  // from last line start to current
-        secondDirection = secondDirection.subVectors(SharedCoord, phantomLineCoordEnd); // from current to phantom line end
+        firstDirection = firstDirection.subVectors(SharedCoord, firstCoord);  // from last line start to current
+        secondDirection = secondDirection.subVectors(SharedCoord, phantomCoord); // from current to phantom line end
 
         var radianValue = firstDirection.angleTo(secondDirection);
         var angleToDegree = radianValue * (180 / Math.PI);
@@ -453,7 +484,11 @@ export function RemoveLastWall(){
 
     // if a wall is removed, then revert the condition flags
     if(originSnap) originSnap = false;
-    if(hasCompleteWalls) hasCompleteWalls = false;
+    // remove the origin angle
+    if(hasCompleteWalls){
+        mainScene.remove(originAngle);
+        hasCompleteWalls = false;
+    } 
 
     // remove them from the list
     if(wallCount != 0){
