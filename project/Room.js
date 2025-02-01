@@ -17,10 +17,6 @@ const angleObjects = [];
 const wallLengths = [];
 const lengthObjects = [];
 
-// objects that are displayed when walls are clicked
-let displayedAngleObject;
-let displayedLineLengthObject;
-
 const fontLoader = new FontLoader();
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
@@ -108,6 +104,7 @@ export function AddPoint(scene){
         console.log("Phantom click: " +phantomClick);
         console.log("Has completed walls: " +hasCompleteWalls);
         console.log("originSnap: " +originSnap);
+        console.log(" ");
         return;
     }
 
@@ -166,6 +163,26 @@ export function AddPoint(scene){
             } );
             phantomAngleTextObject.geometry = textGeometry;
 
+
+            // Dev note ----CLEAR THE LINES UNDERNEATH TO PREVENT CALCULATION-----
+            // recalculating the length to the correct value
+            wallLengths.pop(lineLength);
+            lineLength = CalculateLineData(1);
+            wallLengths.push(lineLength);
+            
+            textGeometry = new TextGeometry( lineLength, {
+                font: retrievedFont,
+                size: 2,   // size of the text
+                depth: 0,  // depth of the text (which makes it 3D or not)
+                curveSegments: 12, // Details on the curvature of the font text
+                bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
+        
+            } );
+
+            lengthObjects[lengthObjects.length-1].geometry = textGeometry;
+
+            //--------------------------------------------------------------------
+
             originAngle = CalculateLineEquations(true);
             wallAngles[0] = originAngle;
 
@@ -216,7 +233,7 @@ export function AddPoint(scene){
         wallLines.push(0);
         wallAngles.push(0);
         angleObjects.push(0);
-        lengthObjects.push(0);
+        //lengthObjects.push(0);
 
         
 
@@ -245,7 +262,7 @@ function PrintLists(){
     console.log("angle objects: " +angleObjects);
     console.log("wall lengths: " +wallLengths);
     console.log("length objects: " +lengthObjects);
-    console.log(" ");
+    console.log(" @ ");
     console.log("-----------OTHER---------");
     console.log("isPlacingPoint: " +isPlacingPoint);
     console.log("Phantom click: " +phantomClick);
@@ -350,7 +367,7 @@ function CheckTheDistanceBetweenOrigin(){
 }
 
 
-function CreatePhantomLength(){
+function CreatePhantomLength(isLastAngle){
     const textGeometry = new TextGeometry( lineLength, {
         font: retrievedFont,
         size: 2,   // size of the text
@@ -360,8 +377,7 @@ function CreatePhantomLength(){
 
     } );
 
-    
-
+    if(isLastAngle) return textGeometry;
     // Create the text for the length
     const phantomLength = new THREE.Mesh(textGeometry, textMaterial);
     phantomLength.position.x = lineMidPoint.x;
@@ -453,6 +469,9 @@ function CalculateLineData(data){
 
     if(data == 1){
         //line returns 
+        if(originSnap){
+            return wallCoordinates[wallCoordinates.length-2].distanceTo(wallCoordinates[wallCoordinates.length - 1]).toFixed(2);
+        }
         return recentLineCoordinate.distanceTo(phantomCoordinate).toFixed(2);
     }else{
         // calculates the mid point for the phantom line
