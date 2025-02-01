@@ -423,6 +423,11 @@ function CalculateLineData(data){
 
 
 export function EnablePointPlacement(){
+    
+    /* this check will prevent any actions when clicking the new wall button
+    if the walls are in a complete state. */
+    if(hasCompleteWalls) return;    
+
     isPlacingPoint = true;
     phantomClick = false;   // resets the phantomClick
 
