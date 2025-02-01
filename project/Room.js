@@ -24,6 +24,11 @@ let displayedLineLengthObject;
 const fontLoader = new FontLoader();
 const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
+// set variables for the colours of the text, makes it easier to edit
+const regularTextColour = 0xB8B8B8;
+const finalTextColour = 0x24BA00;
+
+const textMaterial = new THREE.MeshBasicMaterial({ color: regularTextColour});
 let retrievedFont;
 
 // stores the phantomLineObject and phantomAngleTextObject so its easier to locate and remove
@@ -172,7 +177,7 @@ export function AddPoint(scene){
                 bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
         
             } );
-            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+            
 
             const originAngleObject = new THREE.Mesh(textGeometry, textMaterial);
             originAngleObject.position.x = wallCoordinates[0].x;
@@ -184,14 +189,23 @@ export function AddPoint(scene){
 
             //RemovePreviousPhantomData();
             DisablePointPlacement();
+            
 
             hasCompleteWalls = true;
-            showObjs();
+            HighlightWallInformation(hasCompleteWalls);
         }else{
             
             EnterAccurateLength();
             
         }
+
+        /* here we are adding the objects to the scene before they are cleard of reference
+            this is because the DrawPhantomLine varaible will clear it from the scene.
+            */
+        mainScene.add(phantomAngleTextObject);
+        mainScene.add(phantomLengthTextObject);
+        phantomAngleTextObject = "";
+        phantomLengthTextObject = "";
         
 
     }else{
@@ -203,6 +217,8 @@ export function AddPoint(scene){
         wallAngles.push(0);
         angleObjects.push(0);
         lengthObjects.push(0);
+
+        
 
     }
     
@@ -279,6 +295,7 @@ export function DrawPhantomLine(){
         if(!originSnap){
             /* due to the originSnap flag occuring at different times than the entire removal of the phantom data,
                 it has to be triggered once the originSnap flag is no longer true*/
+                
             RemovePreviousPhantomData();
     
             if(wallCoordinates.length > 1){
@@ -291,9 +308,6 @@ export function DrawPhantomLine(){
                     bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
             
                 } );
-    
-                // Create a material for the text
-                const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
             
                 // Create the text mesh
                 const phantomAngle = new THREE.Mesh(textGeometry, textMaterial);
@@ -346,7 +360,7 @@ function CreatePhantomLength(){
 
     } );
 
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xB8B8B8 });
+    
 
     // Create the text for the length
     const phantomLength = new THREE.Mesh(textGeometry, textMaterial);
@@ -467,7 +481,6 @@ export function EnablePointPlacement(){
 export function DisablePointPlacement(){
     isPlacingPoint = false;
     // removes the point placement flag and will remove the phantom line
-    //showObjs();
     RemovePreviousPhantomLine();
     RemovePreviousPhantomData();
 
@@ -476,6 +489,12 @@ export function DisablePointPlacement(){
 
 export function RemoveLastWall(){
 
+    // remove the origin angle and change the colour back
+    if(hasCompleteWalls){
+        mainScene.remove(originAngle);
+        hasCompleteWalls = false;
+        HighlightWallInformation(hasCompleteWalls);
+    }
     RemovePreviousPhantomData();
     // remove the objects first before removing the reference in th e
     mainScene.remove(wallLines[wallLines.length-1]);
@@ -484,11 +503,8 @@ export function RemoveLastWall(){
 
     // if a wall is removed, then revert the condition flags
     if(originSnap) originSnap = false;
-    // remove the origin angle
-    if(hasCompleteWalls){
-        mainScene.remove(originAngle);
-        hasCompleteWalls = false;
-    } 
+    
+
 
     // remove them from the list
     if(wallCount != 0){
@@ -521,20 +537,12 @@ function setWallCount(count){
 }
 
 // loopoing through all the objects and adding them to the scene
-function showObjs(){
-    angleObjects.forEach(element => {
-        if(element != 0){
-            mainScene.add(element);
-        }
-    });
-
-    lengthObjects.forEach(element => {
-        mainScene.add(element);
-    });
+function HighlightWallInformation(hasCompleteWalls){
 
     mainScene.traverse( function (element) {
         if (element.name == "phantomAngle" || element.name == "phantomLength"){
-            element.material.color.set(0x24BA00);
+            if(hasCompleteWalls) element.material.color.set(finalTextColour);
+            if(!hasCompleteWalls)  element.material.color.set(regularTextColour);
         }
     } );
 }
