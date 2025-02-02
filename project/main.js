@@ -218,25 +218,27 @@ function changeCamPerspective(){
 
 // -------------------- BUTTON CLICKING --------------------
 
-document.getElementById('createRoomDiv').addEventListener('click', doSomething);
+document.getElementById('createRoomDiv').addEventListener('click', ChangeRoomDivButton);
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
 document.getElementById('newWallButton').addEventListener('click', EnablePlacement);    //
 document.getElementById('removeWallButton').addEventListener('click', RemovePreviousWall);
 document.getElementById('cancelWallButton').addEventListener('click', CancelWallSetup);
 
+document.getElementById('finishWallButton').addEventListener('click', ConfirmWalls);
 
-function doSomething(){
 
+function ChangeRoomDivButton(){
+
+    if(isBuildMode) return;
     // select the root within the CSS that contains colour variables
     var root = document.querySelector(':root');
-
     // gets the properties within the root style
     // ref: http://w3schools.com/css/tryit.asp?filename=trycss3_var_js
     var styleProperties = getComputedStyle(root);
 
     // grabbing the elements by id
     var createRoom = document.getElementById('createRoomDiv');
-    var roomOptions = document.getElementById('room-option-box');
+    var roomOptions = document.getElementById('roomOptionBox');
     
     // if the room option is flex, then it will remove the highlight from the button and remove the options div
     if(roomOptions.style.display == "flex"){
@@ -245,6 +247,8 @@ function doSomething(){
         var divBackgroundColour = styleProperties.getPropertyValue('--divOptionColour');
         var textColour = styleProperties.getPropertyValue('--regularTextColour')
         roomOptions.style.display = "none"; // hides the div
+        document.getElementById('topNavBar2nd').style.height = "0px";
+        if(!isBuildMode) ChangeNavBarVisibility(false);
 
     }else{
         
@@ -252,18 +256,36 @@ function doSomething(){
         var divBackgroundColour = styleProperties.getPropertyValue('--divSelectedColour');
         var textColour = styleProperties.getPropertyValue('--selectedTextColour')
         roomOptions.style.display = "flex"; // shows the div in flex mode
+        document.getElementById('topNavBar2nd').style.height = styleProperties.getPropertyValue('--topNavHeightExpansion');
+        if(!isBuildMode) ChangeNavBarVisibility(true);
     }
+    // traverses the navbar div
+    
     // changes the colours accordingly.
     createRoom.style.backgroundColor = divBackgroundColour;
     createRoom.style.color = textColour;
 
 }
 
+function ChangeNavBarVisibility(shouldBeVisible){
+    
+    var root = document.querySelector(':root');
+    var styleProperties = getComputedStyle(root);
+    if(shouldBeVisible){
+        document.getElementById('topNavBar2nd').style.height = styleProperties.getPropertyValue('--topNavHeightExpansion');
+    }else{
+        document.getElementById('topNavBar2nd').style.height = "0px";
+    }
+}
+
 function createNewRoom(){
     changeCamPerspective(); // changing the perspective so drawing walls is easier. 
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
+    ChangeRoomDivButton();
     isBuildMode = true; // enables the lock on the skyCamera
     PassScene(scene);  
+    document.getElementById('topNavBar2nd').style.height = "0px";
+    
 }
 
 // triggers the placement boolean in the room script
@@ -283,6 +305,20 @@ function CancelWallSetup(){
     DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
     changeCamPerspective();
 }
+
+function ConfirmWalls(){
+    console.log("Confirm walls.");
+    if(getWallCount() >= 1){
+        document.getElementById("wallOptions").style.display = "none";
+        document.getElementById("designOptions").style.display = "flex";
+    } 
+    isBuildMode = false;    // disables the lock on the skyCamera
+    DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
+    changeCamPerspective();
+}
+
+
+
 
 
 

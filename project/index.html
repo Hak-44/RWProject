@@ -5,12 +5,15 @@
 		<title>My first three.js app</title>
 		<style>
 
-			/* Root used for colours */
+			/* Root used for colours and general variables*/
 			:root{
 				--divOptionColour:  rgb(14, 42, 65);
 				--divSelectedColour:  rgb(32, 81, 121);
 				--regularTextColour: rgba(240, 255, 255, 0.548);
 				--selectedTextColour: rgba(240, 255, 255, 0.945);
+
+				--topNavHeightExpansion: 80px;
+				--leftSideBarExpansion: 120px;
 			}
 
 			.left-boarder{
@@ -18,6 +21,58 @@
 				justify-content: center;
         	}
 
+			.top-navbar-div{
+				position: fixed;	/* places the bar exactly where it should be, preventing any movement when new elements are added */
+				display: flex;
+				
+				flex-direction: row;
+				justify-content: center;
+
+				width: 100vw;
+				overflow-x: hidden;
+				height: var(--topNavHeightExpansion);	/*covers the entire screen size*/
+				max-width: 90vw;          /* Places a maximun width of 80px, so any width larger that that gets capped */
+				margin-right: 50px;          /* Add space ato the sides */
+				margin-left: 50px;   
+
+				border-bottom-style: dotted;	/* temporary dots so I know where the border ends */
+				border-bottom-width: 1px;
+
+				transition: height 0.3s;
+				overflow-y: hidden;	
+			}
+			
+			.top-nav-1st{
+				margin-top: 0px;
+			}
+
+			.top-nav-2nd{
+				margin-top: var(--topNavHeightExpansion);
+				height: 0px;	/*covers the entire screen size*/
+
+			}
+
+			.main-Option{
+				padding: 5px;
+				margin: 10px;
+				display: flex;
+				flex-direction: row;
+      			gap: 5px; /* Gap between the button div */
+				
+				text-align: center;
+			}
+
+			.main-option-button{
+				background-color: var(--divOptionColour);
+				width: 90px;
+				height: 50px;
+			}
+
+			.room-Options{
+				width: 90px;
+				height: 50px;
+			}
+			
 			/* Div that displays the options (new / load room) */
 			.room-option-div{
 				display: none;
@@ -25,8 +80,15 @@
 				justify-content: center;
 				align-items: center;
 
+				text-align: center;
 				
         	}
+
+			.room-option-button{
+				width: 90px;
+				height: 50px;
+				
+			}
 
 			.new-room-div{
 				background-color: rgba(127, 136, 255, 0.719);
@@ -36,7 +98,7 @@
 				background-color: rgb(80, 165, 180);
         	}
 
-
+			/* Side bar for the insert options */
 			.left-sidebar-div{
 				position: fixed;	/*places the bar exactly where it should be, preventing any movement when new elements are added */
 				display: flex;
@@ -61,13 +123,24 @@
 				will be done in the specified time above.*/
 					
 			}
+			
 
-			.wallOptions{
+			.wall-Options{
 				padding: 5px;
 				margin: 10px;
 				display: flex;
 				flex-direction: column;
-      			gap: 10px; /* Adjust the value as needed */
+      			gap: 10px; /* Gap between the button div */
+				
+				text-align: center;
+			}
+
+			.design-Options{
+				padding: 5px;
+				margin: 10px;
+				display: none;
+				flex-direction: column;
+      			gap: 10px; /* Gap between the button div */
 				
 				text-align: center;
 			}
@@ -81,9 +154,11 @@
 				display: none;
 				flex-direction: column;
 				text-align: center;
+				
 			}
 
 			body { margin: 0; }
+
 		</style>
 	</head>
 	<body>
@@ -95,7 +170,7 @@
 				<div class="left-sidebar-div" id="leftSidebar">
 					
 					<!-- wall options for the side bar-->
-					<div class="wallOptions">
+					<div class="wall-Options" id="wallOptions">
 						<!-- given the same class as they should be treated the same in terms of styling-->
 						<div class="wallButton" id="newWallButton" onclick="EnablePlacement()">NEW WALL</div>
 						<div class="wallButton" id="removeWallButton" onclick="RemovePreviousWall()">REMOVE LAST WALL</div>
@@ -103,21 +178,48 @@
 						<div class="wallButton" id="cancelWallButton" onclick="CancelWallSetup()">CANCEL</div>
 		
 					</div>
+
+					<div class="design-Options" id="designOptions">
+						<!-- given the same class as they should be treated the same in terms of styling-->
+						<div class="designOption" id="addFurniture" onclick="ShowFurnitures()">Furniture</div>
+						<div class="designOption" id="addDecor" onclick="ShowDecorations()">Decoration</div>
+						<div class="designOption" id="addDoor" onclick="ShowDoors()">Doors</div>
+						<div class="designOption" id="addWindow" onclick="ShowWindows()">Windows</div>
+		
+					</div>
 					
 			
 				</div>
 			</div>
 			
-			<div class="container" style="background-color: var(--divOptionColour)">
-				<div id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view</div>
-				<div id="createRoomDiv" style="color: var(--regularTextColour)" onclick="doSomething()">Create room</div>
 
+			<div class="wrap">
+				<!-- side bar that will dispaly the options -->
+				<div class="top-navbar-div top-nav-1st" id="topNavBar">
+					
+					<!-- the room options for the top navigation bar-->
+					<div class="main-Option" id="mainOptions">
+						<div class="main-option-button" id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view</div>
+						<div class="main-option-button" id="createRoomDiv" style="color: var(--regularTextColour)" onclick="doSomething()">Room</div>
+			
+					</div>
+					
+			
+				</div>
+
+				<div class="top-navbar-div top-nav-2nd" id="topNavBar2nd">
+					
+					<!-- the room options for the top navigation bar-->
+					<div class="room-option-div" id="roomOptionBox">
+						<div class="room-option-button new-room-div" id="new-room-button">New room</div>
+						<div class="room-option-button load-room-div" id="load-room-button">Load room</div>
+					</div>
+					
+			
+				</div>
 			</div>
 
-			<div class="room-option-div" id="room-option-box">
-				<div class="new-room-div" id="new-room-button">New room</div>
-				<div class="load-room-div" id="load-room-button">Load room</div>
-			</div>
+			
 		
 			<div id="selected-container" style="background-color: rgb(209, 209, 209);">
 				<span id="selected-object" style="color: midnightblue;"></span>
