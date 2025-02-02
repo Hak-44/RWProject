@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { int } from 'three/tsl';
 
 // used to track the values for the walls 
 var wallCount = 0;
@@ -69,7 +70,7 @@ fontLoader.load( '/droid_sans_bold.typeface.json',
 );
 
 export function PassScene(scene){
-    //testWalls(scene);
+    
     mainScene = scene;
     
     
@@ -568,12 +569,40 @@ function HighlightWallInformation(hasCompleteWalls){
 }
 
 export function CreateWalls(){
+    
+    /* for each objects that is created, there are attribute data stored on them. Here
+        we are getting the coordinates ("position") that positions the line object and 
+        returning it as an array. The first three elements in are the coordinates for the
+        start of the line and the last 3 are for the end of the line.
+        
+        ref: https://discourse.threejs.org/t/how-to-animate-three-line-objects-from-startpoint-to-endpoint/6626/8
+             https://threejs.org/docs/?q=buffer#api/en/core/BufferGeometry
+        example:
+            var vertArray = wallLineObjects[0].geometry.getAttribute("position").array;
+            console.log(vertArray);
+            console.log(`first coordinates: (${vertArray[0]}, ${vertArray[1]}, ${vertArray[2]})`);
+        
+    */
+       
+    for(var i = 0; i < wallLineObjects.length; i++){
 
-    const geometry = new THREE.BoxGeometry( 1, 1, 5 );
-    const material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
-    const cube = new THREE.Mesh( geometry, material );
-    mainScene.add( cube );
+        var vertArray = wallLineObjects[i].geometry.getAttribute("position").array;
 
+        var lineStart = new THREE.Vector3(vertArray[0], vertArray[1], vertArray[2]);
+        var lineEnd = new THREE.Vector3(vertArray[3], vertArray[4], vertArray[5]);
+    
+        var midpointX = (lineStart.x + lineEnd.x) / 2;
+        var midpointY = (lineStart.z + lineEnd.z) / 2;
+    
+        const geometry = new THREE.BoxGeometry( 1, 40, wallLengths[i] );
+        const material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
+        const cube = new THREE.Mesh( geometry, material );
+        cube.name = "Wall Object";
+        cube.position.set(midpointX,0,midpointY);
+        cube.lookAt(lineEnd);
+        mainScene.add( cube );
+    }
+    
 
 };
 
