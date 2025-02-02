@@ -163,14 +163,18 @@ export function AddPoint(scene){
             } );
             phantomAngleTextObject.geometry = textGeometry;
 
-
-            // Dev note ----CLEAR THE LINES UNDERNEATH TO PREVENT CALCULATION-----
-            // recalculating the length to the correct value
-            wallLengths.pop(lineLength);
-            lineLength = CalculateLineData(1);
-            wallLengths.push(lineLength);
             
-            textGeometry = new TextGeometry( lineLength, {
+            // recalculating the length to the correct value
+            const finalLine = wallLines[wallLines.length-1];
+            finalLine.computeLineDistances();
+            //ref: https://stackoverflow.com/questions/62665406/three-js-why-is-line-length-equal-to-zero
+            // you can access each bufferGeometrys attribute and find information about it, calling the 
+            // in this case the last line is taken and we are getting the true line length.
+            var ld = finalLine.geometry.getAttribute("lineDistance");
+            var finalLineLength = ld.getX(ld.count - 1).toFixed(2);
+            ld.getX(ld.count - 1);
+
+            textGeometry = new TextGeometry( finalLineLength, {
                 font: retrievedFont,
                 size: 2,   // size of the text
                 depth: 0,  // depth of the text (which makes it 3D or not)
@@ -178,11 +182,11 @@ export function AddPoint(scene){
                 bevelEnabled: false,  // no bevels as the text is 2D (depth is 0)
         
             } );
-
             lengthObjects[lengthObjects.length-1].geometry = textGeometry;
+            wallLengths[wallLengths.length-1] = finalLineLength;
 
-            //--------------------------------------------------------------------
-
+            
+            // recalculating the angle to the correct value (still WIP)
             originAngle = CalculateLineEquations(true);
             wallAngles[0] = originAngle;
 
@@ -451,6 +455,8 @@ function CalculateLineEquations(originAngle){
         /* to get the inner angle (acute) within both lines, sub vectors need to go in line order */
         firstDirection = firstDirection.subVectors(SharedCoord, firstCoord);  // from last line start to current
         secondDirection = secondDirection.subVectors(SharedCoord, phantomCoord); // from current to phantom line end
+        firstDirection.normalize();
+        secondDirection.normalize();
 
         var radianValue = firstDirection.angleTo(secondDirection);
         var angleToDegree = radianValue * (180 / Math.PI);

@@ -314,6 +314,7 @@ function ConfirmWalls(){
     } 
     isBuildMode = false;    // disables the lock on the skyCamera
     DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
+    CreateWalls();
     changeCamPerspective();
 }
 
