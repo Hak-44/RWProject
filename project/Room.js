@@ -10,8 +10,10 @@ let lineLength;
 let lineMidPoint;
 let originAngle; // used for the origin angle
 
+const wallObjects = [];
+
 const wallCoordinates = []; 
-const wallLines = [];
+const wallLineObjects = [];
 const wallAngles = [];
 const angleObjects = [];
 const wallLengths = [];
@@ -123,7 +125,7 @@ export function AddPoint(scene){
         wallLine = new THREE.Line( geometry, material );
 
         // Ref: https://threejs.org/docs/index.html?q=obje#api/en/core/Object3D.userData
-        wallLine.userData.objectID = 0;     // custom id that is used here is to distinguish the differnet objects on the scene. The unique object id for the wall lines will be 0.
+        wallLine.userData.objectID = 0;     // custom id that is used here is to distinguish the differnet objects on the scene. The unique object id for the wall line objects will be 0.
         wallLine.name = "Wall line " +wallCount;
         wallLine.userData.wallNumber = wallCount;
         mainScene.add(wallLine);
@@ -138,11 +140,11 @@ export function AddPoint(scene){
         wallAngle = wallCount >= 2 ? wallAngle : 0;
         phantomAngleTextObject = wallCount >= 2 ? phantomAngleTextObject : 0;
 
-        wallLines.push(wallLine);
+        wallLineObjects.push(wallLine);
         wallAngles.push(wallAngle); // pushing the angle to corresponding area
         wallLengths.push(lineLength);
 
-        angleObjects.push(phantomAngleTextObject);
+        if(phantomAngleTextObject != 0) angleObjects.push(phantomAngleTextObject);
         lengthObjects.push(phantomLengthTextObject);
 
         console.log("Total walls " +wallCount);
@@ -165,7 +167,7 @@ export function AddPoint(scene){
 
             
             // recalculating the length to the correct value
-            const finalLine = wallLines[wallLines.length-1];
+            const finalLine = wallLineObjects[wallLineObjects.length-1];
             finalLine.computeLineDistances();
             //ref: https://stackoverflow.com/questions/62665406/three-js-why-is-line-length-equal-to-zero
             // you can access each bufferGeometrys attribute and find information about it, calling the 
@@ -233,10 +235,6 @@ export function AddPoint(scene){
         /* place the point down and do nothing else, as this will be the first point for the first wall
            to draw from.  */
         wallCoordinates.push( new THREE.Vector3( x_coordinates, 0, y_coordinates ) );
-
-        wallLines.push(0);
-        wallAngles.push(0);
-        angleObjects.push(0);
         //lengthObjects.push(0);
 
         
@@ -261,7 +259,7 @@ function PrintLists(){
     console.log("-----------WALL INFO---------");
     console.log("Wall count: "+wallCount);
     console.log("wallcoordinates: " +wallCoordinates);
-    console.log("wall lines: " +wallLines);
+    console.log("wall line objects: " +wallLineObjects);
     console.log("wall angles: " +wallAngles);
     console.log("angle objects: " +angleObjects);
     console.log("wall lengths: " +wallLengths);
@@ -522,7 +520,7 @@ export function RemoveLastWall(){
     }
     RemovePreviousPhantomData();
     // remove the objects first before removing the reference in th e
-    mainScene.remove(wallLines[wallLines.length-1]);
+    mainScene.remove(wallLineObjects[wallLineObjects.length-1]);
     mainScene.remove(angleObjects[angleObjects.length-1]);
     mainScene.remove(lengthObjects[lengthObjects.length-1]);
 
@@ -535,7 +533,7 @@ export function RemoveLastWall(){
     if(wallCount != 0){
         wallCount--;
         wallCoordinates.pop();
-        wallLines.pop();
+        wallLineObjects.pop();
         wallAngles.pop();
         angleObjects.pop();
         wallLengths.pop();
@@ -568,6 +566,16 @@ function HighlightWallInformation(hasCompleteWalls){
         }
     } );
 }
+
+export function CreateWalls(){
+
+    const geometry = new THREE.BoxGeometry( 1, 1, 5 );
+    const material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
+    const cube = new THREE.Mesh( geometry, material );
+    mainScene.add( cube );
+
+
+};
 
 function testWalls(scene){
     console.log("Wall is being generated");
