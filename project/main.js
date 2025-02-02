@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
-import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall} from './Room';
+import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount} from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -106,11 +106,27 @@ const pointer = new THREE.Vector3();
 function animate() {
     MouseRaycast();
     CameraLeveling();
-    if(getPlacingPoint()) DrawPhantomLine();    // if the point placement flag is true, then draw the phantom guide line
+    CheckBuildStatus();
     controls.update();  // updating the controls from the camera
 	renderer.render( scene, currentCamera );   // final render of the scene 
 }
 renderer.setAnimationLoop( animate );
+
+
+function CheckBuildStatus(){
+    if(getPlacingPoint()) DrawPhantomLine();    // if the point placement flag is true, then draw the phantom guide line
+    if(getWallCount() >= 1){
+        DisplayFinishButton(true);
+    }else{
+        DisplayFinishButton(false);
+    }
+}
+
+function DisplayFinishButton(isTrue){
+    if(isTrue) document.getElementById('finishWallButton').style.display = "flex";
+    if(!isTrue) document.getElementById('finishWallButton').style.display = "none";
+}
+
 
 // here keeps the scene updated depending on the windows resizing. 
 window.addEventListener('resize', function() {

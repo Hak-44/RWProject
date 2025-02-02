@@ -547,13 +547,10 @@ export function getPlacingPoint(){
     return isPlacingPoint;
 }
 
-function getWallCount(){
+export function getWallCount(){
     return wallCount;
 }
 
-function setWallCount(count){
-    wallCount = count;
-}
 
 // loopoing through all the objects and adding them to the scene
 function HighlightWallInformation(hasCompleteWalls){

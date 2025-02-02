@@ -75,6 +75,13 @@
 			.wallButton{
 				background-color: rgb(201, 231, 227);
 			}
+			
+			/* the finish wall button will get displayed whenever ther is at least one wall visible*/
+			#finishWallButton{
+				display: none;
+				flex-direction: column;
+				text-align: center;
+			}
 
 			body { margin: 0; }
 		</style>
@@ -92,6 +99,7 @@
 						<!-- given the same class as they should be treated the same in terms of styling-->
 						<div class="wallButton" id="newWallButton" onclick="EnablePlacement()">NEW WALL</div>
 						<div class="wallButton" id="removeWallButton" onclick="RemovePreviousWall()">REMOVE LAST WALL</div>
+						<div class="wallButton" id="finishWallButton" onclick="ConfirmWalls()">FINISH</div>
 						<div class="wallButton" id="cancelWallButton" onclick="CancelWallSetup()">CANCEL</div>
 		
 					</div>
