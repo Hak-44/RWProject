@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
 import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls, RemoveWalls, ClearEverything } from './Room';
+import { HideDesignBar, ShowDesignBar } from './DesignMode';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -290,7 +291,7 @@ function createNewRoom(){
     isBuildMode = true; // enables the lock on the skyCamera
     PassScene(scene);  
     document.getElementById('topNavBar2nd').style.height = "0px";
-    
+    HideDesignBar();    // hiding the bar from the desingMode module
 }
 
 // triggers the placement boolean in the room script
@@ -326,6 +327,7 @@ function ConfirmWalls(){
     DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
     CreateWalls();
     changeCamPerspective();
+    ShowDesignBar();    // showing the bar again from the desingMode module
 }
 
 function SwitchMenuOptions(hasFinishedBuilding){

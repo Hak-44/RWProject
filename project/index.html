@@ -123,6 +123,14 @@
 				will be done in the specified time above.*/
 					
 			}
+
+
+			/* Side bar for the insert options */
+			.left-sidebar-2nd{
+				margin-left: 120px;
+				width: 0px;
+				
+			}
 			
 
 			.wall-Options{
@@ -167,7 +175,7 @@
 
 			<div class="wrap">
 				<!-- side bar that will dispaly the options -->
-				<div class="left-sidebar-div" id="leftSidebar">
+				<div class="left-sidebar-div leftSide1st" id="leftSidebar">
 					
 					<!-- wall options for the side bar-->
 					<div class="wall-Options" id="wallOptions">
@@ -181,7 +189,7 @@
 
 					<div class="design-Options" id="designOptions">
 						<!-- given the same class as they should be treated the same in terms of styling-->
-						<div class="designOption" id="addFurniture" onclick="ShowFurnitures()">Furniture</div>
+						<div class="designOption" id="addFurniture" onclick="DisplayRoomTypeOptions(1)">Furniture</div>
 						<div class="designOption" id="addDecor" onclick="ShowDecorations()">Decoration</div>
 						<div class="designOption" id="addDoor" onclick="ShowDoors()">Doors</div>
 						<div class="designOption" id="addWindow" onclick="ShowWindows()">Windows</div>
@@ -190,6 +198,28 @@
 					
 			
 				</div>
+
+
+
+				<div class="left-sidebar-div left-sidebar-2nd" id="leftSidebar2nd">
+					
+					<!-- wall options for the side bar-->
+					<label class="roomTypeLabel" id="roomTypeLabelName">Label</label>
+					<div class="room-type-options" id="roomTypeOptions">
+						<div class="room-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
+						<div class="room-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
+						<div class="room-type-Button" id="bathroomButton" onclick="ShowBathroomObjects()">Bathroom</div>
+						<div class="room-type-Button" id="bedroomButton" onclick="ShowBedroomObjects()">Bedroom</div>
+					</div>
+
+					<div class="option-scrollpane" id="optionScrollPane">
+						
+					</div>
+
+
+				</div>
+
+
 			</div>
 			
 
@@ -232,6 +262,8 @@
 		<script type="module" src="/main.js">
 		</script>
 		<script type="module" src="/Room.js">
+		</script>
+		<script type="module" src="/DesignMode.js">
 		</script>
 	</body>
 </html>
