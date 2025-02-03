@@ -15,9 +15,19 @@ const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 document.getElementById('addFurniture').addEventListener('click', function(){
     DisplayRoomTypeOptions(1, "Furniture");
 }); 
+
 document.getElementById('addDecor').addEventListener('click', function(){
     DisplayRoomTypeOptions(2, "Decoration");
 }); 
+
+document.getElementById('addDoor').addEventListener('click', function(){
+    DisplayRoomTypeOptions(3, "Doors");
+}); 
+
+document.getElementById('addWindow').addEventListener('click', function(){
+    DisplayRoomTypeOptions(4, "Windows");
+}); 
+
 
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
