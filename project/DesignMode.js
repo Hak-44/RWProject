@@ -4,9 +4,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 // labelling all the 
-var roomTypeID;
-var previousRoomTypeID; // used to close the div when needed.
-var roomTypeName;
+var objectType;
+var previousObjectType; // used to close the div when needed.
+var objectTypeName;
 const roomTypeLabel = document.getElementById('roomTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 
@@ -31,15 +31,15 @@ document.getElementById('addWindow').addEventListener('click', function(){
 
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
-    roomTypeID = value; 
+    objectType = value; 
     // the previousTypeID will be used to check if the user clicks the same
-    if(previousRoomTypeID == roomTypeID){
-        previousRoomTypeID = 0;
+    if(previousObjectType == objectType){
+        previousObjectType = 0;
         ShowNextMenu(false);    // triggers the hide operation
         return;
     }
-    previousRoomTypeID = value;
-    roomTypeName = typeName;    // changes the label text
+    previousObjectType = value;
+    objectTypeName = typeName;    // changes the label text
     ShowNextMenu(true);
 }
 
@@ -49,7 +49,7 @@ function ShowNextMenu(shouldShow){
         leftSidebar2nd.style.width = '0px';
         return;
     }
-    roomTypeLabel.innerText = roomTypeName;
+    roomTypeLabel.innerText = objectTypeName;
     leftSidebar2nd.style.width = '180px';
 }
 
