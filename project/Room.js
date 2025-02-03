@@ -665,6 +665,9 @@ export function ClearEverything(){
     /* since the wallCoordinate will have an extra element in the list, 
         it will call the pop() method one last time. */
     wallCoordinates.pop();
+    if(angleObjects.length) angleObjects.pop();
+    PrintLists();
+
     
 }
 
