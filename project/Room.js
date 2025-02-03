@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import { int } from 'three/tsl';
+
+// sets to true whenever a room is loaded or created. 
+export var hasNewRoomBeenMade = false;
 
 // used to track the values for the walls 
 var wallCount = 0;
@@ -11,6 +13,7 @@ let lineLength;
 let lineMidPoint;
 let originAngle; // used for the origin angle
 
+// used for the finalised wall objects
 const wallObjects = [];
 
 const wallCoordinates = []; 
@@ -27,7 +30,7 @@ const phantomLineMaterial = new THREE.LineBasicMaterial( { color: 0xCECECE } );
 const regularTextColour = 0xB8B8B8;
 const finalTextColour = 0x24BA00;
 
-const textMaterial = new THREE.MeshBasicMaterial({ color: regularTextColour});
+const textMaterial = new THREE.MeshBasicMaterial({ color: regularTextColour });
 let retrievedFont;
 
 // stores the phantomLineObject and phantomAngleTextObject so its easier to locate and remove
@@ -70,9 +73,8 @@ fontLoader.load( '/droid_sans_bold.typeface.json',
 );
 
 export function PassScene(scene){
-    
     mainScene = scene;
-    
+    hasNewRoomBeenMade = true;
     
 }
 
@@ -208,8 +210,10 @@ export function AddPoint(scene){
             originAngleObject.position.z = wallCoordinates[0].z;
             originAngleObject.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
             originAngleObject.name = "phantomAngle";
+            originAngleObject.userData.objectID = 1;
             mainScene.add(originAngleObject);
             originAngle = originAngleObject;
+            angleObjects.unshift(originAngle);
 
             //RemovePreviousPhantomData();
             DisablePointPlacement();
@@ -303,6 +307,7 @@ export function DrawPhantomLine(){
         
         phantomLine = new THREE.Line( geometry, phantomLineMaterial );
         phantomLine.name = "PhantomLine";
+        phantomLine.userData.objectID = 0;
 
         phantomLineObject = phantomLine;    // reference to the object is recorded down so it can be removed when no longer needed. 
         mainScene.add(phantomLine);
@@ -335,6 +340,7 @@ export function DrawPhantomLine(){
                 phantomAngle.position.z = wallCoordinates[wallCoordinates.length-1].z;
                 phantomAngle.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
                 phantomAngle.name = "phantomAngle";
+                phantomAngle.userData.objectID = 1;
                 mainScene.add(phantomAngle);
                 phantomAngleTextObject = phantomAngle;
     
@@ -387,6 +393,7 @@ function CreatePhantomLength(isLastAngle){
     phantomLength.position.z = lineMidPoint.z;
     phantomLength.rotation.x = -Math.PI / 2; // the rotation is negative, so it faces upright, in addition it needs to be flat on the plane
     phantomLength.name = "phantomLength";
+    phantomLength.userData.objectID = 2;
 
     return phantomLength;
 }
@@ -528,8 +535,6 @@ export function RemoveLastWall(){
     // if a wall is removed, then revert the condition flags
     if(originSnap) originSnap = false;
     
-
-
     // remove them from the list
     if(wallCount != 0){
         wallCount--;
@@ -596,45 +601,97 @@ export function CreateWalls(){
     
         const geometry = new THREE.BoxGeometry( 1, 40, wallLengths[i] );
         const material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
-        const cube = new THREE.Mesh( geometry, material );
-        cube.name = "Wall Object";
-        cube.position.set(midpointX,0,midpointY);
-        cube.lookAt(lineEnd);
-        mainScene.add( cube );
+        const wall = new THREE.Mesh( geometry, material );
+        wall.name = "Wall Object";
+        wall.position.set(midpointX,0,midpointY);
+        wall.lookAt(lineEnd);
+        mainScene.add( wall );
+        wallObjects.push(wall);
     }
-    
+
+    /* removes the data objects as they do not need to be visible when
+        in design mode */
+    DisplayingObjectData(false);
 
 };
 
-function testWalls(scene){
-    console.log("Wall is being generated");
-    let lines;
-    const material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-    // creating lines and giving their vector axes
-    const points = [];
-    points.push( new THREE.Vector3( 20, 0, 0 ) );
-    points.push( new THREE.Vector3( 10, 0, 0 ) );
-    points.push( new THREE.Vector3( 5, 0, 5 ) );
+// removes the walls so the lines can be visible 
+export function RemoveWalls(){
+    wallObjects.forEach(element => {
+        mainScene.remove(element);
+    });
+    
+    while(wallObjects.length){
+        wallObjects.pop();
+    }
 
-    // data that represents mesh, lines or point geometry data.
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
+    /* as we are returning to the buildMode, we are displaying the 
+        wall data */
+    DisplayingObjectData(true);
+    
+}
 
-    // points[0].set(1, 0, 5);
-    // points[1].set(1, 0, 90);
-    geometry.setFromPoints(points);
+// clears the entire screen
+export function ClearEverything(){
 
-    lines = new THREE.Line( geometry, material );
-    // when creating the line, you can give it it's own properties, such as names, ids and so forth
-    lines.name = "Floor Plan";
+    // uncheck the flag and revert the colours
+    if(hasCompleteWalls){
+        hasCompleteWalls = false;
+        HighlightWallInformation(hasCompleteWalls);
+        originSnap = false;
+    }
 
-    scene.add( lines );
+    /* for each of the objects on the scene, they will be removed
+        by the referencees in the list
+    */
+    while(wallCount != 0){
+        wallCount--;
+        if(wallObjects.length){
+            wallObjects.pop();
+        } 
 
-    // code here creates a sprite into the scene, this follows the sprite orientation no matter the angle by default
-    const material1 = new THREE.SpriteMaterial({ size: 0.1, color: 0xADADAD })
-    const sprite1 = new THREE.Sprite(material1)
-    sprite1.position.copy(new THREE.Vector3(1,1,1))
-    scene.add(sprite1)
-    console.log(scene)
+        // will remove the data. 
+        DisplayingObjectData(false);
+
+        // clearing the lists after removing the objects in the scene
+        wallCoordinates.pop();
+        wallLineObjects.pop();
+        wallAngles.pop();
+        angleObjects.pop()
+        wallLengths.pop();
+        lengthObjects.pop();
+    }
+
+    /* since the wallCoordinate will have an extra element in the list, 
+        it will call the pop() method one last time. */
+    wallCoordinates.pop();
+    
+}
+
+function DisplayingObjectData(isDisplayable){
+    if(isDisplayable){
+        // display the data.
+        wallLineObjects.forEach(element => {
+            mainScene.add(element);
+        });
+        angleObjects.forEach(element => {
+            mainScene.add(element);
+        });
+        lengthObjects.forEach(element => {
+            mainScene.add(element);
+        });
+        return;
+    }
+    wallLineObjects.forEach(element => {
+        mainScene.remove(element);
+    });
+    angleObjects.forEach(element => {
+        mainScene.remove(element);
+    });
+    lengthObjects.forEach(element => {
+        mainScene.remove(element);
+    });
+    
 }
 
 

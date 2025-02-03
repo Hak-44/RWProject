@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective. 
-import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls } from './Room';
+import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls, RemoveWalls, ClearEverything } from './Room';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -222,7 +222,7 @@ document.getElementById('createRoomDiv').addEventListener('click', ChangeRoomDiv
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
 document.getElementById('newWallButton').addEventListener('click', EnablePlacement);    //
 document.getElementById('removeWallButton').addEventListener('click', RemovePreviousWall);
-document.getElementById('cancelWallButton').addEventListener('click', CancelWallSetup);
+document.getElementById('cancelWallButton').addEventListener('click', ClearWallSetup);
 
 document.getElementById('finishWallButton').addEventListener('click', ConfirmWalls);
 
@@ -279,6 +279,11 @@ function ChangeNavBarVisibility(shouldBeVisible){
 }
 
 function createNewRoom(){
+
+    if(getWallCount() > 0){
+        RemoveWalls();
+        SwitchMenuOptions(false);
+    }
     changeCamPerspective(); // changing the perspective so drawing walls is easier. 
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
     ChangeRoomDivButton();
@@ -298,19 +303,24 @@ function RemovePreviousWall(){
     RemoveLastWall();
 }
 
-function CancelWallSetup(){
-    console.log("Closing wall setup.");
-    document.getElementById("leftSidebar").style.width = "0px"; 
-    isBuildMode = false;    // disables the lock on the skyCamera
-    DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
-    changeCamPerspective();
+function ClearWallSetup(){
+
+    ClearEverything();
+
+    // console.log("Closing wall setup.");
+    // document.getElementById("leftSidebar").style.width = "0px"; 
+    // isBuildMode = false;    // disables the lock on the skyCamera
+    // DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
+    // changeCamPerspective();
+    // if(getWallCount() >= 1){
+    //     CreateWalls();
+    // }
 }
 
 function ConfirmWalls(){
     console.log("Confirm walls.");
     if(getWallCount() >= 1){
-        document.getElementById("wallOptions").style.display = "none";
-        document.getElementById("designOptions").style.display = "flex";
+        SwitchMenuOptions(true);
     } 
     isBuildMode = false;    // disables the lock on the skyCamera
     DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
@@ -318,7 +328,15 @@ function ConfirmWalls(){
     changeCamPerspective();
 }
 
-
+function SwitchMenuOptions(hasFinishedBuilding){
+    if(hasFinishedBuilding){
+        document.getElementById("wallOptions").style.display = "none";
+        document.getElementById("designOptions").style.display = "flex";
+        return;
+    }
+    document.getElementById("wallOptions").style.display = "flex";
+    document.getElementById("designOptions").style.display = "none";
+}
 
 
 
