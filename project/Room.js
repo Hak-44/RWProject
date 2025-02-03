@@ -533,10 +533,10 @@ export function RemoveLastWall(){
     
     /*if the final angle is placed, then it will remove it from the scene
         the first object is the angle that gets removed as it gets pushed to the 
-        front. */
+        front to represent the first */
     if(originSnap){
         mainScene.remove(angleObjects[0]);
-        angleObjects.pop(0);
+        angleObjects.shift();
     } 
     mainScene.remove(lengthObjects[lengthObjects.length-1]);
 
