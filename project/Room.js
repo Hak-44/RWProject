@@ -530,6 +530,14 @@ export function RemoveLastWall(){
     // remove the objects first before removing the reference in th e
     mainScene.remove(wallLineObjects[wallLineObjects.length-1]);
     mainScene.remove(angleObjects[angleObjects.length-1]);
+    
+    /*if the final angle is placed, then it will remove it from the scene
+        the first object is the angle that gets removed as it gets pushed to the 
+        front. */
+    if(originSnap){
+        mainScene.remove(angleObjects[0]);
+        angleObjects.pop(0);
+    } 
     mainScene.remove(lengthObjects[lengthObjects.length-1]);
 
     // if a wall is removed, then revert the condition flags
@@ -665,7 +673,7 @@ export function ClearEverything(){
     /* since the wallCoordinate will have an extra element in the list, 
         it will call the pop() method one last time. */
     wallCoordinates.pop();
-    if(angleObjects.length) angleObjects.pop();
+    
     PrintLists();
 
     
