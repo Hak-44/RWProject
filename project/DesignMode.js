@@ -5,11 +5,14 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 // labelling all the 
 var objectType;
+var objectSecondType;
 var previousObjectType; // used to close the div when needed.
 var objectTypeName;
-const roomTypeLabel = document.getElementById('roomTypeLabelName');
+const roomTypeLabel = document.getElementById('objectTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
-
+const objectOptions = document.getElementById('objectOptions');
+const objectScrollPane = document.getElementById('objectScrollPane');
+const backDiv = document.getElementById('backToObjectList');
 
 // each button will pass through their own unique value, displaying the correct format of the menu
 document.getElementById('addFurniture').addEventListener('click', function(){
@@ -29,9 +32,33 @@ document.getElementById('addWindow').addEventListener('click', function(){
 }); 
 
 
+document.getElementById('livingRoomButton').addEventListener('click', function(){
+    ShowObjectList(5, "Living Room");
+}); 
+
+document.getElementById('kitchenButton').addEventListener('click', function(){
+    ShowObjectList(6, "Kitchen");
+}); 
+
+document.getElementById('bathroomButton').addEventListener('click', function(){
+    ShowObjectList(7, "Bathroom");
+}); 
+
+document.getElementById('bedroomButton').addEventListener('click', function(){
+    ShowObjectList(8, "Bedroom");
+}); 
+
+document.getElementById('backToObjectList').addEventListener('click', function(){
+    HideObjectList();
+}); 
+
+
+
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
     objectType = value; 
+    console.log("name: "+typeName);
+    HideObjectList();
     // the previousTypeID will be used to check if the user clicks the same
     if(previousObjectType == objectType){
         previousObjectType = 0;
@@ -43,9 +70,26 @@ function DisplayRoomTypeOptions(value, typeName){
     ShowNextMenu(true);
 }
 
+
+function ShowObjectList(roomType, value){
+    objectSecondType = roomType; // determins whether its kitcken or bedroom etc
+    console.log()
+    objectSecondType = value; 
+    //loadObjectsInList(value);
+    objectScrollPane.style.display = 'flex';
+    objectOptions.style.display = 'none';   // hide the other content
+}
+
+function HideObjectList(){
+    objectScrollPane.style.display = 'none';
+    objectOptions.style.display = 'flex'; 
+}
+
+
 // if shouldshow is false, it will hide it
 function ShowNextMenu(shouldShow){
     if(!shouldShow){
+        
         leftSidebar2nd.style.width = '0px';
         return;
     }

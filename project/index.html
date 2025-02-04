@@ -14,6 +14,9 @@
 
 				--topNavHeightExpansion: 80px;
 				--leftSideBarExpansion: 120px;
+
+				--leftSide2ndMaxWidth: 180px;
+				
 			}
 
 			.left-boarder{
@@ -111,7 +114,7 @@
 				overflow-x: hidden;
 				height: 100vh;	/*covers the entire screen size*/
 				max-height: 80vh;          /* Places a maximun height of 80px, so any height larger that that gets capped */
-				margin-top: 50px;          /* Add space at the top of the sidebar */
+				margin-top: 80px;          /* Add space at the top of the sidebar */
 				margin-bottom: 50px;   
 
 				border-right-style: dotted;	/* temporary dots so I know where the border ends */
@@ -130,6 +133,35 @@
 				margin-left: 120px;
 				width: 0px;
 				
+			}
+
+			/* div that contains the list such as kitchen, bedroom etc*/
+			.object-type-options{
+				display: flex;
+				flex-direction: column;
+			}
+
+			
+			.object-scrollpane{
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				max-width: 100vw;
+				max-height: 40em;
+				margin-top: 20px;
+				margin-bottom: 20px;
+
+				overflow-y: auto;
+				
+			}
+
+			.object-item{
+				background-color: cornflowerblue;
+				border: 1px solid #ddd;
+				width: 100px;
+				height: 100px;
+				background-color: #a5c8d6;
+				padding: 12px;
 			}
 			
 
@@ -204,18 +236,31 @@
 				<div class="left-sidebar-div left-sidebar-2nd" id="leftSidebar2nd">
 					
 					<!-- wall options for the side bar-->
-					<label class="roomTypeLabel" id="roomTypeLabelName">Label</label>
-					<div class="room-type-options" id="roomTypeOptions">
-						<div class="room-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
-						<div class="room-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
-						<div class="room-type-Button" id="bathroomButton" onclick="ShowBathroomObjects()">Bathroom</div>
-						<div class="room-type-Button" id="bedroomButton" onclick="ShowBedroomObjects()">Bedroom</div>
+					<label class="objectTypeLabel" id="objectTypeLabelName">Label</label>
+					<div class="object-type-options" id="objectOptions">
+						<div class="object-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
+						<div class="object-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
+						<div class="object-type-Button" id="bathroomButton" onclick="ShowBathroomObjects()">Bathroom</div>
+						<div class="object-type-Button" id="bedroomButton" onclick="ShowBedroomObjects()">Bedroom</div>
 					</div>
 
-					<div class="option-scrollpane" id="optionScrollPane">
+					<div class="obj-container">
+
+						<div class="object-scrollpane" id="objectScrollPane">
+							<div class="object-item">
+								asdfgadfg
+								asdfgadfg
+								asdfgadfg
+								asdfgadfg
+								asdfgadfg
+							</div>
+
+						</div>
 						
 					</div>
-
+					
+					<div class="back-To-Object-Menu" id="backToObjectList">Back</div>
+					
 
 				</div>
 
