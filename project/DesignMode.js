@@ -3,7 +3,15 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
-// labelling all the 
+// referencing the json file containing the 
+const objectJSONPath = "public/objects/interiorObjects.json";
+const imgLocation = "/public/images/";
+var livingRoomItems;
+var kitchenItems;
+
+
+
+// labelling variables for the navigation for the left sidebar
 var objectType;
 var objectSecondType;
 var previousObjectType; // used to close the div when needed.
@@ -12,7 +20,7 @@ const roomTypeLabel = document.getElementById('objectTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
-const backDiv = document.getElementById('backToObjectList');
+
 
 // each button will pass through their own unique value, displaying the correct format of the menu
 document.getElementById('addFurniture').addEventListener('click', function(){
@@ -71,14 +79,90 @@ function DisplayRoomTypeOptions(value, typeName){
 }
 
 
-function ShowObjectList(roomType, value){
-    objectSecondType = roomType; // determins whether its kitcken or bedroom etc
+function ShowObjectList(roomTypeValue){
+    objectSecondType = roomTypeValue; // determins whether its kitcken or bedroom etc
     console.log()
-    objectSecondType = value; 
-    //loadObjectsInList(value);
+    loadObjectsInList();   // retrieving the json from the object folder
     objectScrollPane.style.display = 'flex';
     objectOptions.style.display = 'none';   // hide the other content
 }
+
+function loadObjectsInList(){
+    // getting the json from the public object folder
+    fetch(objectJSONPath)
+    .then(response => response.json())
+    .then(data => {
+        console.log("loading from json");
+        livingRoomItems = data.livingRoomItems;
+        kitchenItems = data.kitchenItems;
+        GetRoomType();
+        CacheItems(); 
+    })
+    .catch(error => console.error('Error:', error))
+    
+    
+    
+}
+
+
+
+function GetRoomType(){
+    switch(objectSecondType){
+        case 5:
+            // loop pass and add (living room items)
+            livingRoomItems.forEach(obj => {
+
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+            });
+            break;
+        case 6:
+            // loop pass and add (Kitchen items)
+            kitchenItems.forEach(obj => {
+
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+            });
+            break;
+        case 7:
+            // loop pass and add (Bathroom items)
+            kitchenItems.forEach(obj => {
+
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+            });
+            break;
+        case 8:
+            // loop pass and add (bedroom items)
+            kitchenItems.forEach(obj => {
+                // console.log("displaying "+obj.name);
+                // console.log("Room type: "+obj.roomType);
+                // console.log("--------------------------");
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+            });
+            break;
+            
+    }
+}
+
+// creating an element and an image
+function DisplayObject(obj){
+    var div = document.createElement('div');
+    var label = document.createElement('label');
+    var img = document.createElement('img');
+
+    label.innerText = obj.name;
+    label.style.textAlign = "center";
+
+    img.src = imgLocation+obj.image;
+    img.width = 128; 
+    img.height = 128; 
+
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    div.appendChild(label);
+    div.appendChild(img);
+    objectScrollPane.appendChild(div);
+
+}
+
 
 function HideObjectList(){
     objectScrollPane.style.display = 'none';
