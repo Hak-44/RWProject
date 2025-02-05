@@ -1,0 +1,47 @@
+{
+    "livingRoomItems": [
+        {
+            "name": "chair1",
+            "objectType": 1,
+            "roomType": 5,
+            "extension": ".glb",
+            "width": 45,
+            "height": 95,
+            "image": "blank.png",
+            "link": "abc.com"
+        },
+        {
+            "name": "chair2",
+            "objectType": 1,
+            "roomType": 5,
+            "extension": ".glb",
+            "width": 45,
+            "height": 95,
+            "image": "blank.png",
+            "link": "abc.com"
+        }
+    ],
+    "kitchenItems": [
+        {
+            "name": "kitchenStool",
+            "objectType": 1,
+            "roomType": 6,
+            "extension": ".glb",
+            "width": 25,
+            "height": 88,
+            "image": "blank.png",
+            "link": "abc.com"
+        },
+        {
+            "name": "woodenChair",
+            "objectType": 1,
+            "roomType": 6,
+            "extension": ".glb",
+            "width": 25,
+            "height": 82,
+            "image": "blank.png",
+            "link": "abc.com"
+        }
+    ]
+
+}
