@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { HouseItem } from "./HouseItem.js";
 
 // referencing the json file containing the
 const objectJSONPath = "json/interiorObjects";
@@ -11,7 +12,7 @@ const imgLocation = "images/";
 // 2. create an object list that will have the objects that are in the scene
 // 3. if the list is loaded, then don't retrieve from the backend.
 
-var allObjects = [];
+var allObjectData = [];
 var sceneObjects = [];
 
 var livingRoomItems;
@@ -97,29 +98,29 @@ function ShowObjectList(roomTypeValue){
 function loadObjectsInList(){
     // getting the json from the public object folder
     fetch("json/interiorObjects")
-        .then(response => response.json())
-        .then(data => {
-            console.log("loading from json");
-            livingRoomItems = data.livingRoomItems;
-            kitchenItems = data.kitchenItems;
-            CacheObjectData();
-            GetRoomType();
+    .then(response => response.json())
+    .then(data => {
+        console.log("loading from json");
+        livingRoomItems = data.livingRoomItems;
+        kitchenItems = data.kitchenItems;
+        CacheObjectData();
+        GetRoomType();
 
-        })
-        .catch(error => console.error('Error:', error))
-
+    })
+    .catch(error => console.error('Error:', error))
+    console.log(allObjectData);
 
 
 }
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        var houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        var houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
         allObjectData.push(houseItem);
     });
 
