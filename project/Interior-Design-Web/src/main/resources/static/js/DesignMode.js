@@ -181,6 +181,7 @@ function DisplayObject(obj){
     var img = document.createElement('img');
 
     label.innerText = obj.name;
+    label.id = "object-name";
     label.style.textAlign = "center";
 
     img.src = imgLocation+obj.image;
@@ -189,9 +190,19 @@ function DisplayObject(obj){
 
     div.style.display = "flex";
     div.style.flexDirection = "column";
+
     div.appendChild(label);
     div.appendChild(img);
     objectScrollPane.appendChild(div);
+
+    div.addEventListener('click', function() {
+        /* grabs the first label that is within the div, then get the
+           inner text, which will be used for the object creation. */
+        const label = div.getElementsByTagName('label')[0];
+        const name = label.innerText;
+        console.log('Object: '+name);
+
+    });
 
 }
 
