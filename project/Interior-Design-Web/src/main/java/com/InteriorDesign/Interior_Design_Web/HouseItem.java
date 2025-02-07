@@ -8,15 +8,19 @@ public class HouseItem extends NeutralObj{
     float itemPrice;
     String itemURL;
 
-    HouseItem(String itemName, short objectType, short itemType) {
+    public HouseItem(String itemName, short objectType, short itemType, float width, float height) {
+        super(objectType, itemType, width, height);
         this.itemName = itemName;
         this.objectType = objectType;
         this.itemType = itemType;
-        itemDescription = "None";
-        itemPrice = 0.00f;
-        itemURL = "N/A";
+        this.width = width;
+        this.height = height;
+        this.itemDescription = "None";
+        this.itemPrice = 0.00f;
+        this.itemURL = "N/A";
 
     }
+
 
     public String GetItemName(){
         return this.itemName;

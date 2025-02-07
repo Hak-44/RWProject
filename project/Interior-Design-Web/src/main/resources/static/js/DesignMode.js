@@ -11,6 +11,9 @@ const imgLocation = "images/";
 // 2. create an object list that will have the objects that are in the scene
 // 3. if the list is loaded, then don't retrieve from the backend.
 
+var allObjects = [];
+var sceneObjects = [];
+
 var livingRoomItems;
 var kitchenItems;
 
@@ -110,6 +113,15 @@ function loadObjectsInList(){
 }
 
 function CacheObjectData(){
+    livingRoomItems.forEach(obj => {
+        var houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
+        allObjectData.push(houseItem);
+    });
+
+    kitchenItems.forEach(obj => {
+        var houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType);
+        allObjectData.push(houseItem);
+    });
 
 }
 

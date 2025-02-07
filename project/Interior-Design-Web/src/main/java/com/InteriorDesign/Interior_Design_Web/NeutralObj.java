@@ -2,7 +2,7 @@ package com.InteriorDesign.Interior_Design_Web;
 
 import java.math.BigDecimal;
 
-abstract class NeutralObj {
+public class NeutralObj {
 
     float width;
     float height;
@@ -13,6 +13,13 @@ abstract class NeutralObj {
     BigDecimal positionX;
     BigDecimal positionY;
     BigDecimal positionZ;
+
+    public NeutralObj(short objectType, short itemType, float width, float height) {
+        this.objectType = objectType;
+        this.itemType = itemType;
+        this.width = width;
+        this.height = height;
+    }
 
     public short getObjectType(){
         return objectType;
