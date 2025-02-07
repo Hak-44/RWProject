@@ -2,16 +2,18 @@ import { NeutralObj} from "./NeutralObj.js";
 
 export class HouseItem extends NeutralObj{
 
-    itemName;
+    name;
+    image;
     itemDescription;
     itemPrice;
     itemURL;
 
-    constructor(itemName, objectType, itemType, width, height) {
-        super(objectType, itemType, width, height);
-        this.itemName = itemName;
+    constructor(name, objectType, roomType, width, height, image) {
+        super(objectType, roomType, width, height);
+        this.name = name;
+        this.image = image;
         this.objectType = objectType;
-        this.itemType = itemType;
+        this.roomType = roomType;
         this.width = width;
         this.height = height;
         this.itemDescription = "None";
@@ -21,7 +23,7 @@ export class HouseItem extends NeutralObj{
     }
 
     GetItemName(){
-        return this.itemName;
+        return this.name;
     }
 
     GetItemDesc(){
@@ -36,8 +38,8 @@ export class HouseItem extends NeutralObj{
         return this.itemURL;
     }
 
-    SetItemName(newItemName){
-        this.itemName = newItemName;
+    Setname(newname){
+        this.name = newname;
     }
 
     SetItemDesc(newItemDescription){

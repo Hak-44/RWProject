@@ -5,14 +5,14 @@ export class NeutralObj{
     depth;
 
     objectType;
-    itemType;
+    roomType;
     positionX;
     positionY;
     positionZ;
 
-    constructor(objectType, itemType, width, height) {
+    constructor(objectType, roomType, width, height) {
         this.objectType = objectType;
-        this.itemType = itemType;
+        this.roomType = roomType;
         this.width = width;
         this.height = height;
     }
@@ -22,7 +22,7 @@ export class NeutralObj{
     }
 
     getItemType(){
-        return this.itemType;
+        return this.roomType;
     }
 
     getPositionX(){

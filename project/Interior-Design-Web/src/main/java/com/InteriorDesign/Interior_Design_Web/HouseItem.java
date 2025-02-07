@@ -3,14 +3,16 @@ package com.InteriorDesign.Interior_Design_Web;
 
 public class HouseItem extends NeutralObj{
 
-    String itemName;
+    String name;
+    String image;
     String itemDescription;
     float itemPrice;
     String itemURL;
 
-    public HouseItem(String itemName, short objectType, short itemType, float width, float height) {
+    public HouseItem(String name, short objectType, short itemType, float width, float height, String image) {
         super(objectType, itemType, width, height);
-        this.itemName = itemName;
+        this.name = name;
+        this.image = image;
         this.objectType = objectType;
         this.itemType = itemType;
         this.width = width;
@@ -23,7 +25,7 @@ public class HouseItem extends NeutralObj{
 
 
     public String GetItemName(){
-        return this.itemName;
+        return this.name;
     }
 
     public String GetItemDesc(){
@@ -39,7 +41,7 @@ public class HouseItem extends NeutralObj{
     }
 
     public void SetItemName(String newName){
-        this.itemName = newName;
+        this.name = newName;
     }
 
     public void SetItemDesc(String newDescription){

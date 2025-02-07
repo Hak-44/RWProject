@@ -96,31 +96,40 @@ function ShowObjectList(roomTypeValue){
 }
 
 function loadObjectsInList(){
-    // getting the json from the public object folder
-    fetch("json/interiorObjects")
-    .then(response => response.json())
-    .then(data => {
-        console.log("loading from json");
-        livingRoomItems = data.livingRoomItems;
-        kitchenItems = data.kitchenItems;
-        CacheObjectData();
-        GetRoomType();
 
-    })
-    .catch(error => console.error('Error:', error))
-    console.log(allObjectData);
+    if(allObjectData.length == 0){
+        // getting the json from the public object folder
+        fetch("json/interiorObjects")
+        .then(response => response.json())
+        .then(data => {
+            console.log("loading from json");
+            livingRoomItems = data.livingRoomItems;
+            kitchenItems = data.kitchenItems;
+            CacheObjectData();
+            GetRoomType();
+
+        })
+        .catch(error => console.error('Error:', error))
+        console.log(allObjectData);
+    }else{
+        console.log("Reading from cache data.");
+        allObjectData.forEach(obj =>{
+            if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+        })
+    }
+
 
 
 }
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image);
         allObjectData.push(houseItem);
     });
 
@@ -165,6 +174,8 @@ function GetRoomType(){
 
 // creating an element and an image
 function DisplayObject(obj){
+
+    console.log(obj.image);
     var div = document.createElement('div');
     var label = document.createElement('label');
     var img = document.createElement('img');
