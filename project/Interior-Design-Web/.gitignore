@@ -1,13 +1,4 @@
 
-/node_modules
-
-/examples/
-/docs/
-/test/
-/src/
-
-.vscode/
-.idea/
 
 HELP.md
 target/

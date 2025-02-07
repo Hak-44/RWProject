@@ -5,10 +5,14 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 // referencing the json file containing the
 const objectJSONPath = "json/interiorObjects";
-const imgLocation = "src/main/resources/static/images/";
+const imgLocation = "images/";
+
+// 1. create a list that will contain all the objects[]
+// 2. create an object list that will have the objects that are in the scene
+// 3. if the list is loaded, then don't retrieve from the backend.
+
 var livingRoomItems;
 var kitchenItems;
-
 
 
 // labelling variables for the navigation for the left sidebar
@@ -95,8 +99,9 @@ function loadObjectsInList(){
             console.log("loading from json");
             livingRoomItems = data.livingRoomItems;
             kitchenItems = data.kitchenItems;
+            CacheObjectData();
             GetRoomType();
-            CacheItems();
+
         })
         .catch(error => console.error('Error:', error))
 
@@ -104,9 +109,12 @@ function loadObjectsInList(){
 
 }
 
+function CacheObjectData(){
 
+}
 
 function GetRoomType(){
+
     switch(objectSecondType){
         case 5:
             // loop pass and add (living room items)
