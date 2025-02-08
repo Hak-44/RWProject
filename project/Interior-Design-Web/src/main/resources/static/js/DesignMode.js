@@ -79,6 +79,39 @@ export function PassSceneToDesign(scene){
     mainScene = scene;
 }
 
+
+export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectName){
+
+    /* similar to how the general raycast works within /main.js, it will track the mouse position, but now against the worldPlane,
+        only. After finding the worldplane object, it will return the X and Z coordinates where the raycast has
+        collided with the plane.
+    */
+
+    raycaster.setFromCamera( pointer, currentCamera );
+    var selectedObject;
+
+    var intersects = raycaster.intersectObjects( scene.children );
+    if(intersects.length > 0 && intersects[0].object.userData.sceneID == 4){
+
+        var name = intersects[0].object.userData.objectName
+        console.log("Object: "+name)
+        // x_coordinates = intersects[0].point.x;
+        // // the Z coordinates is the y coordinates to the user as they are looking straight down towards the worldPlane
+        // y_coordinates = intersects[0].point.z;
+
+    }else{
+
+
+    }
+
+
+
+    //console.log("Mouse X: "+ x_coordinates + " | Mouse Y: " + y_coordinates);
+
+}
+
+
+
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
     objectType = value;
@@ -234,6 +267,7 @@ function LoadObject(name){
     }
     var filename = name+extension;
     loaderPath = 'objects/'+name+'.glb';
+    console.log("object name before loading.. : " +name)
     loader.load(loaderPath,
         // call-back
         function ( gltf ) {
@@ -241,8 +275,26 @@ function LoadObject(name){
             console.log("Setting obj position and size. ");
 
             const model = gltf.scene;
+            model.receiveShadow = true;
+            model.castShadow = true;
+
             model.scale.set(width/10, height/20, 40/10)
+
+            model.traverse( ( object ) => {
+
+                if ( object.isMesh ) {
+                    object.userData = {
+                        objectName: name,
+                        sceneID: 4
+                    };
+                    object.material.color.set( 0xffffff );
+
+                }
+
+            } );
+
             mainScene.add( model );
+
 
         },
         // called when loading is in progress
