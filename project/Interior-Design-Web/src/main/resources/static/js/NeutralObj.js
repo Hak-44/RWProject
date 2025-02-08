@@ -6,15 +6,18 @@ export class NeutralObj{
 
     objectType;
     roomType;
+    extension;
+
     positionX;
     positionY;
     positionZ;
 
-    constructor(objectType, roomType, width, height) {
+    constructor(objectType, roomType, width, height, extension) {
         this.objectType = objectType;
         this.roomType = roomType;
         this.width = width;
         this.height = height;
+        this.extension = extension;
     }
 
     getObjectType(){

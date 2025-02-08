@@ -2,7 +2,13 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { HouseItem } from "./HouseItem.js";
+
+// loader to load the object.
+const loader = new GLTFLoader();
+let mainScene;
+
 
 // referencing the json file containing the
 const objectJSONPath = "json/interiorObjects";
@@ -68,7 +74,10 @@ document.getElementById('backToObjectList').addEventListener('click', function()
     HideObjectList();
 });
 
-
+export function PassSceneToDesign(scene){
+    console.log("Passing scene to design mode");
+    mainScene = scene;
+}
 
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
@@ -124,12 +133,12 @@ function loadObjectsInList(){
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image, obj.extension);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image, obj.extension);
         allObjectData.push(houseItem);
     });
 
@@ -199,13 +208,59 @@ function DisplayObject(obj){
         /* grabs the first label that is within the div, then get the
            inner text, which will be used for the object creation. */
         const label = div.getElementsByTagName('label')[0];
-        const name = label.innerText;
-        console.log('Object: '+name);
+        const objectName = label.innerText;
+        console.log('Object: '+objectName);
+        LoadObject(objectName);
 
     });
 
 }
 
+
+function LoadObject(name){
+
+    var width;
+    var height;
+    var extension;
+    var loaderPath;
+
+    for (var i = 0; i < allObjectData.length; i++){
+        if(allObjectData[i].name === name){
+            width = allObjectData[i].width;
+            height = allObjectData[i].height;
+            extension = allObjectData[i].extension;
+            break;
+        }
+    }
+    var filename = name+extension;
+    loaderPath = 'objects/'+name+'.glb';
+    loader.load(loaderPath,
+        // call-back
+        function ( gltf ) {
+            // https://discourse.threejs.org/t/uncaught-in-promise-typeerror-cannot-read-properties-of-undefined-reading-material-error/38003
+            console.log("Setting obj position and size. ");
+
+            const model = gltf.scene;
+            model.scale.set(width/10, height/20, 40/10)
+            mainScene.add( model );
+
+        },
+        // called when loading is in progress
+        function ( xhr ) {
+
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+        },
+        // called when loading has errors
+        function ( error ) {
+
+            console.log( 'An error happened: ' +error);
+
+        }
+    );
+
+
+}
 
 function HideObjectList(){
     // clearing the innerHTML and hiding

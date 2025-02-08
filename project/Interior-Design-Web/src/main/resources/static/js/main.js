@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective.
 import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls, RemoveWalls, ClearEverything } from './Room.js';
-import { HideDesignBar, ShowDesignBar } from './DesignMode.js';
+import { HideDesignBar, PassSceneToDesign, ShowDesignBar} from './DesignMode.js';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -328,6 +328,7 @@ function ConfirmWalls(){
     CreateWalls();
     changeCamPerspective();
     ShowDesignBar();    // showing the bar again from the desingMode module
+    PassSceneToDesign(scene);   // passing the scene to the design module
 }
 
 function SwitchMenuOptions(hasFinishedBuilding){
