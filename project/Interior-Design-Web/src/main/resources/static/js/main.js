@@ -355,7 +355,7 @@ function ConfirmWalls(){
     CreateWalls();
     changeCamPerspective();
     ShowDesignBar();    // showing the bar again from the desingMode module
-    PassSceneToDesign(scene);   // passing the scene to the design module
+    PassSceneToDesign(scene, currentCamera, renderer);   // passing the scene to the design module
 }
 
 function SwitchMenuOptions(hasFinishedBuilding){

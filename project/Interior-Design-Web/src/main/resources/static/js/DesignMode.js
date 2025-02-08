@@ -2,13 +2,16 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { DragControls } from 'three/addons/controls/DragControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { HouseItem } from "./HouseItem.js";
 
 // loader to load the object.
 const loader = new GLTFLoader();
-let mainScene;
 
+let mainScene;
+let renderer;
+let camera;
 
 // referencing the json file containing the
 const objectJSONPath = "json/interiorObjects";
@@ -20,6 +23,8 @@ const imgLocation = "images/";
 
 var allObjectData = [];
 var sceneObjects = [];
+
+var dragControls = null;
 
 var livingRoomItems;
 var kitchenItems;
@@ -74,9 +79,13 @@ document.getElementById('backToObjectList').addEventListener('click', function()
     HideObjectList();
 });
 
-export function PassSceneToDesign(scene){
+// passing the scene camera and renderer which will be used for drag control operations
+export function PassSceneToDesign(scene, passedCamera, passedRenderer){
     console.log("Passing scene to design mode");
     mainScene = scene;
+    renderer = passedRenderer;
+    camera = passedCamera;
+
 }
 
 
@@ -86,6 +95,7 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
         only. After finding the worldplane object, it will return the X and Z coordinates where the raycast has
         collided with the plane.
     */
+    if(dragControls != null) dragControls.enabled = true;
 
     raycaster.setFromCamera( pointer, currentCamera );
     var selectedObject;
@@ -285,7 +295,9 @@ function LoadObject(name){
                 if ( object.isMesh ) {
                     object.userData = {
                         objectName: name,
-                        sceneID: 4
+                        sceneID: 4,
+
+                        isDraggable: true
                     };
                     object.material.color.set( 0xffffff );
 
@@ -294,7 +306,10 @@ function LoadObject(name){
             } );
 
             mainScene.add( model );
-
+            sceneObjects.push(model);
+            console.log("Updating drag controller");
+            // updating the drag controls to the new current list of objects
+            dragControls = new DragControls( sceneObjects, camera, renderer.domElement );
 
         },
         // called when loading is in progress
