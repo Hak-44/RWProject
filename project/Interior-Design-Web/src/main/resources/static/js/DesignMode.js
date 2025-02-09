@@ -6,6 +6,7 @@ import { DragControls } from 'three/addons/controls/DragControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { HouseItem } from "./HouseItem.js";
+import { DisableBothOrbitCameras, EnableBothOrbitCameras } from "./main.js";
 
 // loader to load the object.
 const loader = new GLTFLoader();
@@ -24,6 +25,9 @@ const imgLocation = "images/";
 
 var allObjectData = [];
 var sceneObjects = [];
+
+var editingObject = [];
+var hasEditingObject = false;
 
 // outline objects
 var hoveredObject = null;
@@ -91,6 +95,44 @@ document.getElementById('backToObjectList').addEventListener('click', function()
     HideObjectList();
 });
 
+// adding an event listener that will check for keyboard inputs
+document.addEventListener('keydown', function(event) {
+    // G is the button that will move the object around that is selected
+    if (event.key === 'g') {
+        // if this flag is true, it means the user has pressed G again, so release it
+        if(hasEditingObject){
+            ReleaseObject();
+            EnableBothOrbitCameras();
+            dragControls.enabled = false;
+            return;
+        }
+        // if an object is selected, it will allow movement for that object
+        if(selectedObject){
+            console.log("Object dragging enabled");
+            if(!hasEditingObject) AddObjectToDragArray();
+            dragControls = new DragControls( editingObject, camera, renderer.domElement );
+            dragControls.enabled = true;
+            DisableBothOrbitCameras();
+        }else{
+
+        }
+
+    }
+
+});
+
+function AddObjectToDragArray(){
+    hasEditingObject = true;
+    editingObject.push(selectedObject);
+
+}
+
+function ReleaseObject(){
+    console.log("Releasing object");
+    hasEditingObject = false;
+    editingObject = [];
+}
+
 // passing the scene camera and renderer which will be used for drag control operations
 export function PassSceneToDesign(scene, passedCamera, passedRenderer){
     console.log("Passing scene to design mode");
@@ -122,8 +164,6 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
         //console.log("Object: "+name);
         hoveredObject = foundObject.object;
 
-
-
         // x_coordinates = intersects[0].point.x;
         // // the Z coordinates is the y coordinates to the user as they are looking straight down towards the worldPlane
         // y_coordinates = intersects[0].point.z;
@@ -145,6 +185,10 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
 
 // when clicked in main when design mode is true, this function will rin
 export function GetObjectSelected(){
+    SelectTheObject();
+}
+
+function SelectTheObject(){
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
         if(selectedObject != hoveredObject){
@@ -159,18 +203,14 @@ export function GetObjectSelected(){
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
 
-
         }
         console.log("Object: "+selectedObject.userData.objectName);
     }else{
         // clicked off the object, so remove it from the selected variable
         activeClick = false;
         RevertDeselectedObject();
-
-
     }
     console.log("Active click: "+activeClick)
-
 }
 
 // reverts the current selected object back to normal
@@ -373,8 +413,7 @@ function LoadObject(name){
             sceneObjects.push(model);
             console.log("Updating drag controller");
             // updating the drag controls to the new current list of objects
-            dragControls = new DragControls( sceneObjects, camera, renderer.domElement );
-            dragControls.enabled = false;
+
         },
         // called when loading is in progress
         function ( xhr ) {

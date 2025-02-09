@@ -255,7 +255,13 @@ export function DisableOrbitControls(){
 }
 
 
+export function DisableBothOrbitCameras(){
+    controls.enabled = false;
+}
 
+export function EnableBothOrbitCameras(){
+    controls.enabled = true;
+}
 
 
 // -------------------- BUTTON CLICKING --------------------
