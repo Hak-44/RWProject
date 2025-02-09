@@ -4,6 +4,7 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 import { HouseItem } from "./HouseItem.js";
 
 // loader to load the object.
@@ -24,7 +25,18 @@ const imgLocation = "images/";
 var allObjectData = [];
 var sceneObjects = [];
 
-var dragControls = null;
+// outline objects
+var hoveredObject = null;
+var selectedObject = null;
+var hoveredObjMaterial = null;
+var activeClick = false;
+
+
+
+var dragControls = null;    // used for drag controls
+
+var x_coordinates;
+var y_coordinates;
 
 var livingRoomItems;
 var kitchenItems;
@@ -86,6 +98,10 @@ export function PassSceneToDesign(scene, passedCamera, passedRenderer){
     renderer = passedRenderer;
     camera = passedCamera;
 
+
+
+
+
 }
 
 
@@ -95,7 +111,6 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
         only. After finding the worldplane object, it will return the X and Z coordinates where the raycast has
         collided with the plane.
     */
-    if(dragControls != null) dragControls.enabled = true;
 
     raycaster.setFromCamera( pointer, currentCamera );
     var selectedObject;
@@ -103,24 +118,73 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
     var intersects = raycaster.intersectObjects( scene.children );
     if(intersects.length > 0 && intersects[0].object.userData.sceneID == 4){
 
-        var name = intersects[0].object.userData.objectName
-        console.log("Object: "+name)
+        var foundObject = intersects[0]
+        //console.log("Object: "+name);
+        hoveredObject = foundObject.object;
+
+
+
         // x_coordinates = intersects[0].point.x;
         // // the Z coordinates is the y coordinates to the user as they are looking straight down towards the worldPlane
         // y_coordinates = intersects[0].point.z;
 
     }else{
 
+        hoveredObject = null;
 
     }
 
 
+     // Ensure the material is updated
 
+    // x_coordinates = intersects[0].point.x;
+    // y_coordinates = intersects[0].point.z;
     //console.log("Mouse X: "+ x_coordinates + " | Mouse Y: " + y_coordinates);
 
 }
 
+// when clicked in main when design mode is true, this function will rin
+export function GetObjectSelected(){
+    if(hoveredObject != null){
+        activeClick = true;   // counts it as a click
+        if(selectedObject != hoveredObject){
+            // switch it to the new hovered object
+            RevertDeselectedObject();
+            selectedObject = hoveredObject;
+            selectedObject.material.color.set(0xff0000);
+            selectedObject.material.transparent = true;
+            selectedObject.material.opacity = 0.1;
 
+            // re-enabling the shadows as they can get removed when altering the transparency
+            selectedObject.castShadow = true;
+            selectedObject.receiveShadow = true;
+
+
+        }
+        console.log("Object: "+selectedObject.userData.objectName);
+    }else{
+        // clicked off the object, so remove it from the selected variable
+        activeClick = false;
+        RevertDeselectedObject();
+
+
+    }
+    console.log("Active click: "+activeClick)
+
+}
+
+// reverts the current selected object back to normal
+function RevertDeselectedObject(){
+    if(selectedObject){
+        selectedObject.material.opacity = 1;
+        selectedObject.material.color.set(0xffffff);
+        selectedObject.material.transparent = false;
+
+        selectedObject.castShadow = true;
+        selectedObject.receiveShadow = true;
+        selectedObject = null;  // clear the reference to the object once clearing
+    }
+}
 
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
@@ -310,7 +374,7 @@ function LoadObject(name){
             console.log("Updating drag controller");
             // updating the drag controls to the new current list of objects
             dragControls = new DragControls( sceneObjects, camera, renderer.domElement );
-
+            dragControls.enabled = false;
         },
         // called when loading is in progress
         function ( xhr ) {

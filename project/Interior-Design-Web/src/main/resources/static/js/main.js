@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective.
 import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls, RemoveWalls, ClearEverything } from './Room.js';
-import { HideDesignBar, PassSceneToDesign, ShowDesignBar, ObjectRayCast } from './DesignMode.js';
+import { HideDesignBar, PassSceneToDesign, ShowDesignBar, ObjectRayCast, GetObjectSelected } from './DesignMode.js';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
@@ -130,6 +130,7 @@ function animate() {
     CheckBuildStatus();
     controls.update();  // updating the controls from the camera
     renderer.render( scene, currentCamera );   // final render of the scene
+
 }
 renderer.setAnimationLoop( animate );
 
@@ -180,7 +181,13 @@ function CheckMode(){
     console.log("running check")
     if(isBuildMode && isPlacingPoint){
         AddPoint(scene);
+        return;
     }
+
+    if(isDesignMode){
+        GetObjectSelected();
+    }
+
 }
 
 function MouseRaycast(){
@@ -227,15 +234,24 @@ function changeCamPerspective(){
         is2D = true;
         currentCamera = skyCamera;
         skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
-
+        EnableCameraControls();
         //skyCamera.position = orbitCamera.position;
 
     }else{
         is2D = false;
         currentCamera = orbitCamera;
-
+        EnableCameraControls();
     }
 
+}
+
+export function EnableCameraControls(){
+    currentCamera.enabled = true;
+
+}
+
+export function DisableOrbitControls(){
+    currentCamera.enabled = false;
 }
 
 
