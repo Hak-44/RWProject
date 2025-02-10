@@ -129,7 +129,7 @@ document.addEventListener('keydown', function(event) {
         if(selectedObject){
             transformControls.attach( selectedObject );
             transformControls.setMode('translate');
-            mainScene.add( transformControls.getHelper() );
+
         }
 
     }
@@ -138,7 +138,7 @@ document.addEventListener('keydown', function(event) {
         if(selectedObject){
             transformControls.attach( selectedObject );
             transformControls.setMode('rotate');
-            mainScene.add( transformControls.getHelper() );
+
         }
     }
 
@@ -154,20 +154,24 @@ function AddObjectToDragArray(){
 }
 
 function ReleaseObject(){
+    console.log("position: "+JSON.stringify(selectedObject.position));
     console.log("Releasing object");
     hasEditingObject = false;
     editingObject = [];
     RevertDeselectedObject();
+
 }
 
 
 function CreateTransformControls(){
     if(!hasTransformControls){
+        // ref: https://github.com/mrdoob/three.js/blob/master/examples/webgl_animation_skinning_ik.html
         hasTransformControls = true;
         transformControls = new TransformControls( camera, renderer.domElement );
         transformControls.size = 0.75;
         transformControls.space = 'world';
         transformControls.setMode('translate');
+        mainScene.add( transformControls.getHelper() );
     }
 
 }

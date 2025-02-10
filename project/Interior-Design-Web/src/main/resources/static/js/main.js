@@ -193,6 +193,8 @@ function CheckMode(){
 function MouseRaycast(){
 
     // if it's builder mode, it will do the operations within the Room
+    raycaster.setFromCamera( pointer, currentCamera );
+
     if(isBuildMode){
         WallRayCast(scene, pointer, raycaster, currentCamera)
         return;
@@ -203,7 +205,7 @@ function MouseRaycast(){
         return;
     }
 
-    raycaster.setFromCamera( pointer, currentCamera );
+
 
     /* calculate objects intersecting the picking ray (needs to be var since it will be constantly updated)
         which will return an array of objects  */
