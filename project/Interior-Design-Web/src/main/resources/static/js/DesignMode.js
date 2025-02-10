@@ -41,6 +41,7 @@ var activeClick = false;
 var dragControls = null;    // used for drag controls
 let transformControls = null;
 var hasTransformControls = false;
+var transformHelp;
 
 var x_coordinates;
 var y_coordinates;
@@ -59,6 +60,7 @@ const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
 
+const rightSidebar = document.getElementById('rightSidebar');
 
 // each button will pass through their own unique value, displaying the correct format of the menu
 document.getElementById('addFurniture').addEventListener('click', function(){
@@ -115,7 +117,6 @@ document.addEventListener('keydown', function(event) {
         if(selectedObject){
             console.log("Object dragging enabled");
             if(!hasEditingObject) AddObjectToDragArray();
-            CreateTransformControls();
             dragControls = new DragControls( editingObject, camera, renderer.domElement );
             dragControls.enabled = true;
             DisableBothOrbitCameras();
@@ -123,38 +124,44 @@ document.addEventListener('keydown', function(event) {
 
     }
 
-    // allows for more specific movement, such as moving it in the x or y axis
-    if (event.key === 't' && hasEditingObject) {
-        /* This function should return true if a helper exists within the scene.
-            by traversing through it. If false, it will create. (WIP) */
-        if(!FindHelperControls()){
-            console.log("HelperControls do not exist, adding.");
-            mainScene.add( transformControls.getHelper() );
-        }else{
-            console.log("HelpControls already exists.");
-        }
-        console.log("hasEditingObject: "+hasEditingObject)
-        if(selectedObject){
-            transformControls.attach( selectedObject );
-            transformControls.setMode('translate');
+    if (event.key === 't' || event.key === 'r' && hasEditingObject){
+        CreateTransformControls();
+        // allows for more specific movement, such as moving it in the x or y axis
+        if (event.key === 't' && hasEditingObject) {
+            /* This function should return true if a helper exists within the scene.
+                by traversing through it. If false, it will create. (WIP) */
+            if(!FindHelperControls()){
+                console.log("HelperControls do not exist, adding.");
+                transformHelp = transformControls.getHelper();
+                mainScene.add( transformHelp );
+            }else{
+                console.log("HelpControls already exists.");
+            }
+            console.log("hasEditingObject: "+hasEditingObject)
+            if(selectedObject){
+                transformControls.attach( selectedObject );
+                transformControls.setMode('translate');
+
+            }
 
         }
+        if (event.key === 'r' && hasEditingObject) {
+            if(!FindHelperControls()){
+                console.log("HelperControls do not exist, adding.");
+                transformHelp = transformControls.getHelper();
+                mainScene.add( transformHelp );
+            }else{
+                console.log("HelpControls already exists.");
+            }
+            console.log("hasEditingObject: "+hasEditingObject)
+            if(selectedObject){
+                transformControls.attach( selectedObject );
+                transformControls.setMode('rotate');
 
+            }
+        }
     }
-    if (event.key === 'r' && hasEditingObject) {
-        if(!FindHelperControls()){
-            console.log("HelperControls do not exist, adding.");
-            mainScene.add( transformControls.getHelper() );
-        }else{
-            console.log("HelpControls already exists.");
-        }
-        console.log("hasEditingObject: "+hasEditingObject)
-        if(selectedObject){
-            transformControls.attach( selectedObject );
-            transformControls.setMode('rotate');
 
-        }
-    }
 
 
 
@@ -192,16 +199,14 @@ function CreateTransformControls(){
 }
 
 function DetachTransformControls(){
-    mainScene.remove(transformControls.getHelper());
+
+    mainScene.remove(transformHelp);
+    transformHelp = null;
     transformControls.enabled = false;
 }
 
 function FindHelperControls(){
-    mainScene.traverse(function (transformHelper) {
-        if (transformHelper === transformControls.getHelper()) {
-            return true;
-        }
-    });
+    if(transformHelp != null) return true;
     return false;
 }
 
@@ -276,6 +281,7 @@ function SelectTheObject(){
             // re-enabling the shadows as they can get removed when altering the transparency
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
+            rightSidebar.style.width = '300px';
 
         }
         console.log("Object: "+selectedObject.userData.objectName);
@@ -284,6 +290,7 @@ function SelectTheObject(){
         if(!hasEditingObject){
             activeClick = false;
             RevertDeselectedObject();
+            if(selectedObject == null) rightSidebar.style.width = '0px';
         }
     }
     console.log("Active click: "+activeClick)
