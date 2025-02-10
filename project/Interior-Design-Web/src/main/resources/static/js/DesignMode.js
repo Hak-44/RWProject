@@ -363,12 +363,12 @@ function loadObjectsInList(){
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
         allObjectData.push(houseItem);
     });
 
@@ -451,6 +451,7 @@ function LoadObject(name){
 
     var width;
     var height;
+    var depth;
     var extension;
     var loaderPath;
 
@@ -458,6 +459,7 @@ function LoadObject(name){
         if(allObjectData[i].name === name){
             width = allObjectData[i].width;
             height = allObjectData[i].height;
+            depth = allObjectData[i].depth;
             extension = allObjectData[i].extension;
             break;
         }
@@ -475,7 +477,8 @@ function LoadObject(name){
             model.receiveShadow = true;
             model.castShadow = true;
 
-            model.scale.set(width/10, height/20, 40/10)
+            console.log("depth:  "+depth);
+            model.scale.set(width/10, height/20, depth/10)
 
             model.traverse( ( object ) => {
 

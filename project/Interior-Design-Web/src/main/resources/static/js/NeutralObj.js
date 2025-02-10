@@ -20,11 +20,12 @@ export class NeutralObj{
     scaleY;
     scaleZ;
 
-    constructor(objectType, roomType, width, height, extension) {
+    constructor(objectType, roomType, width, height, depth, extension) {
         this.objectType = objectType;
         this.roomType = roomType;
         this.width = width;
         this.height = height;
+        this.depth = depth;
         this.extension = extension;
     }
 

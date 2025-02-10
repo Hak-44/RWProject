@@ -7,6 +7,7 @@
             "extension": ".glb",
             "width": 45,
             "height": 95,
+            "depth": 40,
             "image": "blank.png",
             "link": "abc.com"
         },
@@ -17,6 +18,7 @@
             "extension": ".glb",
             "width": 45,
             "height": 95,
+            "depth": 40,
             "image": "blank.png",
             "link": "abc.com"
         }
@@ -29,6 +31,7 @@
             "extension": ".glb",
             "width": 25,
             "height": 88,
+            "depth": 20,
             "image": "blank.png",
             "link": "abc.com"
         },
@@ -39,6 +42,7 @@
             "extension": ".glb",
             "width": 25,
             "height": 82,
+            "depth": 25,
             "image": "blank.png",
             "link": "abc.com"
         }
