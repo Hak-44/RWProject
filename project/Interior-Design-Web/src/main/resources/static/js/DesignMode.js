@@ -125,6 +125,7 @@ document.addEventListener('keydown', function(event) {
     // allows for more specific movement, such as moving it in the x or y axis
     if (event.key === 't' && hasEditingObject) {
 
+        console.log("hasEditingObject: "+hasEditingObject)
         if(selectedObject){
             transformControls.attach( selectedObject );
             transformControls.setMode('translate');
@@ -133,6 +134,7 @@ document.addEventListener('keydown', function(event) {
 
     }
     if (event.key === 'r' && hasEditingObject) {
+        console.log("hasEditingObject: "+hasEditingObject)
         if(selectedObject){
             transformControls.attach( selectedObject );
             transformControls.setMode('rotate');
@@ -155,7 +157,9 @@ function ReleaseObject(){
     console.log("Releasing object");
     hasEditingObject = false;
     editingObject = [];
+    RevertDeselectedObject();
 }
+
 
 function CreateTransformControls(){
     if(!hasTransformControls){
@@ -234,7 +238,7 @@ function SelectTheObject(){
             // switch it to the new hovered object
             RevertDeselectedObject();
             selectedObject = hoveredObject;
-            selectedObject.material.color.set(0xff0000);
+            //selectedObject.material.color.set(0xff0000);
             selectedObject.material.transparent = true;
             selectedObject.material.opacity = 0.1;
 
@@ -246,8 +250,10 @@ function SelectTheObject(){
         console.log("Object: "+selectedObject.userData.objectName);
     }else{
         // clicked off the object, so remove it from the selected variable
-        activeClick = false;
-        RevertDeselectedObject();
+        if(!hasEditingObject){
+            activeClick = false;
+            RevertDeselectedObject();
+        }
     }
     console.log("Active click: "+activeClick)
 }
