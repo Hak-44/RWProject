@@ -4,6 +4,7 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 import { HouseItem } from "./HouseItem.js";
 import { DisableBothOrbitCameras, EnableBothOrbitCameras } from "./main.js";
@@ -38,6 +39,8 @@ var activeClick = false;
 
 
 var dragControls = null;    // used for drag controls
+let transformControls = null;
+var hasTransformControls = false;
 
 var x_coordinates;
 var y_coordinates;
@@ -101,6 +104,7 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'g') {
         // if this flag is true, it means the user has pressed G again, so release it
         if(hasEditingObject){
+            DetachTransformControls();
             ReleaseObject();
             EnableBothOrbitCameras();
             dragControls.enabled = false;
@@ -110,14 +114,34 @@ document.addEventListener('keydown', function(event) {
         if(selectedObject){
             console.log("Object dragging enabled");
             if(!hasEditingObject) AddObjectToDragArray();
+            CreateTransformControls();
             dragControls = new DragControls( editingObject, camera, renderer.domElement );
             dragControls.enabled = true;
             DisableBothOrbitCameras();
-        }else{
-
         }
 
     }
+
+    // allows for more specific movement, such as moving it in the x or y axis
+    if (event.key === 't' && hasEditingObject) {
+
+        if(selectedObject){
+            transformControls.attach( selectedObject );
+            transformControls.setMode('translate');
+            mainScene.add( transformControls.getHelper() );
+        }
+
+    }
+    if (event.key === 'r' && hasEditingObject) {
+        if(selectedObject){
+            transformControls.attach( selectedObject );
+            transformControls.setMode('rotate');
+            mainScene.add( transformControls.getHelper() );
+        }
+    }
+
+
+
 
 });
 
@@ -131,6 +155,21 @@ function ReleaseObject(){
     console.log("Releasing object");
     hasEditingObject = false;
     editingObject = [];
+}
+
+function CreateTransformControls(){
+    if(!hasTransformControls){
+        hasTransformControls = true;
+        transformControls = new TransformControls( camera, renderer.domElement );
+        transformControls.size = 0.75;
+        transformControls.space = 'world';
+        transformControls.setMode('translate');
+    }
+
+}
+
+function DetachTransformControls(){
+    transformControls.detach(selectedObject);
 }
 
 // passing the scene camera and renderer which will be used for drag control operations
