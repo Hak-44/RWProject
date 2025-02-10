@@ -260,6 +260,9 @@ export function GetObjectSelected(){
 }
 
 function SelectTheObject(){
+    if(hasEditingObject){
+        return;
+    }
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
         if(selectedObject != hoveredObject){
