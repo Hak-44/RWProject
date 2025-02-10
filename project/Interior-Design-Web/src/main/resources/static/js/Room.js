@@ -615,6 +615,8 @@ export function CreateWalls(){
         wall.name = "Wall Object";
         wall.position.set(midpointX,0,midpointY);
         wall.lookAt(lineEnd);
+        wall.receiveShadow = true;
+        wall.castShadow = true;
         mainScene.add( wall );
         wallObjects.push(wall);
     }

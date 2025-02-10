@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // orbital controls allow movement of the camera, changing the perspective.
 import { PassScene, WallRayCast, EnablePointPlacement, isPlacingPoint, AddPoint, DrawPhantomLine, getPlacingPoint, DisablePointPlacement, RemoveLastWall, getWallCount, CreateWalls, RemoveWalls, ClearEverything } from './Room.js';
-import { HideDesignBar, ShowDesignBar } from './DesignMode.js';
+import { HideDesignBar, PassSceneToDesign, ShowDesignBar, ObjectRayCast, GetObjectSelected } from './DesignMode.js';
 
 // initial setup for the three.js website
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
 document.body.appendChild( renderer.domElement );
 
 
@@ -18,7 +19,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xf8f8f8 ); // background colour of 3D env
 
 // adding gray colour fog to the scene allows better visibality with certain colours
-scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 500);
+//scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 500);
 
 
 // ground properties
@@ -37,9 +38,28 @@ groundMesh.receiveShadow = true  // giving shadow to the object
 scene.add(groundMesh)
 
 
+// -------------------- LIGHTING --------------------
+
+// form documentation:
+
+//Create a DirectionalLight and turn on shadows for the light
+const light = new THREE.DirectionalLight( 0xffffff, 0.9 );
+light.position.set( 20, 20, 20 ); //default; light shining from top
+light.castShadow = true; // default false
+scene.add( light );
+
+//Set up shadow properties for the light
+light.shadow.mapSize.width = 512; // default
+light.shadow.mapSize.height = 512; // default
+light.shadow.camera.near = 0.5; // default
+light.shadow.camera.far = 500; // default
+
+const ambientLight = new THREE.AmbientLight( 0xFFFFFF, 1 ); // soft white light
+scene.add( ambientLight );
 
 
-
+//addShadowedLight( 0.5, 1, - 1, 0xffd500, 3 );
+// might use this for now: https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_stl.html
 
 
 // -------------------- CAMERA CONTROLS --------------------
@@ -110,6 +130,7 @@ function animate() {
     CheckBuildStatus();
     controls.update();  // updating the controls from the camera
     renderer.render( scene, currentCamera );   // final render of the scene
+
 }
 renderer.setAnimationLoop( animate );
 
@@ -160,18 +181,31 @@ function CheckMode(){
     console.log("running check")
     if(isBuildMode && isPlacingPoint){
         AddPoint(scene);
+        return;
     }
+
+    if(isDesignMode){
+        GetObjectSelected();
+    }
+
 }
 
 function MouseRaycast(){
 
     // if it's builder mode, it will do the operations within the Room
+    raycaster.setFromCamera( pointer, currentCamera );
+
     if(isBuildMode){
         WallRayCast(scene, pointer, raycaster, currentCamera)
         return;
     }
 
-    raycaster.setFromCamera( pointer, currentCamera );
+    if(isDesignMode){
+        ObjectRayCast(scene, pointer, raycaster, currentCamera, objectName)
+        return;
+    }
+
+
 
     /* calculate objects intersecting the picking ray (needs to be var since it will be constantly updated)
         which will return an array of objects  */
@@ -202,19 +236,34 @@ function changeCamPerspective(){
         is2D = true;
         currentCamera = skyCamera;
         skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
-
+        EnableCameraControls();
         //skyCamera.position = orbitCamera.position;
 
     }else{
         is2D = false;
         currentCamera = orbitCamera;
-
+        EnableCameraControls();
     }
 
 }
 
+export function EnableCameraControls(){
+    currentCamera.enabled = true;
+
+}
+
+export function DisableOrbitControls(){
+    currentCamera.enabled = false;
+}
 
 
+export function DisableBothOrbitCameras(){
+    controls.enabled = false;
+}
+
+export function EnableBothOrbitCameras(){
+    controls.enabled = true;
+}
 
 
 // -------------------- BUTTON CLICKING --------------------
@@ -289,6 +338,7 @@ function createNewRoom(){
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
     ChangeRoomDivButton();
     isBuildMode = true; // enables the lock on the skyCamera
+    isDesignMode = false;   //disables the raycasting for the design mode
     PassScene(scene);
     document.getElementById('topNavBar2nd').style.height = "0px";
     HideDesignBar();    // hiding the bar from the desingMode module
@@ -324,10 +374,12 @@ function ConfirmWalls(){
         SwitchMenuOptions(true);
     }
     isBuildMode = false;    // disables the lock on the skyCamera
+    isDesignMode = true;
     DisablePointPlacement();    // removes the point placement flag and will remove the phantom line
     CreateWalls();
     changeCamPerspective();
     ShowDesignBar();    // showing the bar again from the desingMode module
+    PassSceneToDesign(scene, currentCamera, renderer);   // passing the scene to the design module
 }
 
 function SwitchMenuOptions(hasFinishedBuilding){

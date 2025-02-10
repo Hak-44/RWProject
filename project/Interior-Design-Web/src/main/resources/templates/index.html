@@ -127,6 +127,29 @@
 
 			}
 
+			/* Right navigation bar for the object information. */
+			/* https://www.w3schools.com/w3css/w3css_sidebar.asp */
+			.right-sidebar-div{
+				right: 0;	/* Displays the bar to the right instead of the left */
+				position: fixed;
+				display: flex;
+
+				flex-direction: column;
+				justify-content: center;
+
+				width: 0px;
+				overflow-x: hidden;
+				height: 100vh;
+				max-height: 80vh;
+				margin-top: 80px;
+				margin-bottom: 50px;
+
+				border-left-style: dotted;
+				border-left-width: 1px;
+
+				transition: width 0.3s;
+
+			}
 
 			/* Side bar for the insert options */
 			.left-sidebar-2nd{
@@ -271,6 +294,9 @@
 			</div>
 
 
+
+
+
 			<div class="wrap">
 				<!-- side bar that will dispaly the options -->
 				<div class="top-navbar-div top-nav-1st" id="topNavBar">
@@ -298,6 +324,18 @@
 			</div>
 
 
+			<div class="right-sidebar-div" id="rightSidebar">
+
+				<!-- wall options for the side bar-->
+				<div class="object-menu-options" id="objectMenuOptions">
+					<!-- given the same class as they should be treated the same in terms of styling-->
+					<div class="objectMenuButton" id="removeObject">Remove</div>
+					<div class="objectMenuButton" id="searchForItem" >Search for item</div>
+					<div class="objectMenuButton" id="editObject" >Edit</div>
+
+				</div>
+
+			</div>
 
 			<div id="selected-container" style="background-color: rgb(209, 209, 209);">
 				<span id="selected-object" style="color: midnightblue;"></span>
