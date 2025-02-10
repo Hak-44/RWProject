@@ -9,12 +9,12 @@ public class HouseItem extends NeutralObj{
     float itemPrice;
     String itemURL;
 
-    public HouseItem(String name, short objectType, short itemType, float width, float height, String image) {
-        super(objectType, itemType, width, height);
+    public HouseItem(String name, short objectType, short roomType, float width, float height, float depth, String image, String extension) {
+        super(objectType, roomType, width, height, depth, extension);
         this.name = name;
         this.image = image;
         this.objectType = objectType;
-        this.itemType = itemType;
+        this.roomType = roomType;
         this.width = width;
         this.height = height;
         this.itemDescription = "None";

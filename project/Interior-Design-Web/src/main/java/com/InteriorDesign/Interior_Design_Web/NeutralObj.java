@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 public class NeutralObj {
 
+    String UUID;
+    
     float width;
     float height;
     float depth;
 
     short objectType;
-    short itemType;
+    short roomType;
     String extension;
 
     BigDecimal positionX;
@@ -24,19 +26,21 @@ public class NeutralObj {
     BigDecimal scaleY;
     BigDecimal scaleZ;
 
-    public NeutralObj(short objectType, short itemType, float width, float height) {
+    public NeutralObj(short objectType, short roomType, float width, float height, float depth, String extension) {
         this.objectType = objectType;
-        this.itemType = itemType;
+        this.roomType = roomType;
         this.width = width;
         this.height = height;
+        this.depth = depth;
+        this.extension = extension;
     }
 
     public short getObjectType(){
         return objectType;
     }
 
-    public short getItemType(){
-        return itemType;
+    public short getRoomType(){
+        return roomType;
     }
 
 
