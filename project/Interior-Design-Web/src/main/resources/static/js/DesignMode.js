@@ -104,10 +104,11 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'g') {
         // if this flag is true, it means the user has pressed G again, so release it
         if(hasEditingObject){
+            dragControls.enabled = false;
             DetachTransformControls();
             ReleaseObject();
             EnableBothOrbitCameras();
-            dragControls.enabled = false;
+
             return;
         }
         // if an object is selected, it will allow movement for that object
@@ -124,7 +125,14 @@ document.addEventListener('keydown', function(event) {
 
     // allows for more specific movement, such as moving it in the x or y axis
     if (event.key === 't' && hasEditingObject) {
-
+        /* This function should return true if a helper exists within the scene.
+            by traversing through it. If false, it will create. (WIP) */
+        if(!FindHelperControls()){
+            console.log("HelperControls do not exist, adding.");
+            mainScene.add( transformControls.getHelper() );
+        }else{
+            console.log("HelpControls already exists.");
+        }
         console.log("hasEditingObject: "+hasEditingObject)
         if(selectedObject){
             transformControls.attach( selectedObject );
@@ -134,6 +142,12 @@ document.addEventListener('keydown', function(event) {
 
     }
     if (event.key === 'r' && hasEditingObject) {
+        if(!FindHelperControls()){
+            console.log("HelperControls do not exist, adding.");
+            mainScene.add( transformControls.getHelper() );
+        }else{
+            console.log("HelpControls already exists.");
+        }
         console.log("hasEditingObject: "+hasEditingObject)
         if(selectedObject){
             transformControls.attach( selectedObject );
@@ -171,14 +185,27 @@ function CreateTransformControls(){
         transformControls.size = 0.75;
         transformControls.space = 'world';
         transformControls.setMode('translate');
-        mainScene.add( transformControls.getHelper() );
+
     }
+    transformControls.enabled = true;
 
 }
 
 function DetachTransformControls(){
-    transformControls.detach(selectedObject);
+    mainScene.remove(transformControls.getHelper());
+    transformControls.enabled = false;
 }
+
+function FindHelperControls(){
+    mainScene.traverse(function (transformHelper) {
+        if (transformHelper === transformControls.getHelper()) {
+            return true;
+        }
+    });
+    return false;
+}
+
+
 
 // passing the scene camera and renderer which will be used for drag control operations
 export function PassSceneToDesign(scene, passedCamera, passedRenderer){
@@ -186,9 +213,6 @@ export function PassSceneToDesign(scene, passedCamera, passedRenderer){
     mainScene = scene;
     renderer = passedRenderer;
     camera = passedCamera;
-
-
-
 
 
 }
@@ -208,7 +232,7 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
     if(intersects.length > 0 && intersects[0].object.userData.sceneID == 4){
 
         var foundObject = intersects[0]
-        //console.log("Object: "+name);
+        //console.log("Found object: "+foundObject.object.userData.objectName);
         hoveredObject = foundObject.object;
 
         // x_coordinates = intersects[0].point.x;
