@@ -282,6 +282,7 @@ function SelectTheObject(){
             // re-enabling the shadows as they can get removed when altering the transparency
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
+            DisplayObjectDetails(true);
             rightSidebar.style.width = '300px';
 
         }
@@ -292,6 +293,7 @@ function SelectTheObject(){
             activeClick = false;
             RevertDeselectedObject();
             if(selectedObject == null) rightSidebar.style.width = '0px';
+            //DisplayObjectDetails(false);
         }
     }
     console.log("Active click: "+activeClick)
@@ -308,6 +310,23 @@ function RevertDeselectedObject(){
         selectedObject.receiveShadow = true;
         selectedObject = null;  // clear the reference to the object once clearing
     }
+}
+
+function DisplayObjectDetails(isDisplayed){
+    if(isDisplayed){
+        document.getElementById('objectName').innerText = selectedObject.userData.objectName;
+        // image
+        document.getElementById('objectDescription').innerText = selectedObject.userData.itemDescription;
+        document.getElementById('objectPrice').innerText = selectedObject.userData.itemPrice;
+        document.getElementById('objectURL').innerText = selectedObject.userData.itemURL;
+    }else{
+        document.getElementById('objectName').innerText = "";
+        // image
+        document.getElementById('objectDescription').innerText = "";
+        document.getElementById('objectPrice').innerText = "";
+        document.getElementById('objectURL').innerText = "";
+    }
+    
 }
 
 function DisplayRoomTypeOptions(value, typeName){
