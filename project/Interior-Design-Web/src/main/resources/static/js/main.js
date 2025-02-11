@@ -86,6 +86,7 @@ const controls = new OrbitControls( orbitCamera, renderer.domElement );
 const skyControls = new OrbitControls( skyCamera, renderer.domElement );
 var is2D = false;   // the variable is checking whether the perspective of the
 
+skyControls.enabled = false;
 
 //camera.lookAt( 0, 0, 0 );
 // interita factors contribute to the smoothness of the camera movement controls.
@@ -128,7 +129,8 @@ function animate() {
     MouseRaycast();
     CameraLeveling();
     CheckBuildStatus();
-    controls.update();  // updating the controls from the camera
+    if(is2D) skyControls.update();
+    if(!is2D) controls.update();  // updating the controls from the camera
     renderer.render( scene, currentCamera );   // final render of the scene
 
 }
@@ -235,12 +237,16 @@ function changeCamPerspective(){
     if(!is2D || isBuildMode){   // isBuldMode is the wall editing mode
         is2D = true;
         currentCamera = skyCamera;
+        skyControls.enabled = true;
+        controls.enabled = false;
         skyControls.enableRotate = false;   // disabling the rotation camera as it is the 2D view
         EnableCameraControls();
         //skyCamera.position = orbitCamera.position;
 
     }else{
         is2D = false;
+        skyControls.enabled = false;
+        controls.enabled = true;
         currentCamera = orbitCamera;
         EnableCameraControls();
     }
