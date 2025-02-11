@@ -208,6 +208,18 @@
 				text-align: center;
 			}
 
+			/* Object menu for the right side of the screen. */
+			.object-menu-options{
+				display: flex;
+				flex-direction: column;
+			}
+
+			.object-details-div{
+				display: flex;
+				flex-direction: column;
+			}
+
+
 			.wallButton{
 				background-color: rgb(201, 231, 227);
 			}
@@ -329,6 +341,16 @@
 				<!-- wall options for the side bar-->
 				<div class="object-menu-options" id="objectMenuOptions">
 					<!-- given the same class as they should be treated the same in terms of styling-->
+
+					<div class="object-details-div" id="objectDetails">
+						<label id="objectName">objectName</label>
+						<label id="objectImage">IMG</label>
+						<label id="objectDescription">description</label>
+						<label id="objectPrice">price</label>
+						<label id="objectURL">url</label>
+					</div>
+
+
 					<div class="objectMenuButton" id="removeObject">Remove</div>
 					<div class="objectMenuButton" id="searchForItem" >Search for item</div>
 					<div class="objectMenuButton" id="editObject" >Edit</div>
