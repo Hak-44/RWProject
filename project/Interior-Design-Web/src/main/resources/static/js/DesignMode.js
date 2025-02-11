@@ -26,6 +26,7 @@ const imgLocation = "images/";
 
 var allObjectData = [];
 var sceneObjects = [];
+var sceneObjectData = [];
 
 var editingObject = [];
 var hasEditingObject = false;
@@ -449,6 +450,7 @@ function DisplayObject(obj){
 
 function LoadObject(name){
 
+    var index;
     var width;
     var height;
     var depth;
@@ -457,6 +459,7 @@ function LoadObject(name){
 
     for (var i = 0; i < allObjectData.length; i++){
         if(allObjectData[i].name === name){
+            index = i;
             width = allObjectData[i].width;
             height = allObjectData[i].height;
             depth = allObjectData[i].depth;
@@ -482,12 +485,27 @@ function LoadObject(name){
 
             model.traverse( ( object ) => {
 
+                // setting the user data for the specific object loaded with userdata
                 if ( object.isMesh ) {
                     object.userData = {
                         objectName: name,
-                        sceneID: 4,
 
-                        isDraggable: true
+                        width: width,
+                        height: height,
+                        depth: depth,
+
+                        objectType: allObjectData[index].objectType,
+                        roomType: allObjectData[index].roomType,
+                        extension: allObjectData[index].extension,
+
+                        image: allObjectData[index].image,
+                        itemDescription: allObjectData[index].itemDescription,
+                        itemPrice: allObjectData[index].itemPrice,
+                        itemURL: allObjectData[index].itemURL,
+
+                        sceneID: 4
+
+
                     };
                     object.material.color.set( 0xffffff );
 

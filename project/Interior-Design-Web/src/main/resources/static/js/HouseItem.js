@@ -9,7 +9,7 @@ export class HouseItem extends NeutralObj{
     itemURL;
 
     constructor(name, objectType, roomType, width, height, depth, image, extension) {
-        super(objectType, roomType, width, height);
+        super(objectType, roomType, width, height, depth, extension);
         this.name = name;
         this.image = image;
         this.objectType = objectType;
