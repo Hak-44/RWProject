@@ -282,7 +282,7 @@ function SelectTheObject(){
             // re-enabling the shadows as they can get removed when altering the transparency
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
-            DisplayObjectDetails(true);
+            DisplayObjectDetails(true); // display te details
             rightSidebar.style.width = '300px';
 
         }
