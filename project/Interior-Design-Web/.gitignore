@@ -33,3 +33,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+#enviroment prop
+application-dev.properties
