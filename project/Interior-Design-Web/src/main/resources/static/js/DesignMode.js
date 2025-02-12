@@ -30,6 +30,7 @@ var sceneObjectData = [];
 
 var editingObject = [];
 var hasEditingObject = false;
+var isSideBarClicked = false;
 
 // outline objects
 var hoveredObject = null;
@@ -99,6 +100,10 @@ document.getElementById('bedroomButton').addEventListener('click', function(){
 
 document.getElementById('backToObjectList').addEventListener('click', function(){
     HideObjectList();
+});
+
+document.getElementById('rightSidebar').addEventListener('click', function(){
+    isSideBarClicked = true;
 });
 
 // adding an event listener that will check for keyboard inputs
@@ -271,6 +276,7 @@ function SelectTheObject(){
     }
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
+
         if(selectedObject != hoveredObject){
             // switch it to the new hovered object
             RevertDeselectedObject();
@@ -289,12 +295,14 @@ function SelectTheObject(){
         console.log("Object: "+selectedObject.userData.objectName);
     }else{
         // clicked off the object, so remove it from the selected variable
-        if(!hasEditingObject){
+
+        if(!hasEditingObject && !isSideBarClicked){
             activeClick = false;
             RevertDeselectedObject();
             if(selectedObject == null) rightSidebar.style.width = '0px';
             //DisplayObjectDetails(false);
         }
+        if(isSideBarClicked) isSideBarClicked = false;
     }
     console.log("Active click: "+activeClick)
 }
