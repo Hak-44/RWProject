@@ -391,12 +391,12 @@ function loadObjectsInList(){
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
         allObjectData.push(houseItem);
     });
 
@@ -529,6 +529,7 @@ function LoadObject(name){
                         itemDescription: allObjectData[index].itemDescription,
                         itemPrice: allObjectData[index].itemPrice,
                         itemURL: allObjectData[index].itemURL,
+                        queryPhrase: allObjectData[index].queryPhrase,
 
                         sceneID: 4
 

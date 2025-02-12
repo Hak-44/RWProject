@@ -9,7 +9,8 @@
             "height": 95,
             "depth": 40,
             "image": "blank.png",
-            "link": "abc.com"
+            "link": "abc.com",
+            "queryPhrase": "arm chair"
         },
         {
             "name": "chair2",
@@ -20,7 +21,8 @@
             "height": 95,
             "depth": 40,
             "image": "blank.png",
-            "link": "abc.com"
+            "link": "abc.com",
+            "queryPhrase": "arm chair"
         }
     ],
     "kitchenItems": [
@@ -33,7 +35,8 @@
             "height": 88,
             "depth": 20,
             "image": "blank.png",
-            "link": "abc.com"
+            "link": "abc.com",
+            "queryPhrase": "kitchen stool"
         },
         {
             "name": "woodenChair",
@@ -44,7 +47,8 @@
             "height": 82,
             "depth": 25,
             "image": "blank.png",
-            "link": "abc.com"
+            "link": "abc.com",
+            "queryPhrase": "dining chair"
         }
     ]
 
