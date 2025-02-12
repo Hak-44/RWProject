@@ -217,6 +217,19 @@
 			.object-details-div{
 				display: flex;
 				flex-direction: column;
+
+				gap: 1em;
+			}
+
+			.object-details-section{
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Used for the object search bar */
+			.object-search-div{
+				display: flex;
+				flex-direction: row;
 			}
 
 
@@ -343,18 +356,43 @@
 					<!-- given the same class as they should be treated the same in terms of styling-->
 
 					<div class="object-details-div" id="objectDetails">
-						<label id="objectName">objectName</label>
+						<div class="object-details-section">
+							<label>Object name</label>
+							<label id="objectName">objectName</label>
+						</div>
+
 						<label id="objectImage">IMG</label>
-						<label id="objectDescription">description</label>
-						<label id="objectPrice">price</label>
-						<label id="objectURL">url</label>
+
+						<div class="object-details-section">
+							<label>Description</label>
+							<label id="objectDescription">description</label>
+						</div>
+
+						<div class="object-details-section">
+							<label>Price</label>
+							<label id="objectPrice">price</label>
+						</div>
+
+						<div class="object-details-section">
+							<label>URL</label>
+							<label id="objectURL">url</label>
+						</div>
+
+						<div class="objectMenuButton" id="editObject" >Edit</div>
+						<div class="objectMenuButton" id="removeObject">Remove</div>
+
+						<div class="objectMenuButton" id="searchForItem" >Search for item</div>
+						<div class="object-search-div">
+							<input type="text" placeholder="Search for item.." id="objectSearchInput">
+							<button class="object-search-button">Search</button>
+						</div>
+
 					</div>
 
 
-					<div class="objectMenuButton" id="removeObject">Remove</div>
-					<div class="objectMenuButton" id="searchForItem" >Search for item</div>
-					<input type="text" placeholder="Search..">
-					<div class="objectMenuButton" id="editObject" >Edit</div>
+
+
+
 
 				</div>
 
