@@ -106,6 +106,40 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
     isSideBarClicked = true;
 });
 
+document.getElementById('objectSearchButton').addEventListener('click', function(){
+    var searchInput = document.getElementById('objectSearchInput').innerText;
+    searchInput = searchInput + " " +selectedObject.userData.queryPhrase;
+    // do the rest of the inputs here if needed.
+    console.log("Searching for "+searchInput);
+    SearchForItems(searchInput);
+});
+
+// creating the json object that will be given after going through the
+function SearchForItems(searchInput){
+
+    const searchJSON = {
+        query: searchInput
+    }
+    console.log("Sending: "+JSON.stringify(searchJSON));
+
+    fetch('/rapidAPI', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchJSON),
+    })
+        .then(response => response.json())
+        .then((data) => {
+            if(data){
+                console.log(data);
+            }
+        })
+        .catch(error => {
+            // handle any errors that occur during the fetch request
+            console.log("[CLIENT] - Error occured: "+error)
+        });
+}
+
+
 // adding an event listener that will check for keyboard inputs
 document.addEventListener('keydown', function(event) {
     // G is the button that will move the object around that is selected
