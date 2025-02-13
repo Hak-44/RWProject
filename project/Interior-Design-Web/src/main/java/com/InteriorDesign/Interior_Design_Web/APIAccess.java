@@ -29,9 +29,7 @@ public class APIAccess {
 
         String newQuery = searchJSON.getQuery().replaceAll(" ", "%20");
         searchJSON.setQuery(newQuery);
-
         String query = searchJSON.getQuery();
-        System.out.println(searchJSON.getQuery());
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://real-time-amazon-data.p.rapidapi.com/search?query="+query+"&page=1&country=GB&sort_by=RELEVANCE&product_condition=ALL&is_prime=false&deals_and_discounts=NONE"))
