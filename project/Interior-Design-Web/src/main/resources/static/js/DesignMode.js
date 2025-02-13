@@ -61,6 +61,7 @@ const roomTypeLabel = document.getElementById('objectTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
+const searchScrollPane = document.getElementById('searchScrollPane');
 
 const rightSidebar = document.getElementById('rightSidebar');
 
@@ -107,7 +108,8 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
 });
 
 document.getElementById('objectSearchButton').addEventListener('click', function(){
-    var searchInput = document.getElementById('objectSearchInput').innerText;
+    var searchInput = document.getElementById('objectSearchInput').value;
+    console.log(searchInput);
     searchInput = searchInput + " " +selectedObject.userData.queryPhrase;
     // do the rest of the inputs here if needed.
     console.log("Searching for "+searchInput);
@@ -130,13 +132,70 @@ function SearchForItems(searchInput){
         .then(response => response.json())
         .then((data) => {
             if(data){
-                console.log(data);
+                DisplaySearchResults(data.data.products);
             }
         })
         .catch(error => {
             // handle any errors that occur during the fetch request
             console.log("[CLIENT] - Error occured: "+error)
         });
+}
+
+function DisplaySearchResults(items){
+
+
+
+    items.forEach(item =>{
+        var mainDiv = document.createElement('div');
+        var horizontalDiv = document.createElement('div');
+        //var imgDiv = document.createElement('div');
+        var detailDiv = document.createElement('div');
+
+        // creation of elements for the information
+        var photoSRC = document.createElement('img');
+        var descLabel = document.createElement('label');
+        var priceLabel = document.createElement('label');
+        var urlLabel = document.createElement('label');
+
+        // width of the picture
+        photoSRC.src = item.product_photo;
+        photoSRC.width = 128; //180
+        photoSRC.height = 128; //256
+
+        //inserted the text for the appropriate divs
+        descLabel.innerText = item.product_title.toString();
+        descLabel.id = "productDescription";
+
+        priceLabel.innerText = item.product_price.toString();
+        priceLabel.id = "productPrice";
+
+        urlLabel.innerText = item.product_url;
+        urlLabel.id = "productURL";
+
+        // setting the div to flex column, so the details are displayed as a column
+        detailDiv.style.display = "flex";
+        detailDiv.style.flexDirection = "column";
+
+        // setting the div to flex row so the information is next to the img div on the right
+        horizontalDiv.style.display = "flex";
+        horizontalDiv.style.gap = "1em";
+        horizontalDiv.style.flexDirection = "row";
+        horizontalDiv.style.width = "100%"; // makes it share it
+
+        mainDiv.style.width = "100%";   // match the right side div
+
+        detailDiv.appendChild(descLabel);
+        detailDiv.appendChild(priceLabel);
+        detailDiv.appendChild(urlLabel);
+
+        horizontalDiv.appendChild(photoSRC);
+        horizontalDiv.appendChild(detailDiv);
+
+        mainDiv.appendChild(horizontalDiv);
+        searchScrollPane.appendChild(mainDiv);
+    })
+
+    searchScrollPane.style.display = 'flex';
 }
 
 
@@ -323,7 +382,7 @@ function SelectTheObject(){
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
             DisplayObjectDetails(true); // display te details
-            rightSidebar.style.width = '300px';
+            rightSidebar.style.width = '500px';
 
         }
         console.log("Object: "+selectedObject.userData.objectName);
