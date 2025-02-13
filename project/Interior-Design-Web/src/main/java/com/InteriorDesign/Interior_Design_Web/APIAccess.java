@@ -27,17 +27,21 @@ public class APIAccess {
     public String GetRapidAPI(@RequestBody QueryClass searchJSON) throws IOException, InterruptedException {
         // need to convert the spaces within the query strings to either %20 or + depending on the API rules
 
+        String newQuery = searchJSON.getQuery().replaceAll(" ", "%20");
+        searchJSON.setQuery(newQuery);
+
+        String query = searchJSON.getQuery();
         System.out.println(searchJSON.getQuery());
 
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create("https://real-time-amazon-data.p.rapidapi.com/search?query=Phone&page=1&country=GB&sort_by=RELEVANCE&product_condition=ALL&is_prime=false&deals_and_discounts=NONE"))
-//                .header("x-rapidapi-key", apiKey)
-//                .header("x-rapidapi-host", "real-time-amazon-data.p.rapidapi.com")
-//                .method("GET", HttpRequest.BodyPublishers.noBody())
-//                .build();
-//        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://real-time-amazon-data.p.rapidapi.com/search?query="+query+"&page=1&country=GB&sort_by=RELEVANCE&product_condition=ALL&is_prime=false&deals_and_discounts=NONE"))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", "real-time-amazon-data.p.rapidapi.com")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-        return("response.body()");
+        return(response.body());
 
     }
 
