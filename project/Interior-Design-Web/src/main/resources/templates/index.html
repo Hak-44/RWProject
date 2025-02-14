@@ -38,8 +38,9 @@
 				margin-right: 50px;          /* Add space ato the sides */
 				margin-left: 50px;
 
-				border-bottom-style: dotted;	/* temporary dots so I know where the border ends */
-				border-bottom-width: 1px;
+
+				/*border-bottom-style: dotted;	!* temporary dots so I know where the border ends *!*/
+				/*border-bottom-width: 1px;*/
 
 				transition: height 0.3s;
 				overflow-y: hidden;
@@ -66,9 +67,12 @@
 			}
 
 			.main-option-button{
+				display: flex;
+				flex-direction: column;
 				background-color: var(--divOptionColour);
 				width: 90px;
-				height: 50px;
+				height: 70px;
+
 			}
 
 			.room-Options{
@@ -89,8 +93,10 @@
 
 
 			.room-option-button{
+				display: flex;
+				flex-direction: column;
 				width: 90px;
-				height: 50px;
+				height: 70px;
 
 			}
 
@@ -118,8 +124,8 @@
 				margin-top: 80px;          /* Add space at the top of the sidebar */
 				margin-bottom: 50px;
 
-				border-right-style: dotted;	/* temporary dots so I know where the border ends */
-				border-right-width: 1px;
+				/*border-right-style: dotted;	!* temporary dots so I know where the border ends *!*/
+				/*border-right-width: 1px;*/
 
 				/* ref: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sidenav_push_opacity */
 				transition: width 0.3s;	/* Transition of the appearance when the width changes on clicking the
@@ -145,8 +151,8 @@
 				margin-top: 80px;
 				margin-bottom: 50px;
 
-				border-left-style: dotted;
-				border-left-width: 1px;
+				/*border-left-style: dotted;*/
+				/*border-left-width: 1px;*/
 
 				transition: width 0.3s;
 
@@ -163,9 +169,18 @@
 			.object-type-options{
 				display: flex;
 				flex-direction: column;
+
+				gap: 10px; /* Gap between the button div */
+
+				text-align: center;
+
+
 			}
 
 			.objectImage{
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
 				width: 250px;
 				height: 200px;
 			}
@@ -217,6 +232,7 @@
 
 			/* Object menu for the right side of the screen. */
 			.object-menu-options{
+				text-align: center;
 				display: flex;
 				flex-direction: column;
 
@@ -239,6 +255,9 @@
 			.object-search-div{
 				display: flex;
 				flex-direction: row;
+				margin-left: auto;
+				margin-right: auto;
+
 			}
 
 			.search-scrollpane{
@@ -267,7 +286,11 @@
 
 			}
 
-			body { margin: 0; }
+			body {
+				margin: 0;
+				font-family: sans-serif, Helvetica, Arial;
+
+			}
 
 		</style>
 
@@ -286,24 +309,24 @@
 
 			<div class="wrap">
 				<!-- side bar that will dispaly the options -->
-				<div class="left-sidebar-div leftSide1st" id="leftSidebar">
+				<div class="left-sidebar-div leftSide1st" id="leftSidebar" style="background: slategray">
 
 					<!-- wall options for the side bar-->
 					<div class="wall-Options" id="wallOptions">
 						<!-- given the same class as they should be treated the same in terms of styling-->
-						<div class="wallButton" id="newWallButton" onclick="EnablePlacement()">NEW WALL</div>
-						<div class="wallButton" id="removeWallButton" onclick="RemovePreviousWall()">REMOVE LAST WALL</div>
-						<div class="wallButton" id="finishWallButton" onclick="ConfirmWalls()">FINISH</div>
-						<div class="wallButton" id="cancelWallButton" onclick="ClearWallSetup()">CLEAR</div>
+						<div class="wallButton" id="newWallButton">New wall</div>
+						<div class="wallButton" id="removeWallButton">Remove last wall</div>
+						<div class="wallButton" id="finishWallButton">Finish</div>
+						<div class="wallButton" id="cancelWallButton">Clear</div>
 
 					</div>
 
 					<div class="design-Options" id="designOptions">
 						<!-- given the same class as they should be treated the same in terms of styling-->
-						<div class="designOption" id="addFurniture" onclick="DisplayRoomTypeOptions(1)">Furniture</div>
-						<div class="designOption" id="addDecor" onclick="ShowDecorations()">Decoration</div>
-						<div class="designOption" id="addDoor" onclick="ShowDoors()">Doors</div>
-						<div class="designOption" id="addWindow" onclick="ShowWindows()">Windows</div>
+						<div class="designOption" id="addFurniture" >Furniture</div>
+						<div class="designOption" id="addDecor" >Decoration</div>
+						<div class="designOption" id="addDoor" >Doors</div>
+						<div class="designOption" id="addWindow">Windows</div>
 
 					</div>
 
@@ -315,7 +338,7 @@
 				<div class="left-sidebar-div left-sidebar-2nd" id="leftSidebar2nd">
 
 					<!-- wall options for the side bar-->
-					<label class="objectTypeLabel" id="objectTypeLabelName">Label</label>
+					<label class="objectTypeLabel" id="objectTypeLabelName" style="text-align: center">Label</label>
 					<div class="object-type-options" id="objectOptions">
 						<div class="object-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
 						<div class="object-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
@@ -332,7 +355,7 @@
 
 					</div>
 
-					<div class="back-To-Object-Menu" id="backToObjectList">Back</div>
+					<div class="back-To-Object-Menu" id="backToObjectList" style="text-align: center">Back</div>
 
 
 				</div>
@@ -350,8 +373,11 @@
 
 					<!-- the room options for the top navigation bar-->
 					<div class="main-Option" id="mainOptions">
-						<div class="main-option-button" id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view</div>
-						<div class="main-option-button" id="createRoomDiv" style="color: var(--regularTextColour)" onclick="doSomething()">Room</div>
+						<div class="main-option-button" id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour)" onclick="changeCamPerspective()">Overhead view
+							<div><img src="/images/eye.png"></div></div>
+						<div class="main-option-button" id="createRoomDiv" style="color: var(--regularTextColour); text-align: center" onclick="doSomething()">Room
+						<div><img src="/images/roomIcon.png"></div>
+						</div>
 
 					</div>
 
@@ -371,7 +397,7 @@
 			</div>
 
 
-			<div class="right-sidebar-div" id="rightSidebar">
+			<div class="right-sidebar-div" id="rightSidebar" style="background-color: #dddddd">
 
 				<!-- wall options for the side bar-->
 				<div class="object-menu-options" id="objectMenuOptions">
@@ -383,7 +409,7 @@
 							<label id="objectName">objectName</label>
 						</div>
 
-						<img src="" class="objectImage" id="objectImage">
+						<img src="" class="objectImage" id="objectImage" >
 
 						<div class="object-details-section">
 							<label>Description</label>
@@ -400,10 +426,15 @@
 							<label id="objectURL">url</label>
 						</div>
 
-						<div class="objectMenuButton" id="editObject" >Edit</div>
-						<div class="objectMenuButton" id="removeObjectButton">Remove</div>
+						<div class="objectMenuButton" id="editObject" >Edit:
+							Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
+							Press T to translate the object, and R to rotate the object.
 
-						<div class="objectMenuButton" id="searchForItem" >Search for item</div>
+							Press G again to confirm once finished.
+						</div>
+
+
+						<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
 						<div class="object-search-div">
 							<input type="text" placeholder="Search for item.." id="objectSearchInput">
 							<button class="object-search-button" id="objectSearchButton">Search</button>

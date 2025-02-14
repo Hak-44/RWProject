@@ -134,32 +134,32 @@ document.getElementById('objectSearchButton').addEventListener('click', function
     SearchForItems(searchInput);
 });
 
-// currently not working, need to find another way....
-document.getElementById('removeObjectButton').addEventListener('click', function(){
-    console.log("WIP.");
-    // console.log("selected id unique: "+selectedObject.userData.uniqueID);
-    //
-    // console.log(sceneObjects);
-    // console.log(models);
-    // for (let i = 0; i < sceneObjects.length; i++){
-    //     console.log("current unique: " +sceneObjects[i].userData.uniqueID)
-    //     if(sceneObjects[i].userData.uniqueID == selectedObject.userData.uniqueID){
-    //         RevertDeselectedObject();git s
-    //         mainScene.remove(sceneObjects[i]);
-    //         mainScene.remove(models[i]);
-    //         sceneObjects.pop(sceneObjects[i]);
-    //         models.pop(models[i]);
-    //
-    //         activeClick = false;
-    //         rightSidebar.style.width = '0px';
-    //
-    //     }
-    // }
-    // console.log("After")
-    // console.log(sceneObjects)
-    // console.log(models)
-
-});
+// // currently not working, need to find another way....
+// document.getElementById('removeObjectButton').addEventListener('click', function(){
+//     console.log("WIP.");
+//     // console.log("selected id unique: "+selectedObject.userData.uniqueID);
+//     //
+//     // console.log(sceneObjects);
+//     // console.log(models);
+//     // for (let i = 0; i < sceneObjects.length; i++){
+//     //     console.log("current unique: " +sceneObjects[i].userData.uniqueID)
+//     //     if(sceneObjects[i].userData.uniqueID == selectedObject.userData.uniqueID){
+//     //         RevertDeselectedObject();git s
+//     //         mainScene.remove(sceneObjects[i]);
+//     //         mainScene.remove(models[i]);
+//     //         sceneObjects.pop(sceneObjects[i]);
+//     //         models.pop(models[i]);
+//     //
+//     //         activeClick = false;
+//     //         rightSidebar.style.width = '0px';
+//     //
+//     //     }
+//     // }
+//     // console.log("After")
+//     // console.log(sceneObjects)
+//     // console.log(models)
+//
+// });
 
 // creating the json object that will be given after going through the
 function SearchForItems(searchInput){
@@ -241,7 +241,7 @@ function DisplaySearchResults(items){
 
         // event listeners for hovering over the div and leaving the div, which simply changes the colour of it.
         mainDiv.addEventListener('mouseenter', function() {
-            mainDiv.style.backgroundColor = 'cyan';
+            mainDiv.style.backgroundColor = '#BAC5B8';
         });
 
         mainDiv.addEventListener('mouseleave', function() {
