@@ -52,6 +52,8 @@ var y_coordinates;
 
 var livingRoomItems;
 var kitchenItems;
+var bathroomItems;
+var bedroomItems;
 
 
 // labelling variables for the navigation for the left sidebar
@@ -560,6 +562,8 @@ function loadObjectsInList(){
             console.log("loading from json");
             livingRoomItems = data.livingRoomItems;
             kitchenItems = data.kitchenItems;
+            bathroomItems = data.bathroomItems;
+            bedroomItems = data.bedroomItems;
             CacheObjectData();
             GetRoomType();
 
@@ -588,6 +592,18 @@ function CacheObjectData(){
         allObjectData.push(houseItem);
     });
 
+    bathroomItems.forEach(obj => {
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
+        allObjectData.push(houseItem);
+    });
+
+    bedroomItems.forEach(obj => {
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
+        allObjectData.push(houseItem);
+    });
+
+
+
 }
 
 function GetRoomType(){
@@ -609,17 +625,15 @@ function GetRoomType(){
             break;
         case 7:
             // loop pass and add (Bathroom items)
-            kitchenItems.forEach(obj => {
+            bathroomItems.forEach(obj => {
 
                 if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
             });
             break;
         case 8:
             // loop pass and add (bedroom items)
-            kitchenItems.forEach(obj => {
-                // console.log("displaying "+obj.name);
-                // console.log("Room type: "+obj.roomType);
-                // console.log("--------------------------");
+            bedroomItems.forEach(obj => {
+
                 if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
             });
             break;
@@ -683,7 +697,7 @@ function LoadObject(name){
         }
     }
     var filename = name+extension;
-    loaderPath = 'objects/'+name+'.glb';
+    loaderPath = 'objects/chair2.glb';  //NOTE: THERE IS A REASON WHY THE PATH IS SET LIKE THIS
     console.log("object name before loading.. : " +name)
     loader.load(loaderPath,
         // call-back
@@ -696,7 +710,7 @@ function LoadObject(name){
             model.castShadow = true;
 
             console.log("depth:  "+depth);
-            model.scale.set(width/10, height/20, depth/10)
+            model.scale.set(45/10, 95/20, 40/10)   //NOTE: THERE IS A REASON WHY THE PATH IS SET LIKE THIS
 
             model.traverse( ( object ) => {
 
