@@ -62,8 +62,17 @@ const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
 const searchScrollPane = document.getElementById('searchScrollPane');
-
 const rightSidebar = document.getElementById('rightSidebar');
+
+
+
+const objectName = document.getElementById('objectName');
+// image
+const objectDescription = document.getElementById('objectDescription');
+const objectPrice = document.getElementById('objectPrice')
+const objectURL = document.getElementById('objectURL')
+
+
 
 // each button will pass through their own unique value, displaying the correct format of the menu
 document.getElementById('addFurniture').addEventListener('click', function(){
@@ -161,6 +170,7 @@ function DisplaySearchResults(items){
         photoSRC.src = item.product_photo;
         photoSRC.width = 128; //180
         photoSRC.height = 128; //256
+        photoSRC.id = "itemPhoto";
 
         //inserted the text for the appropriate divs
         descLabel.innerText = item.product_title.toString();
@@ -173,6 +183,7 @@ function DisplaySearchResults(items){
         urlLabel.id = "productURL";
 
         // setting the div to flex column, so the details are displayed as a column
+        detailDiv.id = "itemDetails";
         detailDiv.style.display = "flex";
         detailDiv.style.flexDirection = "column";
 
@@ -192,6 +203,40 @@ function DisplaySearchResults(items){
         horizontalDiv.appendChild(detailDiv);
 
         mainDiv.appendChild(horizontalDiv);
+
+        // event listeners for hovering over the div and leaving the div, which simply changes the colour of it.
+        mainDiv.addEventListener('mouseenter', function() {
+            mainDiv.style.backgroundColor = 'cyan';
+        });
+
+        mainDiv.addEventListener('mouseleave', function() {
+            mainDiv.style.backgroundColor = '';
+        });
+
+        mainDiv.addEventListener('click', function() {
+
+            //query selectors delve into different divs and can select the children of the childrens of parents (if you get what I mean)
+            console.log("Updating object details");
+            var itemDetails = mainDiv.querySelector('#itemDetails')
+            //var itemDetails = itemDiv.querySelector('#productDescription');
+            var itemPrice = itemDetails.querySelector('#productPrice').textContent;
+            var itemDesc = itemDetails.querySelector('#productDescription').textContent;
+            var itemURL = itemDetails.querySelector('#productURL').textContent;
+
+            selectedObject.userData.image = mainDiv.querySelector('#itemPhoto').src
+            selectedObject.userData.itemDescription = itemDesc;
+            selectedObject.userData.itemPrice = itemPrice;
+            selectedObject.userData.itemURL = itemURL;
+
+            // image
+            objectDescription.innerText = itemDesc;
+            objectPrice.innerText = itemPrice;
+            objectURL.innerText = itemURL;
+
+        });
+
+
+
         searchScrollPane.appendChild(mainDiv);
     })
 
@@ -415,17 +460,18 @@ function RevertDeselectedObject(){
 
 function DisplayObjectDetails(isDisplayed){
     if(isDisplayed){
-        document.getElementById('objectName').innerText = selectedObject.userData.objectName;
+
+        objectName.innerText = selectedObject.userData.objectName;
         // image
-        document.getElementById('objectDescription').innerText = selectedObject.userData.itemDescription;
-        document.getElementById('objectPrice').innerText = selectedObject.userData.itemPrice;
-        document.getElementById('objectURL').innerText = selectedObject.userData.itemURL;
+        objectDescription.innerText = selectedObject.userData.itemDescription;
+        objectPrice.innerText = selectedObject.userData.itemPrice;
+        objectURL.innerText = selectedObject.userData.itemURL;
     }else{
-        document.getElementById('objectName').innerText = "";
+        objectName.innerText = "";
         // image
-        document.getElementById('objectDescription').innerText = "";
-        document.getElementById('objectPrice').innerText = "";
-        document.getElementById('objectURL').innerText = "";
+        objectDescription.innerText = "";
+        objectPrice.innerText = "";
+        objectURL.innerText = "";
     }
     
 }
