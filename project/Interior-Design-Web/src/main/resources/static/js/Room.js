@@ -526,21 +526,18 @@ export function EnablePointPlacement(){
 
     // creation of the red indicator
     if(!hasSpriteIndicator){
-        hasSpriteIndicator = true;
-
-
-        const material = new THREE.SpriteMaterial( { color: 0xF00000 } );
-        spriteIndicator = new THREE.Sprite( material );
-        spriteIndicator.scale.set(2, 2, 1);
-        console.log("adding")
-        mainScene.add( spriteIndicator );
-
+        CreateSpriteIndicator();
     }
 
+}
 
-
-
-
+function CreateSpriteIndicator(){
+    hasSpriteIndicator = true;
+    const material = new THREE.SpriteMaterial( { color: 0xF00000 } );
+    spriteIndicator = new THREE.Sprite( material );
+    spriteIndicator.scale.set(2, 2, 1);
+    console.log("adding")
+    mainScene.add( spriteIndicator );
 }
 
 export function DisablePointPlacement(){
@@ -727,6 +724,9 @@ function DisplayingObjectData(isDisplayable){
         lengthObjects.forEach(element => {
             mainScene.add(element);
         });
+
+        mainScene.add(spriteIndicator);
+
         return;
     }
     wallLineObjects.forEach(element => {
@@ -738,6 +738,9 @@ function DisplayingObjectData(isDisplayable){
     lengthObjects.forEach(element => {
         mainScene.remove(element);
     });
+
+    mainScene.remove(spriteIndicator);
+
 
 }
 
