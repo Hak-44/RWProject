@@ -26,6 +26,7 @@ const imgLocation = "images/";
 
 var allObjectData = [];
 var sceneObjects = [];
+var models = [];
 var sceneObjectData = [];
 
 var editingObject = [];
@@ -116,6 +117,7 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
     isSideBarClicked = true;
 });
 
+
 document.getElementById('objectSearchButton').addEventListener('click', function(){
     var searchInput = document.getElementById('objectSearchInput').value;
     console.log(searchInput);
@@ -123,6 +125,32 @@ document.getElementById('objectSearchButton').addEventListener('click', function
     // do the rest of the inputs here if needed.
     console.log("Searching for "+searchInput);
     SearchForItems(searchInput);
+});
+
+document.getElementById('removeObjectButton').addEventListener('click', function(){
+    console.log("Removing object.")
+    console.log("selected id unique: "+selectedObject.userData.uniqueID);
+
+    console.log(sceneObjects);
+    console.log(models);
+    for (let i = 0; i < sceneObjects.length; i++){
+        console.log("current unique: " +sceneObjects[i].userData.uniqueID)
+        if(sceneObjects[i].userData.uniqueID == selectedObject.userData.uniqueID){
+            RevertDeselectedObject();
+            mainScene.remove(sceneObjects[i]);
+            mainScene.remove(models[i]);
+            sceneObjects.pop(sceneObjects[i]);
+            models.pop(models[i]);
+
+            activeClick = false;
+            rightSidebar.style.width = '0px';
+
+        }
+    }
+    console.log("After")
+    console.log(sceneObjects)
+    console.log(models)
+
 });
 
 // creating the json object that will be given after going through the
@@ -671,18 +699,20 @@ function LoadObject(name){
                         itemURL: allObjectData[index].itemURL,
                         queryPhrase: allObjectData[index].queryPhrase,
 
-                        sceneID: 4
+                        sceneID: 4,
+                        uniqueID: object.uuid
 
 
                     };
                     object.material.color.set( 0xffffff );
+                    mainScene.add( model );
+
 
                 }
 
             } );
-
-            mainScene.add( model );
-            sceneObjects.push(model);
+            models.push(model);
+            sceneObjects.push(object);
             console.log("Updating drag controller");
             // updating the drag controls to the new current list of objects
 
