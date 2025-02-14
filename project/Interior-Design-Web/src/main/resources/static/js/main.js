@@ -353,6 +353,7 @@ function createNewRoom(){
 // triggers the placement boolean in the room script
 function EnablePlacement(){
     if(isBuildMode) EnablePointPlacement();
+    document.getElementById('new-room-button').innerText = "Edit walls";
     console.log("Enabling pointer placements");
 }
 
