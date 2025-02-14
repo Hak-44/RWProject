@@ -87,6 +87,7 @@
 
 			}
 
+
 			.room-option-button{
 				width: 90px;
 				height: 50px;
@@ -140,7 +141,7 @@
 				width: 0px;
 				overflow-x: hidden;
 				height: 100vh;
-				max-height: 80vh;
+				max-height: 100vh;
 				margin-top: 80px;
 				margin-bottom: 50px;
 
@@ -164,6 +165,10 @@
 				flex-direction: column;
 			}
 
+			.objectImage{
+				width: 250px;
+				height: 200px;
+			}
 
 			.object-scrollpane{
 				display: none;
@@ -217,10 +222,11 @@
 
 			}
 
+			/* needed for the scroll search max */
 			.object-details-div{
 				display: flex;
 				flex-direction: column;
-				max-height: 80vh;
+				max-height: 98vh;
 				gap: 1em;
 			}
 
@@ -377,7 +383,7 @@
 							<label id="objectName">objectName</label>
 						</div>
 
-						<label id="objectImage">IMG</label>
+						<img src="" class="objectImage" id="objectImage">
 
 						<div class="object-details-section">
 							<label>Description</label>

@@ -67,7 +67,7 @@ const rightSidebar = document.getElementById('rightSidebar');
 
 
 const objectName = document.getElementById('objectName');
-// image
+const objectImage = document.getElementById('objectImage');
 const objectDescription = document.getElementById('objectDescription');
 const objectPrice = document.getElementById('objectPrice')
 const objectURL = document.getElementById('objectURL')
@@ -157,7 +157,6 @@ function DisplaySearchResults(items){
     items.forEach(item =>{
         var mainDiv = document.createElement('div');
         var horizontalDiv = document.createElement('div');
-        //var imgDiv = document.createElement('div');
         var detailDiv = document.createElement('div');
 
         // creation of elements for the information
@@ -223,12 +222,12 @@ function DisplaySearchResults(items){
             var itemDesc = itemDetails.querySelector('#productDescription').textContent;
             var itemURL = itemDetails.querySelector('#productURL').textContent;
 
-            selectedObject.userData.image = mainDiv.querySelector('#itemPhoto').src
+            selectedObject.userData.image = mainDiv.querySelector('#itemPhoto').src;
             selectedObject.userData.itemDescription = itemDesc;
             selectedObject.userData.itemPrice = itemPrice;
             selectedObject.userData.itemURL = itemURL;
 
-            // image
+            objectImage.src = mainDiv.querySelector('#itemPhoto').src;
             objectDescription.innerText = itemDesc;
             objectPrice.innerText = itemPrice;
             objectURL.innerText = itemURL;
@@ -463,12 +462,14 @@ function DisplayObjectDetails(isDisplayed){
 
         objectName.innerText = selectedObject.userData.objectName;
         // image
+        objectImage.src = selectedObject.userData.image;
         objectDescription.innerText = selectedObject.userData.itemDescription;
         objectPrice.innerText = selectedObject.userData.itemPrice;
         objectURL.innerText = selectedObject.userData.itemURL;
     }else{
         objectName.innerText = "";
         // image
+        objectImage.src = "";
         objectDescription.innerText = "";
         objectPrice.innerText = "";
         objectURL.innerText = "";
@@ -664,7 +665,7 @@ function LoadObject(name){
                         roomType: allObjectData[index].roomType,
                         extension: allObjectData[index].extension,
 
-                        image: allObjectData[index].image,
+                        image: imgLocation+allObjectData[index].image,
                         itemDescription: allObjectData[index].itemDescription,
                         itemPrice: allObjectData[index].itemPrice,
                         itemURL: allObjectData[index].itemURL,
