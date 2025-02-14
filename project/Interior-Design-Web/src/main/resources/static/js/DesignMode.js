@@ -32,6 +32,7 @@ var sceneObjectData = [];
 var editingObject = [];
 var hasEditingObject = false;
 var isSideBarClicked = false;
+var hasSearchBarBeenClicked = false;
 
 // outline objects
 var hoveredObject = null;
@@ -115,6 +116,10 @@ document.getElementById('backToObjectList').addEventListener('click', function()
 
 document.getElementById('rightSidebar').addEventListener('click', function(){
     isSideBarClicked = true;
+});
+
+document.getElementById('objectSearchInput').addEventListener('click', function(){
+    hasSearchBarBeenClicked = true;
 });
 
 
@@ -276,12 +281,20 @@ function DisplaySearchResults(items){
 document.addEventListener('keydown', function(event) {
     // G is the button that will move the object around that is selected
     if (event.key === 'g') {
+
+        // checks if the textfield for searching is still active, if so, return.
+        if(document.activeElement === document.getElementById('objectSearchInput')){
+            console.log("typing..")
+            return;
+        }
+
         // if this flag is true, it means the user has pressed G again, so release it
         if(hasEditingObject){
             dragControls.enabled = false;
             DetachTransformControls();
             ReleaseObject();
             EnableBothOrbitCameras();
+            if(selectedObject == null) rightSidebar.style.width = '0px';
 
             return;
         }
@@ -379,7 +392,7 @@ function DetachTransformControls(){
 
     mainScene.remove(transformHelp);
     transformHelp = null;
-    transformControls.enabled = false;
+    if(hasTransformControls) transformControls.enabled = false;
 }
 
 function FindHelperControls(){
@@ -474,6 +487,7 @@ function SelectTheObject(){
             //DisplayObjectDetails(false);
         }
         if(isSideBarClicked) isSideBarClicked = false;
+
     }
     console.log("Active click: "+activeClick)
 }
