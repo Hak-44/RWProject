@@ -127,6 +127,7 @@ document.getElementById('objectSearchButton').addEventListener('click', function
     SearchForItems(searchInput);
 });
 
+// currently not working, need to find another way....
 document.getElementById('removeObjectButton').addEventListener('click', function(){
     console.log("WIP.");
     // console.log("selected id unique: "+selectedObject.userData.uniqueID);
@@ -441,7 +442,7 @@ function SelectTheObject(){
     }
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
-
+        searchScrollPane.innerHTML = ''; // clearing the scroll pane for the next object.
         if(selectedObject != hoveredObject){
             // switch it to the new hovered object
             RevertDeselectedObject();
