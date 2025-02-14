@@ -348,6 +348,11 @@ function AddObjectToDragArray(){
 
 function ReleaseObject(){
     console.log("position: "+JSON.stringify(selectedObject.position));
+    //  depending on its position, if the object goes underneath the main plain, it will snap back to a reasonable y-axis
+    if(selectedObject.position.y < -0.45){
+        selectedObject.position.y = -0.45;
+
+    }
     console.log("Releasing object");
     hasEditingObject = false;
     editingObject = [];
