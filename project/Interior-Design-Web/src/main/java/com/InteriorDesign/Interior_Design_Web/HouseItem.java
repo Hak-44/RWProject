@@ -8,8 +8,9 @@ public class HouseItem extends NeutralObj{
     String itemDescription;
     float itemPrice;
     String itemURL;
+    String queryPhrase;
 
-    public HouseItem(String name, short objectType, short roomType, float width, float height, float depth, String image, String extension) {
+    public HouseItem(String name, short objectType, short roomType, float width, float height, float depth, String image, String extension, String queryPhrase) {
         super(objectType, roomType, width, height, depth, extension);
         this.name = name;
         this.image = image;
@@ -20,6 +21,7 @@ public class HouseItem extends NeutralObj{
         this.itemDescription = "None";
         this.itemPrice = 0.00f;
         this.itemURL = "N/A";
+        this.queryPhrase = queryPhrase;
 
     }
 

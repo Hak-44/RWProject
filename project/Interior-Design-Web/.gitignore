@@ -34,5 +34,7 @@ build/
 ### VS Code ###
 .vscode/
 
+#enviroment prop
 # enviromnet dev
+
 application-dev.properties

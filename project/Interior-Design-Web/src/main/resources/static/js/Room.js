@@ -38,6 +38,9 @@ var phantomLineObject;
 var phantomAngleTextObject;
 var phantomLengthTextObject;
 
+var spriteIndicator;
+var hasSpriteIndicator = false;
+
 // capturing the x and y axis on the screen
 var mouseCoordinate;
 var x_coordinates;
@@ -93,6 +96,18 @@ export function WallRayCast(scene, pointer, raycaster, currentCamera){
         // the Z coordinates is the y coordinates to the user as they are looking straight down towards the worldPlane
         y_coordinates = intersects[0].point.z;
 
+    }
+
+    // checks for an indicator, if there is one, then do the following
+    if(hasSpriteIndicator){
+        // if there is a placement, then you track the most recent coordinate
+        if(wallCoordinates.length >= 1){
+            spriteIndicator.position.set(wallCoordinates[wallCoordinates.length-1].x, 0, wallCoordinates[wallCoordinates.length-1].z);
+        }else{
+            // if not, track the mouse movement.
+            spriteIndicator.position.set(x_coordinates,0,y_coordinates);
+
+        }
     }
 
 
@@ -509,6 +524,20 @@ export function EnablePointPlacement(){
     isPlacingPoint = true;
     phantomClick = false;   // resets the phantomClick
 
+    // creation of the red indicator
+    if(!hasSpriteIndicator){
+        CreateSpriteIndicator();
+    }
+
+}
+
+function CreateSpriteIndicator(){
+    hasSpriteIndicator = true;
+    const material = new THREE.SpriteMaterial( { color: 0xF00000 } );
+    spriteIndicator = new THREE.Sprite( material );
+    spriteIndicator.scale.set(2, 2, 1);
+    console.log("adding")
+    mainScene.add( spriteIndicator );
 }
 
 export function DisablePointPlacement(){
@@ -695,6 +724,9 @@ function DisplayingObjectData(isDisplayable){
         lengthObjects.forEach(element => {
             mainScene.add(element);
         });
+
+        mainScene.add(spriteIndicator);
+
         return;
     }
     wallLineObjects.forEach(element => {
@@ -706,6 +738,9 @@ function DisplayingObjectData(isDisplayable){
     lengthObjects.forEach(element => {
         mainScene.remove(element);
     });
+
+    mainScene.remove(spriteIndicator);
+
 
 }
 

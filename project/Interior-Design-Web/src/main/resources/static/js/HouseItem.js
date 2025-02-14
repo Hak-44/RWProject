@@ -7,8 +7,9 @@ export class HouseItem extends NeutralObj{
     itemDescription;
     itemPrice;
     itemURL;
+    queryPhrase;
 
-    constructor(name, objectType, roomType, width, height, depth, image, extension) {
+    constructor(name, objectType, roomType, width, height, depth, image, extension, queryPhrase) {
         super(objectType, roomType, width, height, depth, extension);
         this.name = name;
         this.image = image;
@@ -21,6 +22,7 @@ export class HouseItem extends NeutralObj{
         this.itemDescription = "None";
         this.itemPrice = 0.00;
         this.itemURL = "N/A";
+        this.queryPhrase = queryPhrase
 
     }
 

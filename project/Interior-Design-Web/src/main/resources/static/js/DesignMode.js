@@ -26,10 +26,12 @@ const imgLocation = "images/";
 
 var allObjectData = [];
 var sceneObjects = [];
+var models = [];
 var sceneObjectData = [];
 
 var editingObject = [];
 var hasEditingObject = false;
+var isSideBarClicked = false;
 
 // outline objects
 var hoveredObject = null;
@@ -60,8 +62,18 @@ const roomTypeLabel = document.getElementById('objectTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
-
+const searchScrollPane = document.getElementById('searchScrollPane');
 const rightSidebar = document.getElementById('rightSidebar');
+
+
+
+const objectName = document.getElementById('objectName');
+const objectImage = document.getElementById('objectImage');
+const objectDescription = document.getElementById('objectDescription');
+const objectPrice = document.getElementById('objectPrice')
+const objectURL = document.getElementById('objectURL')
+
+
 
 // each button will pass through their own unique value, displaying the correct format of the menu
 document.getElementById('addFurniture').addEventListener('click', function(){
@@ -100,6 +112,165 @@ document.getElementById('bedroomButton').addEventListener('click', function(){
 document.getElementById('backToObjectList').addEventListener('click', function(){
     HideObjectList();
 });
+
+document.getElementById('rightSidebar').addEventListener('click', function(){
+    isSideBarClicked = true;
+});
+
+
+document.getElementById('objectSearchButton').addEventListener('click', function(){
+    var searchInput = document.getElementById('objectSearchInput').value;
+    console.log(searchInput);
+    searchInput = searchInput + " " +selectedObject.userData.queryPhrase;
+    // do the rest of the inputs here if needed.
+    console.log("Searching for "+searchInput);
+    SearchForItems(searchInput);
+});
+
+// currently not working, need to find another way....
+document.getElementById('removeObjectButton').addEventListener('click', function(){
+    console.log("WIP.");
+    // console.log("selected id unique: "+selectedObject.userData.uniqueID);
+    //
+    // console.log(sceneObjects);
+    // console.log(models);
+    // for (let i = 0; i < sceneObjects.length; i++){
+    //     console.log("current unique: " +sceneObjects[i].userData.uniqueID)
+    //     if(sceneObjects[i].userData.uniqueID == selectedObject.userData.uniqueID){
+    //         RevertDeselectedObject();git s
+    //         mainScene.remove(sceneObjects[i]);
+    //         mainScene.remove(models[i]);
+    //         sceneObjects.pop(sceneObjects[i]);
+    //         models.pop(models[i]);
+    //
+    //         activeClick = false;
+    //         rightSidebar.style.width = '0px';
+    //
+    //     }
+    // }
+    // console.log("After")
+    // console.log(sceneObjects)
+    // console.log(models)
+
+});
+
+// creating the json object that will be given after going through the
+function SearchForItems(searchInput){
+
+    const searchJSON = {
+        query: searchInput
+    }
+    console.log("Sending: "+JSON.stringify(searchJSON));
+
+    fetch('/rapidAPI', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchJSON),
+    })
+        .then(response => response.json())
+        .then((data) => {
+            if(data){
+                DisplaySearchResults(data.data.products);
+            }
+        })
+        .catch(error => {
+            // handle any errors that occur during the fetch request
+            console.log("[CLIENT] - Error occured: "+error)
+        });
+}
+
+function DisplaySearchResults(items){
+
+
+
+    items.forEach(item =>{
+        var mainDiv = document.createElement('div');
+        var horizontalDiv = document.createElement('div');
+        var detailDiv = document.createElement('div');
+
+        // creation of elements for the information
+        var photoSRC = document.createElement('img');
+        var descLabel = document.createElement('label');
+        var priceLabel = document.createElement('label');
+        var urlLabel = document.createElement('label');
+
+        // width of the picture
+        photoSRC.src = item.product_photo;
+        photoSRC.width = 128; //180
+        photoSRC.height = 128; //256
+        photoSRC.id = "itemPhoto";
+
+        //inserted the text for the appropriate divs
+        descLabel.innerText = item.product_title.toString();
+        descLabel.id = "productDescription";
+
+        priceLabel.innerText = item.product_price.toString();
+        priceLabel.id = "productPrice";
+
+        urlLabel.innerText = item.product_url;
+        urlLabel.id = "productURL";
+
+        // setting the div to flex column, so the details are displayed as a column
+        detailDiv.id = "itemDetails";
+        detailDiv.style.display = "flex";
+        detailDiv.style.flexDirection = "column";
+
+        // setting the div to flex row so the information is next to the img div on the right
+        horizontalDiv.style.display = "flex";
+        horizontalDiv.style.gap = "1em";
+        horizontalDiv.style.flexDirection = "row";
+        horizontalDiv.style.width = "100%"; // makes it share it
+
+        mainDiv.style.width = "100%";   // match the right side div
+
+        detailDiv.appendChild(descLabel);
+        detailDiv.appendChild(priceLabel);
+        detailDiv.appendChild(urlLabel);
+
+        horizontalDiv.appendChild(photoSRC);
+        horizontalDiv.appendChild(detailDiv);
+
+        mainDiv.appendChild(horizontalDiv);
+
+        // event listeners for hovering over the div and leaving the div, which simply changes the colour of it.
+        mainDiv.addEventListener('mouseenter', function() {
+            mainDiv.style.backgroundColor = 'cyan';
+        });
+
+        mainDiv.addEventListener('mouseleave', function() {
+            mainDiv.style.backgroundColor = '';
+        });
+
+        mainDiv.addEventListener('click', function() {
+
+            //query selectors delve into different divs and can select the children of the childrens of parents (if you get what I mean)
+            console.log("Updating object details");
+            var itemDetails = mainDiv.querySelector('#itemDetails')
+            //var itemDetails = itemDiv.querySelector('#productDescription');
+            var itemPrice = itemDetails.querySelector('#productPrice').textContent;
+            var itemDesc = itemDetails.querySelector('#productDescription').textContent;
+            var itemURL = itemDetails.querySelector('#productURL').textContent;
+
+            selectedObject.userData.image = mainDiv.querySelector('#itemPhoto').src;
+            selectedObject.userData.itemDescription = itemDesc;
+            selectedObject.userData.itemPrice = itemPrice;
+            selectedObject.userData.itemURL = itemURL;
+
+            objectImage.src = mainDiv.querySelector('#itemPhoto').src;
+            objectDescription.innerText = itemDesc;
+            objectPrice.innerText = itemPrice;
+            objectURL.innerText = itemURL;
+
+        });
+
+
+
+        searchScrollPane.appendChild(mainDiv);
+    })
+
+    searchScrollPane.style.display = 'flex';
+}
+
 
 // adding an event listener that will check for keyboard inputs
 document.addEventListener('keydown', function(event) {
@@ -271,6 +442,7 @@ function SelectTheObject(){
     }
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
+        searchScrollPane.innerHTML = ''; // clearing the scroll pane for the next object.
         if(selectedObject != hoveredObject){
             // switch it to the new hovered object
             RevertDeselectedObject();
@@ -283,18 +455,20 @@ function SelectTheObject(){
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
             DisplayObjectDetails(true); // display te details
-            rightSidebar.style.width = '300px';
+            rightSidebar.style.width = '500px';
 
         }
         console.log("Object: "+selectedObject.userData.objectName);
     }else{
         // clicked off the object, so remove it from the selected variable
-        if(!hasEditingObject){
+
+        if(!hasEditingObject && !isSideBarClicked){
             activeClick = false;
             RevertDeselectedObject();
             if(selectedObject == null) rightSidebar.style.width = '0px';
             //DisplayObjectDetails(false);
         }
+        if(isSideBarClicked) isSideBarClicked = false;
     }
     console.log("Active click: "+activeClick)
 }
@@ -314,17 +488,20 @@ function RevertDeselectedObject(){
 
 function DisplayObjectDetails(isDisplayed){
     if(isDisplayed){
-        document.getElementById('objectName').innerText = selectedObject.userData.objectName;
+
+        objectName.innerText = selectedObject.userData.objectName;
         // image
-        document.getElementById('objectDescription').innerText = selectedObject.userData.itemDescription;
-        document.getElementById('objectPrice').innerText = selectedObject.userData.itemPrice;
-        document.getElementById('objectURL').innerText = selectedObject.userData.itemURL;
+        objectImage.src = selectedObject.userData.image;
+        objectDescription.innerText = selectedObject.userData.itemDescription;
+        objectPrice.innerText = selectedObject.userData.itemPrice;
+        objectURL.innerText = selectedObject.userData.itemURL;
     }else{
-        document.getElementById('objectName').innerText = "";
+        objectName.innerText = "";
         // image
-        document.getElementById('objectDescription').innerText = "";
-        document.getElementById('objectPrice').innerText = "";
-        document.getElementById('objectURL').innerText = "";
+        objectImage.src = "";
+        objectDescription.innerText = "";
+        objectPrice.innerText = "";
+        objectURL.innerText = "";
     }
     
 }
@@ -383,12 +560,12 @@ function loadObjectsInList(){
 
 function CacheObjectData(){
     livingRoomItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
         allObjectData.push(houseItem);
     });
 
     kitchenItems.forEach(obj => {
-        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension);
+        const houseItem = new HouseItem(obj.name, obj.objectType, obj.roomType, obj.width, obj.height, obj.depth, obj.image, obj.extension, obj.queryPhrase);
         allObjectData.push(houseItem);
     });
 
@@ -517,23 +694,26 @@ function LoadObject(name){
                         roomType: allObjectData[index].roomType,
                         extension: allObjectData[index].extension,
 
-                        image: allObjectData[index].image,
+                        image: imgLocation+allObjectData[index].image,
                         itemDescription: allObjectData[index].itemDescription,
                         itemPrice: allObjectData[index].itemPrice,
                         itemURL: allObjectData[index].itemURL,
+                        queryPhrase: allObjectData[index].queryPhrase,
 
-                        sceneID: 4
+                        sceneID: 4,
+                        uniqueID: object.uuid
 
 
                     };
                     object.material.color.set( 0xffffff );
+                    mainScene.add( model );
+
 
                 }
 
             } );
-
-            mainScene.add( model );
-            sceneObjects.push(model);
+            models.push(model);
+            sceneObjects.push(object);
             console.log("Updating drag controller");
             // updating the drag controls to the new current list of objects
 

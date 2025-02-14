@@ -87,6 +87,7 @@
 
 			}
 
+
 			.room-option-button{
 				width: 90px;
 				height: 50px;
@@ -135,12 +136,12 @@
 				display: flex;
 
 				flex-direction: column;
-				justify-content: center;
+
 
 				width: 0px;
 				overflow-x: hidden;
 				height: 100vh;
-				max-height: 80vh;
+				max-height: 100vh;
 				margin-top: 80px;
 				margin-bottom: 50px;
 
@@ -164,6 +165,10 @@
 				flex-direction: column;
 			}
 
+			.objectImage{
+				width: 250px;
+				height: 200px;
+			}
 
 			.object-scrollpane{
 				display: none;
@@ -177,6 +182,8 @@
 				overflow-y: auto;
 
 			}
+
+
 
 			.object-item{
 				background-color: cornflowerblue;
@@ -212,11 +219,39 @@
 			.object-menu-options{
 				display: flex;
 				flex-direction: column;
+
 			}
 
+			/* needed for the scroll search max */
 			.object-details-div{
 				display: flex;
 				flex-direction: column;
+				max-height: 98vh;
+				gap: 1em;
+			}
+
+			.object-details-section{
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Used for the object search bar */
+			.object-search-div{
+				display: flex;
+				flex-direction: row;
+			}
+
+			.search-scrollpane{
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				max-width: 100vw;
+				max-height: 40em;
+				margin-top: 20px;
+				margin-bottom: 20px;
+
+				overflow-y: auto;
+
 			}
 
 
@@ -343,17 +378,45 @@
 					<!-- given the same class as they should be treated the same in terms of styling-->
 
 					<div class="object-details-div" id="objectDetails">
-						<label id="objectName">objectName</label>
-						<label id="objectImage">IMG</label>
-						<label id="objectDescription">description</label>
-						<label id="objectPrice">price</label>
-						<label id="objectURL">url</label>
+						<div class="object-details-section">
+							<label>Object name</label>
+							<label id="objectName">objectName</label>
+						</div>
+
+						<img src="" class="objectImage" id="objectImage">
+
+						<div class="object-details-section">
+							<label>Description</label>
+							<label id="objectDescription">description</label>
+						</div>
+
+						<div class="object-details-section">
+							<label>Price</label>
+							<label id="objectPrice">price</label>
+						</div>
+
+						<div class="object-details-section">
+							<label>URL</label>
+							<label id="objectURL">url</label>
+						</div>
+
+						<div class="objectMenuButton" id="editObject" >Edit</div>
+						<div class="objectMenuButton" id="removeObjectButton">Remove</div>
+
+						<div class="objectMenuButton" id="searchForItem" >Search for item</div>
+						<div class="object-search-div">
+							<input type="text" placeholder="Search for item.." id="objectSearchInput">
+							<button class="object-search-button" id="objectSearchButton">Search</button>
+						</div>
+
+						<div class="search-scrollpane" id="searchScrollPane"></div>
+
 					</div>
 
 
-					<div class="objectMenuButton" id="removeObject">Remove</div>
-					<div class="objectMenuButton" id="searchForItem" >Search for item</div>
-					<div class="objectMenuButton" id="editObject" >Edit</div>
+
+
+
 
 				</div>
 
