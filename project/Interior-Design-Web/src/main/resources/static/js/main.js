@@ -18,7 +18,7 @@ document.body.appendChild( renderer.domElement );
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xf8f8f8 ); // background colour of 3D env
 
-// adding gray colour fog to the scene allows better visibality with certain colours
+// adding gray colour fog to the scene allows better visibility with certain colours
 //scene.fog = new THREE.Fog(0xD3D3D3, 0.0025, 500);
 
 
@@ -118,8 +118,8 @@ function CameraLeveling(){
 
 // -------------------- RAY CASTING (POINTING ON SCREEN WITH MOUSE) --------------------
 
-let isBuildMode;    // this boolean is used to notify if the user is using buildmod, which is for wall editing
-let isDesignMode;
+let isBuildMode = false;    // this boolean is used to notify if the user is using buildmod, which is for wall editing
+let isDesignMode = false;
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector3();
@@ -185,7 +185,8 @@ function CheckMode(){
         AddPoint(scene);
         return;
     }
-
+    console.log("isBuildMode: "+isBuildMode);
+    console.log("isDesignMode: "+isDesignMode);
     if(isDesignMode){
         GetObjectSelected();
     }
@@ -234,6 +235,7 @@ function MouseRaycast(){
 document.getElementById('changeCameraPerspectiveDiv').addEventListener('click', changeCamPerspective);
 function changeCamPerspective(){
 
+
     if(!is2D || isBuildMode){   // isBuldMode is the wall editing mode
         is2D = true;
         currentCamera = skyCamera;
@@ -243,7 +245,7 @@ function changeCamPerspective(){
         EnableCameraControls();
         //skyCamera.position = orbitCamera.position;
 
-    }else{
+    }else {
         is2D = false;
         skyControls.enabled = false;
         controls.enabled = true;
@@ -276,11 +278,21 @@ export function EnableBothOrbitCameras(){
 
 document.getElementById('createRoomDiv').addEventListener('click', ChangeRoomDivButton);
 document.getElementById('new-room-button').addEventListener('click', createNewRoom);
+
+document.getElementById('load-room-button').addEventListener('click', test);
+
 document.getElementById('newWallButton').addEventListener('click', EnablePlacement);    //
 document.getElementById('removeWallButton').addEventListener('click', RemovePreviousWall);
 document.getElementById('cancelWallButton').addEventListener('click', ClearWallSetup);
 
 document.getElementById('finishWallButton').addEventListener('click', ConfirmWalls);
+
+
+function test() {
+
+
+
+}
 
 
 function ChangeRoomDivButton(){
@@ -336,6 +348,8 @@ function ChangeNavBarVisibility(shouldBeVisible){
 
 function createNewRoom(){
 
+    isBuildMode = true; // enables the lock on the skyCamera
+    isDesignMode = false;   //disables the raycasting for the design mode
     if(getWallCount() > 0){
         RemoveWalls();
         SwitchMenuOptions(false);
@@ -343,8 +357,7 @@ function createNewRoom(){
     changeCamPerspective(); // changing the perspective so drawing walls is easier.
     document.getElementById("leftSidebar").style.width = "120px";   // altering the width of the sidebar, making it appear
     ChangeRoomDivButton();
-    isBuildMode = true; // enables the lock on the skyCamera
-    isDesignMode = false;   //disables the raycasting for the design mode
+
     PassScene(scene);
     document.getElementById('topNavBar2nd').style.height = "0px";
     HideDesignBar();    // hiding the bar from the desingMode module

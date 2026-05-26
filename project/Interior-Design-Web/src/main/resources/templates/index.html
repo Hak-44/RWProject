@@ -1,471 +1,647 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<style>
+<head>
+	<meta charset="utf-8">
+	<title>My first three.js app</title>
+	<style>
 
-			/* Root used for colours and general variables*/
-			:root{
-				--divOptionColour:  rgb(14, 42, 65);
-				--divSelectedColour:  rgb(32, 81, 121);
-				--regularTextColour: rgba(240, 255, 255, 0.548);
-				--selectedTextColour: rgba(240, 255, 255, 0.945);
+		/* Root used for colours and general variables*/
+		:root{
+			--divOptionColour:  rgb(14, 42, 65);
+			--divSelectedColour:  rgb(32, 81, 121);
+			--regularTextColour: rgba(240, 255, 255, 0.548);
+			--selectedTextColour: rgba(240, 255, 255, 0.945);
 
-				--topNavHeightExpansion: 80px;
-				--leftSideBarExpansion: 120px;
+			--topNavHeightExpansion: 95px;
+			--leftSideBarExpansion: 120px;
 
-				--leftSide2ndMaxWidth: 180px;
+			--leftSide2ndMaxWidth: 120px;
 
-			}
+			--bottomNavHeightExmapsion: 240px;
 
-			.left-boarder{
-				display: flex;
-				justify-content: center;
-			}
+			--livingRoomButtonColour: rgb(237 100 100);
+			--kitchenButtonColour: rgb(227 201 67 / 0.82);
+			--bathroomButtonColour: rgba(0, 185, 232, 0.82);
+			--bedroomButtonColour: rgb(189, 107, 235);
 
-			.top-navbar-div{
-				position: fixed;	/* places the bar exactly where it should be, preventing any movement when new elements are added */
-				display: flex;
+			--leftSide1stBackgroundColour: #bdc3c3;
 
-				flex-direction: row;
-				justify-content: center;
+		}
 
-				width: 100vw;
-				overflow-x: hidden;
-				height: var(--topNavHeightExpansion);	/*covers the entire screen size*/
-				max-width: 90vw;          /* Places a maximun width of 80px, so any width larger that that gets capped */
-				margin-right: 50px;          /* Add space ato the sides */
-				margin-left: 50px;
+		.left-boarder{
+			display: flex;
+			justify-content: center;
+		}
 
+		.top-navbar-div{
+			position: fixed;	/* places the bar exactly where it should be, preventing any movement when new elements are added */
+			display: flex;
 
-				/*border-bottom-style: dotted;	!* temporary dots so I know where the border ends *!*/
-				/*border-bottom-width: 1px;*/
+			flex-direction: row;
+			justify-content: center;
 
-				transition: height 0.3s;
-				overflow-y: hidden;
-			}
-
-			.top-nav-1st{
-				margin-top: 0px;
-			}
-
-			.top-nav-2nd{
-				margin-top: var(--topNavHeightExpansion);
-				height: 0px;	/*covers the entire screen size*/
-
-			}
-
-			.main-Option{
-				padding: 5px;
-				margin: 10px;
-				display: flex;
-				flex-direction: row;
-				gap: 5px; /* Gap between the button div */
-
-				text-align: center;
-			}
-
-			.main-option-button{
-				display: flex;
-				flex-direction: column;
-				background-color: var(--divOptionColour);
-				width: 90px;
-				height: 70px;
-
-			}
-
-			.room-Options{
-				width: 90px;
-				height: 50px;
-			}
-
-			/* Div that displays the options (new / load room) */
-			.room-option-div{
-				display: none;
-				background-position: center;
-				justify-content: center;
-				align-items: center;
-
-				text-align: center;
-
-			}
+			width: 100vw;
+			overflow-x: hidden;
+			height: var(--topNavHeightExpansion);	/*covers the entire screen size*/
+			max-width: 90vw;          /* Places a maximum width of 80px, so any width larger that that gets capped */
+			margin-right: 50px;          /* Add space to the sides */
+			margin-left: 50px;
 
 
-			.room-option-button{
-				display: flex;
-				flex-direction: column;
-				width: 90px;
-				height: 70px;
+			/*border-bottom-style: dotted;*/	/*!* temporary dots so I know where the border ends *!*/
+			border-bottom-width: 1px;
 
-			}
+			transition: height 0.3s;
+			overflow-y: hidden;
+		}
 
-			.new-room-div{
-				background-color: rgba(127, 136, 255, 0.719);
-			}
+		.top-nav-1st{
+			margin-top: 0px;
+		}
 
-			.load-room-div{
-				background-color: rgb(80, 165, 180);
-			}
+		.top-nav-2nd{
+			margin-top: var(--topNavHeightExpansion);
+			height: 0px;	/*covers the entire screen size*/
 
-			/* Side bar for the insert options */
-			.left-sidebar-div{
-				position: fixed;	/*places the bar exactly where it should be, preventing any movement when new elements are added */
-				display: flex;
-				/* places them in the center, so when adding new elements, will center
-					them in a column.*/
-				flex-direction: column;
-				justify-content: center;
+		}
 
-				width: 0px;
-				overflow-x: hidden;
-				height: 100vh;	/*covers the entire screen size*/
-				max-height: 80vh;          /* Places a maximun height of 80px, so any height larger that that gets capped */
-				margin-top: 80px;          /* Add space at the top of the sidebar */
-				margin-bottom: 50px;
+		.main-Option{
+			padding: 5px;
+			margin: 10px;
+			display: flex;
+			flex-direction: row;
+			gap: 5px; /* Gap between the button div */
 
-				/*border-right-style: dotted;	!* temporary dots so I know where the border ends *!*/
-				/*border-right-width: 1px;*/
+			text-align: center;
+		}
 
-				/* ref: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sidenav_push_opacity */
-				transition: width 0.3s;	/* Transition of the appearance when the width changes on clicking the
+		.main-option-button{
+			display: flex;
+			flex-direction: column;
+			background-color: var(--divOptionColour);
+			width: 90px;
+			height: 70px;
+			border-radius: 15px;
+
+		}
+
+		.room-Options{
+			width: 90px;
+			height: 50px;
+		}
+
+		/* Div that displays the options (new / load room) */
+		.room-option-div{
+			padding: 5px;
+			margin: 10px;
+			display: flex;
+			flex-direction: row;
+			gap: 5px; /* Gap between the button div */
+
+			text-align: center;
+
+		}
+
+
+		.room-option-button{
+			display: flex;
+			flex-direction: column;
+			width: 90px;
+			height: 70px;
+			border-radius: 15px;
+
+		}
+
+		.new-room-div{
+			background-color: rgba(127, 136, 255, 0.719);
+		}
+
+		.load-room-div{
+			background-color: rgb(80, 165, 180);
+		}
+
+		/* Side bar for the insert options */
+		.left-sidebar-div{
+			position: fixed;	/*places the bar exactly where it should be, preventing any movement when new elements are added */
+			display: flex;
+			/* places them in the center, so when adding new elements, will center
+                them in a column.*/
+			flex-direction: column;
+			justify-content: center;
+
+			width: 0;
+			overflow-x: hidden;
+			height: 100vh;	/*covers the entire screen size*/
+			max-height: 80vh;          /* Places a maximun height of 80px, so any height larger that that gets capped */
+			margin-top: 80px;          /* Add space at the top of the sidebar */
+			margin-bottom: 50px;
+
+			/*border-right-style: dotted;	!* temporary dots so I know where the border ends *!*/
+			/*border-right-width: 1px;*/
+
+			/* ref: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sidenav_push_opacity */
+			transition: width 0.3s;	/* Transition of the appearance when the width changes on clicking the
 				new room button. This is the reason why its at 0. The transition between 0 and the set value in the javascript
 				will be done in the specified time above.*/
 
-			}
+			/*background-color: var(--leftSide1stBackgroundColour);*/
+		}
 
-			/* Right navigation bar for the object information. */
-			/* https://www.w3schools.com/w3css/w3css_sidebar.asp */
-			.right-sidebar-div{
-				right: 0;	/* Displays the bar to the right instead of the left */
-				position: fixed;
-				display: flex;
+		/* Right navigation bar for the object information. */
+		/* https://www.w3schools.com/w3css/w3css_sidebar.asp */
+		.right-sidebar-div{
+			right: 0;	/* Displays the bar to the right instead of the left */
+			position: fixed;
+			display: flex;
 
-				flex-direction: column;
+			flex-direction: column;
 
 
-				width: 0px;
-				overflow-x: hidden;
-				height: 100vh;
-				max-height: 100vh;
-				margin-top: 80px;
-				margin-bottom: 50px;
+			width: 0px;
+			overflow-x: hidden;
+			height: 100vh;
+			max-height: 100vh;
+			margin-top: 80px;
+			margin-bottom: 50px;
 
-				/*border-left-style: dotted;*/
-				/*border-left-width: 1px;*/
+			/*border-left-style: dotted;*/
+			/*border-left-width: 1px;*/
 
-				transition: width 0.3s;
+			transition: width 0.3s;
 
-			}
-
-			/* Side bar for the insert options */
-			.left-sidebar-2nd{
-				margin-left: 120px;
-				width: 0px;
+		}
 
-			}
+		/* Side bar for the insert options */
+		.left-sidebar-2nd{
+			margin-left: 120px;
+			width: 0px;
 
-			/* div that contains the list such as kitchen, bedroom etc*/
-			.object-type-options{
-				display: flex;
-				flex-direction: column;
-
-				gap: 10px; /* Gap between the button div */
+		}
 
-				text-align: center;
+		/* div that contains the list such as kitchen, bedroom etc*/
+		.object-type-options{
+			flex-direction: column;
+			align-items: center;
 
 
-			}
+			gap: 10px; /* Gap between the button div */
 
-			.objectImage{
-				display: block;
-				margin-left: auto;
-				margin-right: auto;
-				width: 250px;
-				height: 200px;
-			}
+			text-align: center;
 
-			.object-scrollpane{
-				display: none;
-				flex-direction: column;
-				align-items: center;
-				max-width: 100vw;
-				max-height: 40em;
-				margin-top: 20px;
-				margin-bottom: 20px;
 
-				overflow-y: auto;
+		}
 
-			}
+		.objectImage{
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			width: 250px;
+			height: 200px;
+		}
 
+		.object-scrollpane{
+			display: none;
+			flex-direction: row;
+			align-items: center;
+			margin: 30px;
 
 
-			.object-item{
-				background-color: cornflowerblue;
-				border: 1px solid #ddd;
-				width: 100px;
-				height: 100px;
-				background-color: #a5c8d6;
-				padding: 12px;
-			}
+			overflow-y: auto;
+			gap: 80px;
 
+		}
 
-			.wall-Options{
-				padding: 5px;
-				margin: 10px;
-				display: flex;
-				flex-direction: column;
-				gap: 10px; /* Gap between the button div */
 
-				text-align: center;
-			}
 
-			.design-Options{
-				padding: 5px;
-				margin: 10px;
-				display: none;
-				flex-direction: column;
-				gap: 10px; /* Gap between the button div */
-
-				text-align: center;
-			}
-
-			/* Object menu for the right side of the screen. */
-			.object-menu-options{
-				text-align: center;
-				display: flex;
-				flex-direction: column;
+		.object-item{
+			background-color: cornflowerblue;
+			border: 1px solid #ddd;
+			width: 100px;
+			height: 100px;
+			background-color: #a5c8d6;
+			padding: 12px;
+		}
 
-			}
 
-			/* needed for the scroll search max */
-			.object-details-div{
-				display: flex;
-				flex-direction: column;
-				max-height: 98vh;
-				gap: 1em;
-			}
-
-			.object-details-section{
-				display: flex;
-				flex-direction: column;
-			}
+		.wall-Options{
+			padding: 5px;
+			margin: 10px;
+			display: flex;
+			flex-direction: column;
+			gap: 10px; /* Gap between the button div */
 
-			/* Used for the object search bar */
-			.object-search-div{
-				display: flex;
-				flex-direction: row;
-				margin-left: auto;
-				margin-right: auto;
+			text-align: center;
+			background-color: var(--leftSide1stBackgroundColour);
+		}
 
-			}
+		.design-Options{
+			padding: 5px;
+			margin: 10px;
+			display: none;
+			flex-direction: column;
+			gap: 10px; /* Gap between the button div */
 
-			.search-scrollpane{
-				display: none;
-				flex-direction: column;
-				align-items: center;
-				max-width: 100vw;
-				max-height: 40em;
-				margin-top: 20px;
-				margin-bottom: 20px;
+			text-align: center;
+			border-radius: 10px;
+			background-color: var(--leftSide1stBackgroundColour);
 
-				overflow-y: auto;
+			align-content: center;
+		}
 
-			}
+		.designOption{
 
+			width: 90px;
+			height: 90px;
+			border-radius: 10px;
+			background-color: var(--divOptionColour);
+			color: var(--regularTextColour);
 
-			.wallButton{
-				background-color: rgb(201, 231, 227);
-			}
+		}
 
-			/* the finish wall button will get displayed whenever ther is at least one wall visible*/
-			#finishWallButton{
-				display: none;
-				flex-direction: column;
-				text-align: center;
+		.object-type-Button{
 
-			}
+			width: 90px;
+			height: 90px;
+			border-radius: 10px;
 
-			body {
-				margin: 0;
-				font-family: sans-serif, Helvetica, Arial;
+			text-align: center;
+		}
 
-			}
 
-		</style>
 
-		<script type="importmap">
-			{
-              "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
-              }
-            }
-		</script>
-	</head>
-	<body>
+		#livingRoomButton{
+			background-color: var(--livingRoomButtonColour);;
+		}
 
-		<div id="left-boarder" style="position: absolute;">
+		#kitchenButton{
+			background-color: var(--kitchenButtonColour);;
+		}
 
-			<div class="wrap">
-				<!-- side bar that will dispaly the options -->
-				<div class="left-sidebar-div leftSide1st" id="leftSidebar" style="background: slategray">
+		#bathroomButton{
+			background-color: var(--bathroomButtonColour);;
+		}
 
-					<!-- wall options for the side bar-->
-					<div class="wall-Options" id="wallOptions">
-						<!-- given the same class as they should be treated the same in terms of styling-->
-						<div class="wallButton" id="newWallButton">New wall</div>
-						<div class="wallButton" id="removeWallButton">Remove last wall</div>
-						<div class="wallButton" id="finishWallButton">Finish</div>
-						<div class="wallButton" id="cancelWallButton">Clear</div>
+		#bedroomButton{
+			background-color: var(--bedroomButtonColour);;
+		}
 
-					</div>
 
-					<div class="design-Options" id="designOptions">
-						<!-- given the same class as they should be treated the same in terms of styling-->
-						<div class="designOption" id="addFurniture" >Furniture</div>
-						<div class="designOption" id="addDecor" >Decoration</div>
-						<div class="designOption" id="addDoor" >Doors</div>
-						<div class="designOption" id="addWindow">Windows</div>
 
-					</div>
+		/* Object menu for the right side of the screen. */
+		.object-menu-options{
+			text-align: center;
+			display: flex;
+			flex-direction: column;
 
+		}
 
-				</div>
+		/* needed for the scroll search max */
+		.object-details-div{
+			display: flex;
+			flex-direction: column;
+			max-height: 98vh;
+			gap: 1em;
+		}
 
+		.desc-price-details-section{
+			display: flex;
+			flex-direction: column;
+			align-self: flex-start;
+			margin-top: 0;
+			width: 50%;
+			max-height: 200px;
+		}
 
+		.object-details-section{
+			display: flex;
+			flex-direction: column;
+			margin-top: 0;
+			width: 100%;
 
-				<div class="left-sidebar-div left-sidebar-2nd" id="leftSidebar2nd">
+		}
 
-					<!-- wall options for the side bar-->
-					<label class="objectTypeLabel" id="objectTypeLabelName" style="text-align: center">Label</label>
-					<div class="object-type-options" id="objectOptions">
-						<div class="object-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
-						<div class="object-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
-						<div class="object-type-Button" id="bathroomButton" onclick="ShowBathroomObjects()">Bathroom</div>
-						<div class="object-type-Button" id="bedroomButton" onclick="ShowBedroomObjects()">Bedroom</div>
-					</div>
 
-					<div class="obj-container">
+		#objectDescription{
+			display: block;
+			word-wrap: break-word;
+			white-space: normal;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
 
-						<div class="object-scrollpane" id="objectScrollPane">
+		/* Used for the object search bar */
+		.object-search-div{
+			display: flex;
+			flex-direction: row;
+			margin-left: auto;
+			margin-right: auto;
 
+		}
 
-						</div>
+		.search-scrollpane{
+			display: none;
+			flex-direction: column;
+			align-items: center;
+			max-width: 100vw;
+			max-height: 40em;
+			margin-top: 20px;
+			margin-bottom: 20px;
 
-					</div>
+			overflow-y: auto;
 
-					<div class="back-To-Object-Menu" id="backToObjectList" style="text-align: center">Back</div>
+		}
 
 
-				</div>
 
+
+		.wallButton{
+
+			width: 90px;
+			height: 90px;
+			border-radius: 10px;
+
+			background-color: rgb(128 181 178);
+		}
+
+		/* the finish wall button will get displayed whenever ther is at least one wall visible*/
+		#finishWallButton{
+			display: none;
+			flex-direction: column;
+			text-align: center;
+
+		}
+
+
+
+
+		.bottom-bar-div{
+			position: fixed;	/* places the bar exactly where it should be, preventing any movement when new elements are added */
+			bottom: 0;
+
+
+			width: 100vw;
+			overflow-x: hidden;
+			height: 0;	/*covers the entire screen size*/
+			max-width: 90vw;          /* Places a maximun width of 80px, so any width larger that that gets capped */
+			margin-right: 50px;          /* Add space ato the sides */
+			margin-left: 70px;
+
+
+			/*border-bottom-style: dotted;*/	/*!* temporary dots so I know where the border ends *!*/
+			border-bottom-width: 1px;
+
+			transition: height 0.3s;
+			overflow-y: hidden;
+			background-color: var(--leftSide1stBackgroundColour);
+			border-radius: 15px;
+
+		}
+
+
+		.description-scrollpane{
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+
+		#optionTypeName{
+			font-size: 20px;
+		}
+
+		.obj-container{
+			width: 100%;
+			margin-left: auto;
+		}
+
+
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #f1f1f1;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #888;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+
+		.Section_1{
+			display: flex;
+			flex-direction: row;
+		}
+
+
+
+		body {
+			margin: 0;
+			font-family: sans-serif, Helvetica, Arial;
+
+		}
+
+	</style>
+
+	<script type="importmap">
+		{
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+          }
+        }
+	</script>
+</head>
+<body>
+
+<div id="left-boarder" style="position: absolute;">
+
+	<div class="wrap">
+		<!-- side bar that will dispaly the options -->
+		<div class="left-sidebar-div leftSide1st" id="leftSidebar">
+
+			<!-- wall options for the side bar-->
+			<div class="wall-Options" id="wallOptions">
+				<!-- given the same class as they should be treated the same in terms of styling-->
+				<div class="wallButton" id="newWallButton">New wall</div>
+				<div class="wallButton" id="removeWallButton">Remove last wall</div>
+				<div class="wallButton" id="finishWallButton">Finish</div>
+				<div class="wallButton" id="cancelWallButton">Clear</div>
 
 			</div>
 
-
-
-
-
-			<div class="wrap">
-				<!-- side bar that will dispaly the options -->
-				<div class="top-navbar-div top-nav-1st" id="topNavBar">
-
-					<!-- the room options for the top navigation bar-->
-					<div class="main-Option" id="mainOptions">
-						<div class="main-option-button" id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour); display: none" onclick="changeCamPerspective()">Overhead view
-							<div><img src="/images/eye.png"></div></div>
-						<div class="main-option-button" id="createRoomDiv" style="color: var(--regularTextColour); text-align: center" onclick="doSomething()">Room
-						<div><img src="/images/roomIcon.png"></div>
-						</div>
-
-					</div>
-
-
-				</div>
-
-				<div class="top-navbar-div top-nav-2nd" id="topNavBar2nd">
-
-					<!-- the room options for the top navigation bar-->
-					<div class="room-option-div" id="roomOptionBox">
-						<div class="room-option-button new-room-div" id="new-room-button">New room</div>
-						<div class="room-option-button load-room-div" id="load-room-button">Load room</div>
-					</div>
-
-
-				</div>
-			</div>
-
-
-			<div class="right-sidebar-div" id="rightSidebar" style="background-color: #dddddd">
-
-				<!-- wall options for the side bar-->
-				<div class="object-menu-options" id="objectMenuOptions">
-					<!-- given the same class as they should be treated the same in terms of styling-->
-
-					<div class="object-details-div" id="objectDetails">
-						<div class="object-details-section">
-							<label>Object name</label>
-							<label id="objectName">objectName</label>
-						</div>
-
-						<img src="" class="objectImage" id="objectImage" >
-
-						<div class="object-details-section">
-							<label>Description</label>
-							<label id="objectDescription">description</label>
-						</div>
-
-						<div class="object-details-section">
-							<label>Price</label>
-							<label id="objectPrice">price</label>
-						</div>
-
-						<div class="object-details-section">
-							<label>URL</label>
-							<label id="objectURL">url</label>
-						</div>
-
-						<div class="objectMenuButton" id="editObject" >Edit:
-							Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
-							Press T to translate the object, and R to rotate the object.
-
-							Press G again to confirm once finished.
-						</div>
-
-
-						<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
-						<div class="object-search-div">
-							<input type="text" placeholder="Search for item.." id="objectSearchInput">
-							<button class="object-search-button" id="objectSearchButton">Search</button>
-						</div>
-
-						<div class="search-scrollpane" id="searchScrollPane"></div>
-
-					</div>
-
-
-
-
-
-
-				</div>
+			<div class="design-Options" id="designOptions">
+				<!-- given the same class as they should be treated the same in terms of styling-->
+				<div class="designOption" id="addFurniture" >Furniture</div>
+				<div class="designOption" id="addDecor" >Decoration</div>
+				<div class="designOption" id="addDoor" >Doors</div>
+				<div class="designOption" id="addWindow">Windows</div>
 
 			</div>
 
-			<div id="selected-container" style="background-color: rgb(209, 209, 209);">
-				<span id="selected-object" style="color: midnightblue;"></span>
-			</div>
 
 		</div>
 
 
 
-		<script type="module" src="/js/main.js">
-		</script>
-		<script type="module" src="/js/Room.js">
-		</script>
-		<script type="module" src="/js/DesignMode.js">
-		</script>
-	</body>
+		<div class="left-sidebar-div left-sidebar-2nd" id="leftSidebar2nd">
+
+			<!-- wall options for the side bar-->
+			<label class="objectTypeLabel" id="objectTypeLabelName" style="text-align: center">Label</label>
+			<div class="object-type-options" id="objectOptions">
+				<div class="object-type-Button" id="livingRoomButton" onclick="ShowLivingRoomObjects()">Living room</div>
+				<div class="object-type-Button" id="kitchenButton" onclick="ShowKitchenObjects()">Kitchen</div>
+				<div class="object-type-Button" id="bathroomButton" onclick="ShowBathroomObjects()">Bathroom</div>
+				<div class="object-type-Button" id="bedroomButton" onclick="ShowBedroomObjects()">Bedroom</div>
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+
+
+
+
+	<div class="wrap">
+		<!-- sidebar that will dispaly the options -->
+		<div class="top-navbar-div top-nav-1st" id="topNavBar">
+
+			<!-- the room options for the top navigation bar-->
+			<div class="main-Option" id="mainOptions">
+				<div class="main-option-button" id="changeCameraPerspectiveDiv" style="color: var(--regularTextColour);" onclick="changeCamPerspective()">
+					<div><img src="/images/eye.png"></div>
+					Overhead view
+				</div>
+				<div class="main-option-button" id="createRoomDiv" style="color: var(--regularTextColour); text-align: center" onclick="doSomething()">
+					<div><img src="/images/roomIcon.png"></div>
+					Room
+				</div>
+
+			</div>
+
+
+		</div>
+
+		<div class="top-navbar-div top-nav-2nd" id="topNavBar2nd">
+
+			<!-- the room options for the top navigation bar-->
+			<div class="room-option-div" id="roomOptionBox">
+				<div class="room-option-button new-room-div" id="new-room-button">New room</div>
+				<div class="room-option-button load-room-div" id="load-room-button">Load room</div>
+			</div>
+
+
+		</div>
+	</div>
+
+
+	<div class="right-sidebar-div" id="rightSidebar" style="background-color: #dddddd">
+
+		<!-- wall options for the sidebar-->
+		<div class="object-menu-options" id="objectMenuOptions">
+			<!-- given the same class as they should be treated the same in terms of styling-->
+
+			<div class="object-details-div" id="objectDetails">
+				<div class="object-details-section">
+					<label>Object name</label>
+					<label id="objectName">objectName</label>
+				</div>
+
+				<img src="" class="objectImage" id="objectImage" >
+
+				<div class="Section_1">
+					<div class="desc-price-details-section">
+						<label>Description</label>
+						<label id="objectDescription">description</label>
+					</div>
+
+					<div class="desc-price-details-section">
+						<label>Price</label>
+						<label id="objectPrice">price</label>
+					</div>
+
+				</div>
+
+
+				<div class="object-details-section">
+					<label>URL</label>
+					<label id="objectURL">url</label>
+				</div>
+
+				<div class="objectMenuButton" id="editObject" >Edit:
+					Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
+					Press T to translate the object, and R to rotate the object.
+
+					Press G again to confirm once finished.
+				</div>
+
+
+				<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
+				<div class="object-search-div">
+					<input type="text" placeholder="Search for item.." id="objectSearchInput">
+					<button class="object-search-button" id="objectSearchButton">Search</button>
+				</div>
+
+				<div class="search-scrollpane" id="searchScrollPane"></div>
+
+			</div>
+
+
+
+
+
+
+		</div>
+
+	</div>
+
+	<div id="selected-container" style="background-color: rgb(209, 209, 209);">
+		<span id="selected-object" style="color: midnightblue;"></span>
+	</div>
+
+
+
+</div>
+
+<div class="bottomBorder">
+
+	<div class="bottom-bar-div" id="bottomBorder" style="position: absolute;">
+		<div class="back-To-Object-Menu" id="backToObjectList">Back</div>
+		<div id="optionTypeName" style="text-align: center">Name</div>
+		<div class="obj-container">
+
+			<div class="object-scrollpane" id="objectScrollPane">
+
+
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+
+
+
+<script type="module" src="/js/main.js">
+</script>
+<script type="module" src="/js/Room.js">
+</script>
+<script type="module" src="/js/DesignMode.js">
+</script>
+
+<!-- Footer -->
+
+
+</body>
 </html>

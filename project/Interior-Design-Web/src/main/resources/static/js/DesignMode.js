@@ -61,6 +61,8 @@ var objectType;
 var objectSecondType;
 var previousObjectType; // used to close the div when needed.
 var objectTypeName;
+var roomTypeName;
+
 const roomTypeLabel = document.getElementById('objectTypeLabelName');
 const leftSidebar2nd = document.getElementById('leftSidebar2nd');
 const objectOptions = document.getElementById('objectOptions');
@@ -76,6 +78,17 @@ const objectDescription = document.getElementById('objectDescription');
 const objectPrice = document.getElementById('objectPrice')
 const objectURL = document.getElementById('objectURL')
 
+const bottomOption = document.getElementById('bottomBorder');
+
+const objectType1Label = document.getElementById("objectTypeLabelName");
+const bottomBarTag = document.getElementById("optionTypeName");
+
+const root = document.querySelector(':root');
+const styleProperties = getComputedStyle(root);
+
+const objectNameTagBackgroundColour = document.getElementById("objectTagName");
+
+var divButtonColour;
 
 
 // each button will pass through their own unique value, displaying the correct format of the menu
@@ -97,18 +110,26 @@ document.getElementById('addWindow').addEventListener('click', function(){
 
 
 document.getElementById('livingRoomButton').addEventListener('click', function(){
+    roomTypeName = "Living Room";
+    divButtonColour = getComputedStyle(this).backgroundColor;
     ShowObjectList(5, "Living Room");
 });
 
 document.getElementById('kitchenButton').addEventListener('click', function(){
+    roomTypeName = "Kitchen";
+    divButtonColour = getComputedStyle(this).backgroundColor;
     ShowObjectList(6, "Kitchen");
 });
 
 document.getElementById('bathroomButton').addEventListener('click', function(){
+    roomTypeName = "Bathroom";
+    divButtonColour = getComputedStyle(this).backgroundColor;
     ShowObjectList(7, "Bathroom");
 });
 
 document.getElementById('bedroomButton').addEventListener('click', function(){
+    roomTypeName = "Bedroom";
+    divButtonColour = getComputedStyle(this).backgroundColor;
     ShowObjectList(8, "Bedroom");
 });
 
@@ -123,6 +144,7 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
 document.getElementById('objectSearchInput').addEventListener('click', function(){
     hasSearchBarBeenClicked = true;
 });
+
 
 
 document.getElementById('objectSearchButton').addEventListener('click', function(){
@@ -177,7 +199,10 @@ function SearchForItems(searchInput){
         .then(response => response.json())
         .then((data) => {
             if(data){
-                DisplaySearchResults(data.data.products);
+
+                //DisplaySearchResults(data.data.products);
+
+                DisplaySearchResults(data.products);
             }
         })
         .catch(error => {
@@ -208,6 +233,7 @@ function DisplaySearchResults(items){
         photoSRC.id = "itemPhoto";
 
         //inserted the text for the appropriate divs
+
         descLabel.innerText = item.product_title.toString();
         descLabel.id = "productDescription";
 
@@ -216,6 +242,8 @@ function DisplaySearchResults(items){
 
         urlLabel.innerText = item.product_url;
         urlLabel.id = "productURL";
+
+
 
         // setting the div to flex column, so the details are displayed as a column
         detailDiv.id = "itemDetails";
@@ -443,7 +471,7 @@ export function ObjectRayCast(scene, pointer, raycaster, currentCamera, objectNa
     }
 
 
-     // Ensure the material is updated
+    // Ensure the material is updated
 
     // x_coordinates = intersects[0].point.x;
     // y_coordinates = intersects[0].point.z;
@@ -476,6 +504,9 @@ function SelectTheObject(){
             selectedObject.receiveShadow = true;
             DisplayObjectDetails(true); // display te details
             rightSidebar.style.width = '500px';
+            HideObjectList();
+
+            leftSidebar2nd.style.width = '0px';
 
         }
         console.log("Object: "+selectedObject.userData.objectName);
@@ -498,7 +529,9 @@ function SelectTheObject(){
 function RevertDeselectedObject(){
     if(selectedObject){
         selectedObject.material.opacity = 1;
-        selectedObject.material.color.set(0xffffff);
+        //selectedObject.material.color.set(0xffffff);
+        const colour = selectedObject.userData.objectColour;
+        selectedObject.material.color.setStyle( colour );
         selectedObject.material.transparent = false;
 
         selectedObject.castShadow = true;
@@ -516,6 +549,9 @@ function DisplayObjectDetails(isDisplayed){
         objectDescription.innerText = selectedObject.userData.itemDescription;
         objectPrice.innerText = selectedObject.userData.itemPrice;
         objectURL.innerText = selectedObject.userData.itemURL;
+
+        objectName.style.backgroundColor = selectedObject.userData.objectColour;
+
     }else{
         objectName.innerText = "";
         // image
@@ -524,11 +560,12 @@ function DisplayObjectDetails(isDisplayed){
         objectPrice.innerText = "";
         objectURL.innerText = "";
     }
-    
+
 }
 
 function DisplayRoomTypeOptions(value, typeName){
     /* Set the room ID for the objectTypes that will be retrieved */
+
     objectType = value;
     console.log("name: "+typeName);
     HideObjectList();
@@ -549,27 +586,46 @@ function ShowObjectList(roomTypeValue){
     console.log()
     loadObjectsInList();   // retrieving the json from the object folder
     objectScrollPane.style.display = 'flex';
+    objectScrollPane.style.flexDirection = 'row';
     objectOptions.style.display = 'none';   // hide the other content
+
+
+
+    bottomOption.style.height = styleProperties.getPropertyValue('--bottomNavHeightExmapsion');
+
+    /*if (parseInt(getComputedStyle(bottomOption).height) === 0){
+        bottomOption.style.height = styleProperties.getPropertyValue('--topNavHeightExpansion');
+    }else{
+        bottomOption.style.height = "0px";
+    }*/
+
+    bottomBarTag.innerHTML = roomTypeName + " " +objectTypeName;
+    roomTypeLabel.innerHTML = " ";
+
 }
 
 function loadObjectsInList(){
 
     if(allObjectData.length == 0){
         // getting the json from the public object folder
-        fetch("json/interiorObjects")
-        .then(response => response.json())
-        .then(data => {
-            console.log("loading from json");
-            livingRoomItems = data.livingRoomItems;
-            kitchenItems = data.kitchenItems;
-            bathroomItems = data.bathroomItems;
-            bedroomItems = data.bedroomItems;
-            CacheObjectData();
-            GetRoomType();
 
-        })
-        .catch(error => console.error('Error:', error))
+        fetch("json/interiorObjects")
+            .then(response => response.json())
+            .then(data => {
+                console.log("loading from json");
+                livingRoomItems = data.livingRoomItems;
+                kitchenItems = data.kitchenItems;
+                bathroomItems = data.bathroomItems;
+                bedroomItems = data.bedroomItems;
+                CacheObjectData();
+                GetRoomType();
+
+            })
+            .catch(error => console.error('Error:', error))
         console.log(allObjectData);
+
+
+
     }else{
         console.log("Reading from cache data.");
         allObjectData.forEach(obj =>{
@@ -611,34 +667,37 @@ function GetRoomType(){
     switch(objectSecondType){
         case 5:
             // loop pass and add (living room items)
+
             livingRoomItems.forEach(obj => {
 
-                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj, divButtonColour);
             });
             break;
         case 6:
             // loop pass and add (Kitchen items)
             kitchenItems.forEach(obj => {
 
-                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj, divButtonColour);
             });
             break;
         case 7:
             // loop pass and add (Bathroom items)
             bathroomItems.forEach(obj => {
 
-                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj, divButtonColour);
             });
             break;
         case 8:
             // loop pass and add (bedroom items)
             bedroomItems.forEach(obj => {
 
-                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj);
+                if(obj.roomType == objectSecondType && obj.objectType == objectType) DisplayObject(obj, divButtonColour);
             });
             break;
 
     }
+
+
 }
 
 // creating an element and an image
@@ -652,6 +711,7 @@ function DisplayObject(obj){
     label.innerText = obj.name;
     label.id = "object-name";
     label.style.textAlign = "center";
+    label.style.backgroundColor = divButtonColour;
 
     img.src = imgLocation+obj.image;
     img.width = 128;
@@ -663,6 +723,8 @@ function DisplayObject(obj){
     div.appendChild(label);
     div.appendChild(img);
     objectScrollPane.appendChild(div);
+
+
 
     div.addEventListener('click', function() {
         /* grabs the first label that is within the div, then get the
@@ -733,12 +795,14 @@ function LoadObject(name){
                         itemURL: allObjectData[index].itemURL,
                         queryPhrase: allObjectData[index].queryPhrase,
 
+                        objectColour: divButtonColour,
                         sceneID: 4,
                         uniqueID: object.uuid
 
 
                     };
-                    object.material.color.set( 0xffffff );
+                    //object.material.color.setStyle( 0xffffff );
+                    object.material.color.setStyle( divButtonColour );
                     mainScene.add( model );
 
 
@@ -773,6 +837,9 @@ function HideObjectList(){
     objectScrollPane.innerHTML = '';
     objectScrollPane.style.display = 'none';
     objectOptions.style.display = 'flex';
+
+
+    bottomOption.style.height = "0px";
 }
 
 
@@ -784,7 +851,8 @@ function ShowNextMenu(shouldShow){
         return;
     }
     roomTypeLabel.innerText = objectTypeName;
-    leftSidebar2nd.style.width = '180px';
+    //bottomBarTag.innerHTML = roomTypeName + " " +objectTypeName;
+    leftSidebar2nd.style.width = styleProperties.getPropertyValue('--leftSide2ndMaxWidth');
 }
 
 /* if the user goes to the build mode, it will hide the design bar and will then display them
