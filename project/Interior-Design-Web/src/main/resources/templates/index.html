@@ -25,6 +25,10 @@
 			--bedroomButtonColour: rgb(189, 107, 235);
 
 			--leftSide1stBackgroundColour: #bdc3c3;
+			--rightSideLabelTextColour: #939797;
+			--XYZBoxColour: #c2c0c0;
+			--XYZValueTextColour: #191919;
+
 
 		}
 
@@ -303,6 +307,7 @@
 			gap: 1em;
 		}
 
+
 		.desc-price-details-section{
 			display: flex;
 			flex-direction: column;
@@ -315,6 +320,7 @@
 		.object-details-section{
 			display: flex;
 			flex-direction: column;
+			justify-content: left;
 			margin-top: 0;
 			width: 100%;
 
@@ -337,6 +343,79 @@
 			margin-right: auto;
 
 		}
+
+		.object-property-section{
+			margin: 35px;
+			overflow-x: auto;
+			max-height: 125px;
+		}
+
+		.object-XYZ-values{
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			gap:10px;
+
+		}
+
+		.XYZ-container{
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+
+		}
+
+
+		.scale-properties{
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.scale-value-section {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			font-size: 15px;
+		}
+
+		.scale-value-input {
+			text-align: center;
+			min-width: 40px;
+			max-width: 120px;
+			width: 80px;
+			font-size: 15px;
+
+			border: none;
+			background-color: var(--XYZBoxColour);
+			color: var(--XYZValueTextColour);
+
+		}
+
+		.scale-max-value-input {
+			width: 80px;
+			text-align: center;
+			font-size: 20px;
+		}
+
+		/* Pushes the scale of the bar size to the max of the width */
+		.scale-value-section input[type="number"] {
+
+		}
+
+
+
+
+
+
+		.right-side-mini-text{
+			font-size: 15px;
+			text-align: right;
+		}
+
+
 
 		.search-scrollpane{
 			display: none;
@@ -362,6 +441,27 @@
 
 			background-color: rgb(128 181 178);
 		}
+
+		.labelTitles{
+			font-size: 25px;
+			/*background-color: var(--rightSideLabelBackgroundColour);*/
+		}
+
+		.labelSubTitles{
+			font-size: 18px;
+			/*background-color: var(--rightSideLabelBackgroundColour);*/
+		}
+
+		.labelSectionTitles{
+			font-size: 16px;
+			/*background-color: var(--rightSideLabelBackgroundColour);*/
+		}
+
+
+		.labelTitleColour{
+			color: var(--rightSideLabelTextColour);
+		}
+
 
 		/* the finish wall button will get displayed whenever ther is at least one wall visible*/
 		#finishWallButton{
@@ -398,11 +498,6 @@
 		}
 
 
-		.description-scrollpane{
-			overflow-y: auto;
-			overflow-x: hidden;
-		}
-
 		#optionTypeName{
 			font-size: 20px;
 		}
@@ -435,6 +530,27 @@
 		}
 
 
+		.colour-selection input[type="color"] {
+			appearance: none;
+			-webkit-appearance: none;
+			border: none;
+			background: none;
+			padding: 0;
+			width: 40px;
+			height: 40px;
+			cursor: pointer;
+		}
+
+		.colour-selection input[type="color"]::-webkit-color-swatch-wrapper {
+			padding: 0;
+			border-radius: 2px;
+		}
+
+		.colour-selection input[type="color"]::-webkit-color-swatch {
+			border-radius: 10px;
+		}
+
+
 		.Section_1{
 			display: flex;
 			flex-direction: row;
@@ -454,7 +570,8 @@
 		{
           "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
+            "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19/+esm"
           }
         }
 	</script>
@@ -464,10 +581,10 @@
 <div id="left-boarder" style="position: absolute;">
 
 	<div class="wrap">
-		<!-- side bar that will dispaly the options -->
+		<!-- sidebar that will display the options -->
 		<div class="left-sidebar-div leftSide1st" id="leftSidebar">
 
-			<!-- wall options for the side bar-->
+			<!-- wall options for the sidebar-->
 			<div class="wall-Options" id="wallOptions">
 				<!-- given the same class as they should be treated the same in terms of styling-->
 				<div class="wallButton" id="newWallButton">New wall</div>
@@ -554,19 +671,19 @@
 			<div class="object-details-div" id="objectDetails">
 				<div class="object-details-section">
 					<label>Object name</label>
-					<label id="objectName">objectName</label>
+					<label class="labelTitles " id="objectName">objectName</label>
 				</div>
 
 				<img src="" class="objectImage" id="objectImage" >
 
 				<div class="Section_1">
 					<div class="desc-price-details-section">
-						<label>Description</label>
+						<label class="labelTitles labelTitleColour">Description</label>
 						<label id="objectDescription">description</label>
 					</div>
 
 					<div class="desc-price-details-section">
-						<label>Price</label>
+						<label class="labelTitles labelTitleColour">Price</label>
 						<label id="objectPrice">price</label>
 					</div>
 
@@ -574,25 +691,12 @@
 
 
 				<div class="object-details-section">
-					<label>URL</label>
+					<label class="labelTitles labelTitleColour">URL</label>
 					<label id="objectURL">url</label>
 				</div>
 
-				<div class="objectMenuButton" id="editObject" >Edit:
-					Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
-					Press T to translate the object, and R to rotate the object.
+				<label class="labelTitles labelTitleColour">Object Properties</label>
 
-					Press G again to confirm once finished.
-				</div>
-
-
-				<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
-				<div class="object-search-div">
-					<input type="text" placeholder="Search for item.." id="objectSearchInput">
-					<button class="object-search-button" id="objectSearchButton">Search</button>
-				</div>
-
-				<div class="search-scrollpane" id="searchScrollPane"></div>
 
 			</div>
 
@@ -600,8 +704,156 @@
 
 
 
+		</div>
+
+		<div class="object-property-section" id="objectPropertiesSection">
+			<div id="Scale Properties" class="scale-properties">
+
+				<label class="labelSectionTitles labelTitleColour">Transform</label>
+				<div class="object-XYZ-values">
+					<div>
+						<label class="labelSectionTitles labelTitleColour">Location</label>
+
+						<!-- <div class="right-side-mini-text">
+							<label class="labelTitleColour">Max value</label>
+						</div> -->
+
+					</div>
+
+					<div class="XYZ-container">
+						<div class="scale-value-section">
+							<label>X</label>
+							<input class="scale-value-input" type="number" id="locationRangeXValue" name="locationRangeXValue" min="-9999999" max="9999999" value="10">
+							<!--  <input type="number" id="locationMaxXValueNumber" name="maxXValue" class="location-max-value-input">  -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Y</label>
+							<input class="scale-value-input" type="number" id="locationRangeYValue" name="locationRangeYValue" min="-9999999" max="9999999" value="10">
+							<!-- <input type="number" id="locationMaxYValueNumber" name="maxYValue" class="location-max-value-input"> -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Z</label>
+							<input class="scale-value-input" type="number" id="locationRangeZValue" name="locationRangeZValue" min="-9999999" max="9999999" value="10">
+							<!-- <input type="number" id="locationMaxZValueNumber" name="maxZValue" class="location-max-value-input"> -->
+						</div>
+
+					</div>
+
+
+
+				</div>
+
+
+
+				<div class="object-XYZ-values">
+					<div>
+						<label class="labelSectionTitles labelTitleColour">Rotation</label>
+
+						<!-- <div class="right-side-mini-text">
+							<label class="labelTitleColour">Max value</label>
+						</div> -->
+
+					</div>
+
+					<div class="XYZ-container">
+						<div class="scale-value-section">
+							<label>X</label>
+							<input class="scale-value-input" type="number" id="rotationRangeXValue" name="rotationRangeXValue" min="-360" max="360" value="0">
+							<!--  <input type="number" id="rotationMaxXValueNumber" name="maxXValue" class="rotation-max-value-input">  -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Y</label>
+							<input class="scale-value-input" type="number" id="rotationRangeYValue" name="rotationRangeYValue" min="-360" max="360" value="0">
+							<!-- <input type="number" id="rotationMaxYValueNumber" name="maxYValue" class="rotation-max-value-input"> -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Z</label>
+							<input class="scale-value-input" type="number" id="rotationRangeZValue" name="rotationRangeZValue" min="-360" max="360" value="0">
+							<!-- <input type="number" id="rotationMaxZValueNumber" name="maxZValue" class="rotation-max-value-input"> -->
+						</div>
+
+					</div>
+
+
+
+				</div>
+
+
+
+
+				<div class="object-XYZ-values">
+					<div>
+						<label class="labelSectionTitles labelTitleColour">Scale</label>
+
+						<!-- <div class="right-side-mini-text">
+							<label class="labelTitleColour">Max value</label>
+						</div> -->
+
+					</div>
+
+
+					<div class="XYZ-container">
+						<div class="scale-value-section">
+							<label>X</label>
+							<input class="scale-value-input" type="number" id="scaleRangeXValue" name="scaleRangeXValue" min="1" max="9999999" value="10">
+							<!--  <input type="number" id="scaleMaxXValueNumber" name="maxXValue" class="scale-max-value-input">  -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Y</label>
+							<input class="scale-value-input" type="number" id="scaleRangeYValue" name="scaleRangeYValue" min="2" max="9999999" value="10">
+							<!-- <input type="number" id="scaleMaxYValueNumber" name="maxYValue" class="scale-max-value-input"> -->
+						</div>
+
+						<div class="scale-value-section">
+							<label>Z</label>
+							<input class="scale-value-input" type="number" id="scaleRangeZValue" name="scaleRangeZValue" min="1" max="9999999" value="10">
+							<!-- <input type="number" id="scaleMaxZValueNumber" name="maxZValue" class="scale-max-value-input"> -->
+						</div>
+
+					</div>
+
+
+
+				</div>
+
+
+			</div>
+
+			<div class="labelSectionTitles labelTitleColour colour-selection" style="margin: auto;">
+
+				Colour
+				<input id="colourBox" type="color" value="#ff0000">
+
+			</div>
 
 		</div>
+
+
+		<div class="object-details-section">
+
+			<div class="objectMenuButton" id="editObject">Edit:
+				Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
+				Press T to translate the object, and R to rotate the object.
+
+				Press G again to confirm once finished.
+			</div>
+
+
+			<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
+			<div class="object-search-div">
+				<input type="text" placeholder="Search for item.." id="objectSearchInput">
+				<button class="object-search-button" id="objectSearchButton">Search</button>
+			</div>
+
+			<div class="search-scrollpane" id="searchScrollPane"></div>
+
+		</div>
+
 
 	</div>
 

@@ -9,6 +9,9 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { HouseItem } from "./HouseItem.js";
 import { DisableBothOrbitCameras, EnableBothOrbitCameras } from "./main.js";
 
+
+
+
 // loader to load the object.
 const loader = new GLTFLoader();
 
@@ -88,6 +91,25 @@ const styleProperties = getComputedStyle(root);
 
 const objectNameTagBackgroundColour = document.getElementById("objectTagName");
 
+const locationXRange = document.getElementById("locationRangeXValue");
+const locationYRange = document.getElementById("locationRangeYValue");
+const locationZRange = document.getElementById("locationRangeZValue");
+
+const rotationXRange = document.getElementById("rotationRangeXValue");
+const rotationYRange = document.getElementById("rotationRangeYValue");
+const rotationZRange = document.getElementById("rotationRangeZValue");
+
+const scaleXRange = document.getElementById("scaleRangeXValue");
+const scaleYRange = document.getElementById("scaleRangeYValue");
+const scaleZRange = document.getElementById("scaleRangeZValue");
+
+const scaleMaxXValue = document.getElementById("scaleMaxXValueNumber");
+const scaleMaxYValue = document.getElementById("scaleMaxYValueNumber");
+const scaleMaxZValue = document.getElementById("scaleMaxZValueNumber");
+
+
+const colourBox = document.getElementById("colourBox");
+
 var divButtonColour;
 
 
@@ -141,10 +163,35 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
     isSideBarClicked = true;
 });
 
+
+// scaleMaxXValue.addEventListener("change", function() {
+//     UpdateMaxRangeX(this.value);
+// });
+//
+// scaleMaxYValue.addEventListener("change", function() {
+//     UpdateMaxRangeY(this.value);
+// });
+//
+// scaleMaxZValue.addEventListener("change", function() {
+//     UpdateMaxRangeZ(this.value);
+// });
+
+locationXRange.addEventListener("input", UpdateObjectLocation)
+locationYRange.addEventListener("input", UpdateObjectLocation)
+locationZRange.addEventListener("input", UpdateObjectLocation)
+
+rotationXRange.addEventListener("input", UpdateObjectRotation)
+rotationYRange.addEventListener("input", UpdateObjectRotation)
+rotationZRange.addEventListener("input", UpdateObjectRotation)
+
+scaleXRange.addEventListener("input", UpdateObjectScale)
+scaleYRange.addEventListener("input", UpdateObjectScale)
+scaleZRange.addEventListener("input", UpdateObjectScale)
+
+
 document.getElementById('objectSearchInput').addEventListener('click', function(){
     hasSearchBarBeenClicked = true;
 });
-
 
 
 document.getElementById('objectSearchButton').addEventListener('click', function(){
@@ -391,6 +438,8 @@ function AddObjectToDragArray(){
 
 function ReleaseObject(){
     console.log("position: "+JSON.stringify(selectedObject.position));
+
+    console.log("position: "+JSON.stringify(selectedObject.scale));
     //  depending on its position, if the object goes underneath the main plain, it will snap back to a reasonable y-axis
     if(selectedObject.position.y < -0.45){
         selectedObject.position.y = -0.45;
@@ -550,7 +599,20 @@ function DisplayObjectDetails(isDisplayed){
         objectPrice.innerText = selectedObject.userData.itemPrice;
         objectURL.innerText = selectedObject.userData.itemURL;
 
-        objectName.style.backgroundColor = selectedObject.userData.objectColour;
+        objectName.style.backgroundColor = selectedObject.userData.objectTypeColour;
+
+        // THREE.js allows conversion for colours as the default for them is rrggbb
+        let userColour= document.querySelector("#colourBox");
+        document.getElementById('colourBox').value = '#'+selectedObject.material.color.getHexString();
+
+        SetTheValuesForObject();
+
+        userColour.addEventListener('change', function() {
+            console.log("COLOUR CHANGE: "+this.value);
+            selectedObject.userData.objectColour = this.value;
+            selectedObject.material.color.setStyle( userColour );
+        });
+
 
     }else{
         objectName.innerText = "";
@@ -561,6 +623,23 @@ function DisplayObjectDetails(isDisplayed){
         objectURL.innerText = "";
     }
 
+}
+
+
+function SetTheValuesForObject(){
+    locationXRange.value = parseFloat(selectedObject.position.x);
+    locationYRange.value = parseFloat(selectedObject.position.y);
+    locationZRange.value = parseFloat(selectedObject.position.z);
+
+    // the conversion of PI is needed for the 3D aspect, in addition it will need to be converted when getting the value too.
+    const toDeg = 180 / Math.PI;
+    rotationXRange.value = (selectedObject.rotation.x * toDeg).toFixed(3);
+    rotationYRange.value = (selectedObject.rotation.y * toDeg).toFixed(3);
+    rotationZRange.value = (selectedObject.rotation.z * toDeg).toFixed(3);
+
+    scaleXRange.value = parseFloat(selectedObject.scale.x) * 10;
+    scaleYRange.value = parseFloat(selectedObject.scale.y) * 20;
+    scaleZRange.value = parseFloat(selectedObject.scale.z) * 10;
 }
 
 function DisplayRoomTypeOptions(value, typeName){
@@ -772,7 +851,7 @@ function LoadObject(name){
             model.castShadow = true;
 
             console.log("depth:  "+depth);
-            model.scale.set(45/10, 95/20, 40/10)   //NOTE: THERE IS A REASON WHY THE PATH IS SET LIKE THIS
+            model.scale.set(45/10, 95/20, 40/10)   //NOTE: THERE IS A REASON WHY THE PATH IS SET LIKE THIS        model.scale.set(45/10, 95/20, 40/10) the correct scale will need to be divided by 2
 
             model.traverse( ( object ) => {
 
@@ -795,6 +874,7 @@ function LoadObject(name){
                         itemURL: allObjectData[index].itemURL,
                         queryPhrase: allObjectData[index].queryPhrase,
 
+                        objectTypeColour: divButtonColour,
                         objectColour: divButtonColour,
                         sceneID: 4,
                         uniqueID: object.uuid
@@ -854,6 +934,51 @@ function ShowNextMenu(shouldShow){
     //bottomBarTag.innerHTML = roomTypeName + " " +objectTypeName;
     leftSidebar2nd.style.width = styleProperties.getPropertyValue('--leftSide2ndMaxWidth');
 }
+
+
+
+function UpdateObjectLocation(){
+    if(selectedObject){
+        selectedObject.position.set(parseFloat(locationXRange.value), parseFloat(locationYRange.value), parseFloat(locationZRange.value));
+    }
+}
+
+function UpdateObjectRotation(){
+    if(selectedObject){
+
+        // the conversion of PI is needed for the 3D aspect, in addition it will need to be converted when getting the value too.
+        selectedObject.rotation.x = (parseFloat(rotationXRange.value) * (Math.PI / 180).toFixed(3));
+        selectedObject.rotation.y = (parseFloat(rotationYRange.value) * (Math.PI / 180).toFixed(3));
+        selectedObject.rotation.z = (parseFloat(rotationZRange.value) * (Math.PI / 180).toFixed(3));
+
+        /*selectedObject.rotation.x = parseFloat(rotationXRange.value)  * (Math.PI / 180);
+        selectedObject.rotation.y = parseFloat(rotationYRange.value)  * (Math.PI / 180);
+        selectedObject.rotation.z = parseFloat(rotationZRange.value)  * (Math.PI / 180);*/
+
+    }
+}
+
+function UpdateObjectScale(){
+    if(selectedObject){
+        selectedObject.scale.set(scaleXRange.value/10, scaleYRange.value/20, scaleZRange.value/10);
+    }
+}
+
+
+
+
+function UpdateMaxRangeX(val){
+    scaleXRange.max = val;
+}
+
+function UpdateMaxRangeY(val){
+    scaleYRange.max = val;
+}
+
+function UpdateMaxRangeZ(val){
+    scaleZRange.max = val;
+}
+
 
 /* if the user goes to the build mode, it will hide the design bar and will then display them
     afterwards after editing the walls*/
