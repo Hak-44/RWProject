@@ -203,6 +203,48 @@ document.getElementById('objectSearchButton').addEventListener('click', function
     SearchForItems(searchInput);
 });
 
+
+document.getElementById('objectDeleteButton').addEventListener('click', function(){
+    for(var i = 0; i < sceneObjects.length; i++){
+        if(sceneObjects[i].uuid === selectedObject.userData.uniqueID){
+
+            // gettting the object
+            const mesh = sceneObjects[i];
+            // getting the parent of the object that is inside the userData
+            const parentModel = mesh.userData.parentModel;
+
+            // removing the parent from the scene (which in this case it's the object)
+            mainScene.remove(parentModel);
+
+            // disposing the object's data (such as the material and geometry) as it helps with CPU space
+            mesh.geometry.dispose();
+            mesh.material.dispose();
+
+            // splicing the model
+            sceneObjects.splice(i, 1);
+
+            // using the index of the parent as this is a direct reference to the object
+            models.splice(models.indexOf(parentModel), 1);
+            break;
+        }
+
+    }
+
+    console.log("reset everything regarding the right side bar.")
+    hasEditingObject = false;
+    editingObject = [];
+    selectedObject = null;
+    hoveredObject = null;
+    activeClick = false;
+    RevertDeselectedObject();
+    rightSidebar.style.width = '0px';
+    console.log("logging the scene object details")
+    console.log(sceneObjects);
+
+    console.log("Selected object: "+selectedObject);
+});
+
+
 // // currently not working, need to find another way....
 // document.getElementById('removeObjectButton').addEventListener('click', function(){
 //     console.log("WIP.");
@@ -351,6 +393,7 @@ function DisplaySearchResults(items){
     })
 
     searchScrollPane.style.display = 'flex';
+    console.log("Selected object: "+selectedObject);
 }
 
 
@@ -372,6 +415,8 @@ document.addEventListener('keydown', function(event) {
             ReleaseObject();
             EnableBothOrbitCameras();
             if(selectedObject == null) rightSidebar.style.width = '0px';
+
+            console.log("Selected object: "+selectedObject);
 
             return;
         }
@@ -877,21 +922,26 @@ function LoadObject(name){
                         objectTypeColour: divButtonColour,
                         objectColour: divButtonColour,
                         sceneID: 4,
-                        uniqueID: object.uuid
+                        uniqueID: object.uuid,
+                        parentModel: model
 
 
                     };
                     //object.material.color.setStyle( 0xffffff );
                     object.material.color.setStyle( divButtonColour );
-                    mainScene.add( model );
+
+                    sceneObjects.push(object);
 
 
                 }
 
             } );
+            mainScene.add( model );
             models.push(model);
-            sceneObjects.push(object);
+
+
             console.log("Updating drag controller");
+            console.log(sceneObjects);
             // updating the drag controls to the new current list of objects
 
         },
