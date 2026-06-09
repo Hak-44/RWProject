@@ -423,6 +423,24 @@
 			text-align: right;
 		}
 
+		.search-div-container{
+			background-color: #6a77ac;
+			width: 800px;
+			height: 400px;
+			position: absolute;
+
+			display: none;
+
+		}
+
+		.search-div-header{
+			background-color: #b9bdcc;
+			width: 800px;
+			height: 50px;
+			position: relative;
+		}
+
+
 
 
 		.search-scrollpane{
@@ -912,7 +930,6 @@
 
 			<div class="object-details-section">
 
-
 				<div class="Section_2">
 					<button class="object-delete-button" id="objectDeleteButton">Remove</button>
 				</div>
@@ -923,10 +940,17 @@
 					<button class="object-search-button" id="objectSearchButton">Search</button>
 				</div>
 
+				<div class="object-search-div">
+					<button class="object-search-button" id="searchButtonItem">Search</button>
+				</div>
 
-				<div class="search-scrollpane" id="searchScrollPane"></div>
 
 			</div>
+
+
+
+
+
 
 		</div>
 
@@ -966,7 +990,13 @@
 
 	</div>
 
-
+	<div class="search-div-container" id="searchDivContainer">
+		<div class="search-div-header" id="searchDivHeader">
+			Click here to move
+			<button class="search-container-close-button" id="searchContainerCloseButton">Close</button>
+		</div>
+		<div class="search-scrollpane" id="searchScrollPane"></div>
+	</div>
 
 
 	<div id="selected-container" style="background-color: rgb(209, 209, 209);">

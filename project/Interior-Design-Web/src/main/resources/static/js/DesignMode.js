@@ -174,6 +174,45 @@ document.getElementById('rightSidebar').addEventListener('click', function(){
 });
 
 
+
+// drag and drop sample
+// https://codepen.io/dennisivy/pen/VwNEPvY
+
+let newX = 0, newY = 0, startX = 0, startY = 0;
+
+const searchDivHeader = document.getElementById('searchDivHeader');
+const searchContainer = document.getElementById('searchDivContainer');
+const searchButtonItem = document.getElementById("searchButtonItem");
+const searchContainerCloseButton = document.getElementById("searchContainerCloseButton")
+
+searchDivHeader.addEventListener('mousedown', mouseDown)
+
+function mouseDown(e){
+    startX = e.clientX
+    startY = e.clientY
+
+    document.addEventListener('mousemove', mouseMove)
+    document.addEventListener('mouseup', mouseUp)
+}
+
+function mouseMove(e){
+    newX = startX - e.clientX
+    newY = startY - e.clientY
+
+    startX = e.clientX
+    startY = e.clientY
+
+    searchContainer.style.top = (searchContainer.offsetTop - newY) + 'px'
+    searchContainer.style.left = (searchContainer.offsetLeft - newX) + 'px'
+}
+
+function mouseUp(e){
+    document.removeEventListener('mousemove', mouseMove)
+}
+
+
+
+
 // scaleMaxXValue.addEventListener("change", function() {
 //     UpdateMaxRangeX(this.value);
 // });
@@ -201,6 +240,16 @@ scaleZRange.addEventListener("input", UpdateObjectScale)
 
 document.getElementById('objectSearchInput').addEventListener('click', function(){
     hasSearchBarBeenClicked = true;
+});
+
+searchButtonItem.addEventListener('click', function(){
+    searchContainer.style.display = 'flex';
+
+});
+
+searchContainerCloseButton.addEventListener('click', function(){
+    searchContainer.style.display = 'none';
+
 });
 
 
@@ -652,7 +701,7 @@ function SelectTheObject(){
     }else{
         // clicked off the object, so remove it from the selected variable
 
-        if(!hasEditingObject && !isSideBarClicked){
+        if(!hasEditingObject && !isSideBarClicked){ // add the searchBar in here.
             activeClick = false;
             RevertDeselectedObject();
             if(selectedObject == null){
