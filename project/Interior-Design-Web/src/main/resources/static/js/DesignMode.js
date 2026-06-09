@@ -72,6 +72,7 @@ const objectOptions = document.getElementById('objectOptions');
 const objectScrollPane = document.getElementById('objectScrollPane');
 const searchScrollPane = document.getElementById('searchScrollPane');
 const rightSidebar = document.getElementById('rightSidebar');
+const rightBar2ndDivEdit = document.getElementById('rightBar2ndDivEdit')
 
 
 
@@ -106,6 +107,15 @@ const scaleZRange = document.getElementById("scaleRangeZValue");
 const scaleMaxXValue = document.getElementById("scaleMaxXValueNumber");
 const scaleMaxYValue = document.getElementById("scaleMaxYValueNumber");
 const scaleMaxZValue = document.getElementById("scaleMaxZValueNumber");
+
+const moveEditText = document.getElementById("moveEditText");
+const moveEditDiv = document.getElementById("moveEditDiv");
+const transformEditDiv = document.getElementById("transformEditDiv");
+const rotateEditDiv = document.getElementById("rotateEditDiv");
+
+const moveEditIcon = document.getElementById("moveEditIcon");
+const transformEditIcon = document.getElementById("transformEditIcon");
+const rotateEditIcon = document.getElementById("rotateEditIcon");
 
 
 const colourBox = document.getElementById("colourBox");
@@ -238,6 +248,7 @@ document.getElementById('objectDeleteButton').addEventListener('click', function
     activeClick = false;
     RevertDeselectedObject();
     rightSidebar.style.width = '0px';
+    rightBar2ndDivEdit.style.width = '0px';
     console.log("logging the scene object details")
     console.log(sceneObjects);
 
@@ -414,19 +425,39 @@ document.addEventListener('keydown', function(event) {
             DetachTransformControls();
             ReleaseObject();
             EnableBothOrbitCameras();
-            if(selectedObject == null) rightSidebar.style.width = '0px';
+            if(selectedObject == null){
+                rightSidebar.style.width = '0px';
+                rightBar2ndDivEdit.style.width = '0px';
+            }
 
             console.log("Selected object: "+selectedObject);
+
+            // changing the properties of the edit buttons
+            moveEditText.innerText = "Edit";
+            transformEditDiv.style.display = 'none';
+            rotateEditDiv.style.display = 'none';
+
+            moveEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
 
             return;
         }
         // if an object is selected, it will allow movement for that object
         if(selectedObject){
+
             console.log("Object dragging enabled");
             if(!hasEditingObject) AddObjectToDragArray();
             dragControls = new DragControls( editingObject, camera, renderer.domElement );
             dragControls.enabled = true;
             DisableBothOrbitCameras();
+
+            // changing the properties of the edit buttons
+            moveEditText.innerText = "Move/Confirm";
+            moveEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonHighlight");
+            transformEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+            rotateEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+
+            transformEditDiv.style.display = 'flex';
+            rotateEditDiv.style.display = 'flex';
         }
 
     }
@@ -449,6 +480,13 @@ document.addEventListener('keydown', function(event) {
                 transformControls.attach( selectedObject );
                 transformControls.setMode('translate');
 
+                // changing the properties of the edit buttons
+                transformEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonHighlight");
+                rotateEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+                moveEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+
+                moveEditText.innerText = "Confirm";
+
             }
 
         }
@@ -464,6 +502,12 @@ document.addEventListener('keydown', function(event) {
             if(selectedObject){
                 transformControls.attach( selectedObject );
                 transformControls.setMode('rotate');
+
+                transformEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+                rotateEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonHighlight");
+                moveEditIcon.style.backgroundColor = styleProperties.getPropertyValue("--editButtonsColour");
+
+                moveEditText.innerText = "Confirm";
 
             }
         }
@@ -597,7 +641,8 @@ function SelectTheObject(){
             selectedObject.castShadow = true;
             selectedObject.receiveShadow = true;
             DisplayObjectDetails(true); // display te details
-            rightSidebar.style.width = '500px';
+            rightSidebar.style.width = styleProperties.getPropertyValue('--rightSideBarWidth');
+            rightBar2ndDivEdit.style.width = styleProperties.getPropertyValue('--editButtonsWidth');
             HideObjectList();
 
             leftSidebar2nd.style.width = '0px';
@@ -610,7 +655,10 @@ function SelectTheObject(){
         if(!hasEditingObject && !isSideBarClicked){
             activeClick = false;
             RevertDeselectedObject();
-            if(selectedObject == null) rightSidebar.style.width = '0px';
+            if(selectedObject == null){
+                rightSidebar.style.width = '0px';
+                rightBar2ndDivEdit.style.width = '0px';
+            }
             //DisplayObjectDetails(false);
         }
         if(isSideBarClicked) isSideBarClicked = false;

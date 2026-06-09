@@ -19,6 +19,12 @@
 
 			--bottomNavHeightExmapsion: 240px;
 
+			--rightSideBarWidth: 500px;
+			--editButtons: 500px;
+			--editButtonsWidth: 180px;
+			--editButtonsColour: rgb(73 73 73 / 0.95);
+			--editButtonHighlight: rgb(131 131 131 / 0.95);
+
 			--livingRoomButtonColour: rgb(237 100 100);
 			--kitchenButtonColour: rgb(227 201 67 / 0.82);
 			--bathroomButtonColour: rgba(0, 185, 232, 0.82);
@@ -28,6 +34,8 @@
 			--rightSideLabelTextColour: #939797;
 			--XYZBoxColour: #c2c0c0;
 			--XYZValueTextColour: #191919;
+
+
 
 
 		}
@@ -562,7 +570,69 @@
 			justify-content: center;
 		}
 
+		.right-sidebar-2nd-div{
+			right: var(--editButtons);
+			gap: 10px;
+			position: fixed;
+			display: flex;
 
+			flex-direction: column;
+			justify-content: flex-end;
+
+
+			width: 0;
+			overflow-x: hidden;
+			height: 100vh;
+			max-height: 100vh;
+			margin-bottom: 100px;
+
+
+		}
+
+		.edit-container{
+			display: flex;
+			flex-direction: row;
+			width: var(--editButtonsWidth);
+			gap: 5px;
+		}
+
+		.edit-hidden-container{
+			display: none;
+			flex-direction: row;
+			width: var(--editButtonsWidth);
+			gap: 5px;
+		}
+
+		.edit-label{
+			width: 140px;
+			margin: auto;
+			display: flex;
+			justify-content: flex-end;
+
+
+
+			font-weight: 700;
+			color: var(--editButtonsColour);
+
+
+		}
+
+		.edit-Icon{
+			right: 0;
+			width: 50px;
+			height: 50px;
+			text-align: center;
+			color: white;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			background-color: var(--editButtonsColour);
+
+			border-radius: 15px;
+
+		}
 
 		body {
 			margin: 0;
@@ -667,205 +737,237 @@
 		</div>
 	</div>
 
+	<div class="right-side-container">
+		<div class="right-sidebar-div" id="rightSidebar" style="background-color: #dddddd">
 
-	<div class="right-sidebar-div" id="rightSidebar" style="background-color: #dddddd">
+			<!-- wall options for the sidebar-->
+			<div class="object-menu-options" id="objectMenuOptions">
+				<!-- given the same class as they should be treated the same in terms of styling-->
 
-		<!-- wall options for the sidebar-->
-		<div class="object-menu-options" id="objectMenuOptions">
-			<!-- given the same class as they should be treated the same in terms of styling-->
-
-			<div class="object-details-div" id="objectDetails">
-				<div class="object-details-section">
-					<label>Object name</label>
-					<label class="labelTitles " id="objectName">objectName</label>
-				</div>
-
-				<img src="" class="objectImage" id="objectImage" >
-
-				<div class="Section_1">
-					<div class="desc-price-details-section">
-						<label class="labelTitles labelTitleColour">Description</label>
-						<label id="objectDescription">description</label>
+				<div class="object-details-div" id="objectDetails">
+					<div class="object-details-section">
+						<label>Object name</label>
+						<label class="labelTitles " id="objectName">objectName</label>
 					</div>
 
-					<div class="desc-price-details-section">
-						<label class="labelTitles labelTitleColour">Price</label>
-						<label id="objectPrice">price</label>
+					<img src="" class="objectImage" id="objectImage" >
+
+					<div class="Section_1">
+						<div class="desc-price-details-section">
+							<label class="labelTitles labelTitleColour">Description</label>
+							<label id="objectDescription">description</label>
+						</div>
+
+						<div class="desc-price-details-section">
+							<label class="labelTitles labelTitleColour">Price</label>
+							<label id="objectPrice">price</label>
+						</div>
+
 					</div>
 
+
+					<div class="object-details-section">
+						<label class="labelTitles labelTitleColour">URL</label>
+						<label id="objectURL">url</label>
+					</div>
+
+					<label class="labelTitles labelTitleColour">Object Properties</label>
+
+
 				</div>
 
 
-				<div class="object-details-section">
-					<label class="labelTitles labelTitleColour">URL</label>
-					<label id="objectURL">url</label>
-				</div>
 
-				<label class="labelTitles labelTitleColour">Object Properties</label>
 
 
 			</div>
 
+			<div class="object-property-section" id="objectPropertiesSection">
+				<div id="Scale Properties" class="scale-properties">
+
+					<label class="labelSectionTitles labelTitleColour">Transform</label>
+					<div class="object-XYZ-values">
+						<div>
+							<label class="labelSectionTitles labelTitleColour">Location</label>
+
+							<!-- <div class="right-side-mini-text">
+                                <label class="labelTitleColour">Max value</label>
+                            </div> -->
+
+						</div>
+
+						<div class="XYZ-container">
+							<div class="scale-value-section">
+								<label>X</label>
+								<input class="scale-value-input" type="number" id="locationRangeXValue" name="locationRangeXValue" min="-9999999" max="9999999" value="10">
+								<!--  <input type="number" id="locationMaxXValueNumber" name="maxXValue" class="location-max-value-input">  -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Y</label>
+								<input class="scale-value-input" type="number" id="locationRangeYValue" name="locationRangeYValue" min="0" max="9999999" value="10">
+								<!-- <input type="number" id="locationMaxYValueNumber" name="maxYValue" class="location-max-value-input"> -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Z</label>
+								<input class="scale-value-input" type="number" id="locationRangeZValue" name="locationRangeZValue" min="-9999999" max="9999999" value="10">
+								<!-- <input type="number" id="locationMaxZValueNumber" name="maxZValue" class="location-max-value-input"> -->
+							</div>
+
+						</div>
 
 
 
+					</div>
+
+
+
+					<div class="object-XYZ-values">
+						<div>
+							<label class="labelSectionTitles labelTitleColour">Rotation</label>
+
+							<!-- <div class="right-side-mini-text">
+                                <label class="labelTitleColour">Max value</label>
+                            </div> -->
+
+						</div>
+
+						<div class="XYZ-container">
+							<div class="scale-value-section">
+								<label>X</label>
+								<input class="scale-value-input" type="number" id="rotationRangeXValue" name="rotationRangeXValue" min="-360" max="360" value="0">
+								<!--  <input type="number" id="rotationMaxXValueNumber" name="maxXValue" class="rotation-max-value-input">  -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Y</label>
+								<input class="scale-value-input" type="number" id="rotationRangeYValue" name="rotationRangeYValue" min="-360" max="360" value="0">
+								<!-- <input type="number" id="rotationMaxYValueNumber" name="maxYValue" class="rotation-max-value-input"> -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Z</label>
+								<input class="scale-value-input" type="number" id="rotationRangeZValue" name="rotationRangeZValue" min="-360" max="360" value="0">
+								<!-- <input type="number" id="rotationMaxZValueNumber" name="maxZValue" class="rotation-max-value-input"> -->
+							</div>
+
+						</div>
+
+
+
+					</div>
+
+
+
+
+					<div class="object-XYZ-values">
+						<div>
+							<label class="labelSectionTitles labelTitleColour">Scale</label>
+
+							<!-- <div class="right-side-mini-text">
+                                <label class="labelTitleColour">Max value</label>
+                            </div> -->
+
+						</div>
+
+
+						<div class="XYZ-container">
+							<div class="scale-value-section">
+								<label>X</label>
+								<input class="scale-value-input" type="number" id="scaleRangeXValue" name="scaleRangeXValue" min="1" max="9999999" value="10">
+								<!--  <input type="number" id="scaleMaxXValueNumber" name="maxXValue" class="scale-max-value-input">  -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Y</label>
+								<input class="scale-value-input" type="number" id="scaleRangeYValue" name="scaleRangeYValue" min="2" max="9999999" value="10">
+								<!-- <input type="number" id="scaleMaxYValueNumber" name="maxYValue" class="scale-max-value-input"> -->
+							</div>
+
+							<div class="scale-value-section">
+								<label>Z</label>
+								<input class="scale-value-input" type="number" id="scaleRangeZValue" name="scaleRangeZValue" min="1" max="9999999" value="10">
+								<!-- <input type="number" id="scaleMaxZValueNumber" name="maxZValue" class="scale-max-value-input"> -->
+							</div>
+
+						</div>
+
+
+
+					</div>
+
+
+				</div>
+
+				<div class="labelSectionTitles labelTitleColour colour-selection" style="margin: auto;">
+
+					Colour
+					<input id="colourBox" type="color" value="#ff0000">
+
+				</div>
+
+			</div>
+
+
+			<div class="object-details-section">
+
+
+				<div class="Section_2">
+					<button class="object-delete-button" id="objectDeleteButton">Remove</button>
+				</div>
+
+				<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
+				<div class="object-search-div">
+					<input type="text" placeholder="Search for item.." id="objectSearchInput">
+					<button class="object-search-button" id="objectSearchButton">Search</button>
+				</div>
+
+
+				<div class="search-scrollpane" id="searchScrollPane"></div>
+
+			</div>
 
 		</div>
 
-		<div class="object-property-section" id="objectPropertiesSection">
-			<div id="Scale Properties" class="scale-properties">
-
-				<label class="labelSectionTitles labelTitleColour">Transform</label>
-				<div class="object-XYZ-values">
-					<div>
-						<label class="labelSectionTitles labelTitleColour">Location</label>
-
-						<!-- <div class="right-side-mini-text">
-							<label class="labelTitleColour">Max value</label>
-						</div> -->
-
-					</div>
-
-					<div class="XYZ-container">
-						<div class="scale-value-section">
-							<label>X</label>
-							<input class="scale-value-input" type="number" id="locationRangeXValue" name="locationRangeXValue" min="-9999999" max="9999999" value="10">
-							<!--  <input type="number" id="locationMaxXValueNumber" name="maxXValue" class="location-max-value-input">  -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Y</label>
-							<input class="scale-value-input" type="number" id="locationRangeYValue" name="locationRangeYValue" min="0" max="9999999" value="10">
-							<!-- <input type="number" id="locationMaxYValueNumber" name="maxYValue" class="location-max-value-input"> -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Z</label>
-							<input class="scale-value-input" type="number" id="locationRangeZValue" name="locationRangeZValue" min="-9999999" max="9999999" value="10">
-							<!-- <input type="number" id="locationMaxZValueNumber" name="maxZValue" class="location-max-value-input"> -->
-						</div>
-
-					</div>
-
-
+		<div class="right-sidebar-2nd-div" id="rightBar2ndDivEdit">
+			<div class="edit-container" id="moveEditDiv">
+				<div class="edit-label" id="moveEditText">
+					Edit
+				</div>
+				<div class="edit-Icon" id="moveEditIcon">
+					<label>G</label>
 
 				</div>
-
-
-
-				<div class="object-XYZ-values">
-					<div>
-						<label class="labelSectionTitles labelTitleColour">Rotation</label>
-
-						<!-- <div class="right-side-mini-text">
-							<label class="labelTitleColour">Max value</label>
-						</div> -->
-
-					</div>
-
-					<div class="XYZ-container">
-						<div class="scale-value-section">
-							<label>X</label>
-							<input class="scale-value-input" type="number" id="rotationRangeXValue" name="rotationRangeXValue" min="-360" max="360" value="0">
-							<!--  <input type="number" id="rotationMaxXValueNumber" name="maxXValue" class="rotation-max-value-input">  -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Y</label>
-							<input class="scale-value-input" type="number" id="rotationRangeYValue" name="rotationRangeYValue" min="-360" max="360" value="0">
-							<!-- <input type="number" id="rotationMaxYValueNumber" name="maxYValue" class="rotation-max-value-input"> -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Z</label>
-							<input class="scale-value-input" type="number" id="rotationRangeZValue" name="rotationRangeZValue" min="-360" max="360" value="0">
-							<!-- <input type="number" id="rotationMaxZValueNumber" name="maxZValue" class="rotation-max-value-input"> -->
-						</div>
-
-					</div>
-
-
-
-				</div>
-
-
-
-
-				<div class="object-XYZ-values">
-					<div>
-						<label class="labelSectionTitles labelTitleColour">Scale</label>
-
-						<!-- <div class="right-side-mini-text">
-							<label class="labelTitleColour">Max value</label>
-						</div> -->
-
-					</div>
-
-
-					<div class="XYZ-container">
-						<div class="scale-value-section">
-							<label>X</label>
-							<input class="scale-value-input" type="number" id="scaleRangeXValue" name="scaleRangeXValue" min="1" max="9999999" value="10">
-							<!--  <input type="number" id="scaleMaxXValueNumber" name="maxXValue" class="scale-max-value-input">  -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Y</label>
-							<input class="scale-value-input" type="number" id="scaleRangeYValue" name="scaleRangeYValue" min="2" max="9999999" value="10">
-							<!-- <input type="number" id="scaleMaxYValueNumber" name="maxYValue" class="scale-max-value-input"> -->
-						</div>
-
-						<div class="scale-value-section">
-							<label>Z</label>
-							<input class="scale-value-input" type="number" id="scaleRangeZValue" name="scaleRangeZValue" min="1" max="9999999" value="10">
-							<!-- <input type="number" id="scaleMaxZValueNumber" name="maxZValue" class="scale-max-value-input"> -->
-						</div>
-
-					</div>
-
-
-
-				</div>
-
-
 			</div>
 
-			<div class="labelSectionTitles labelTitleColour colour-selection" style="margin: auto;">
+			<div class="edit-hidden-container" id="transformEditDiv">
+				<div class="edit-label">
+					Transform
+				</div>
+				<div class="edit-Icon" id="transformEditIcon">
+					<label>T</label>
 
-				Colour
-				<input id="colourBox" type="color" value="#ff0000">
+				</div>
+			</div>
 
+
+			<div class="edit-hidden-container" id="rotateEditDiv">
+				<div class="edit-label">
+					Rotate
+				</div>
+				<div class="edit-Icon" id="rotateEditIcon">
+					<label>R</label>
+
+				</div>
 			</div>
 
 		</div>
-
-
-		<div class="object-details-section">
-
-			<div class="objectMenuButton" id="editObject">Edit:
-				Press G whilst the object is transparent to go into edit mode, where you can click and drag/position the object.
-				Press T to translate the object, and R to rotate the object.
-
-				Press G again to confirm once finished.
-			</div>
-
-
-			<div class="Section_2">
-				<button class="object-delete-button" id="objectDeleteButton">Remove</button>
-			</div>
-
-			<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
-			<div class="object-search-div">
-				<input type="text" placeholder="Search for item.." id="objectSearchInput">
-				<button class="object-search-button" id="objectSearchButton">Search</button>
-			</div>
-
-			<div class="search-scrollpane" id="searchScrollPane"></div>
-
-		</div>
-
 
 	</div>
+
+
+
 
 	<div id="selected-container" style="background-color: rgb(209, 209, 209);">
 		<span id="selected-object" style="color: midnightblue;"></span>
@@ -873,7 +975,9 @@
 
 
 
+
 </div>
+
 
 <div class="bottomBorder">
 
