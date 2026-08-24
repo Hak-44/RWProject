@@ -225,14 +225,7 @@
 
 
 
-		.object-item{
-			background-color: cornflowerblue;
-			border: 1px solid #ddd;
-			width: 100px;
-			height: 100px;
-			background-color: #a5c8d6;
-			padding: 12px;
-		}
+
 
 
 		.wall-Options{
@@ -344,13 +337,7 @@
 		}
 
 		/* Used for the object search bar */
-		.object-search-div{
-			display: flex;
-			flex-direction: row;
-			margin-left: auto;
-			margin-right: auto;
 
-		}
 
 		.object-property-section{
 			margin: 35px;
@@ -424,23 +411,44 @@
 		}
 
 		.search-div-container{
-			background-color: #6a77ac;
+			background-color: #d6d6d6;
 			width: 800px;
 			height: 400px;
 			position: absolute;
 
+
 			display: none;
+
 
 		}
 
 		.search-div-header{
-			background-color: #b9bdcc;
+
+			background-color: #f4f4f4;
 			width: 800px;
 			height: 50px;
 			position: relative;
+
+			border-top-radius: 15px;
+			border-bottom: 1px solid;
+
+			display: flex;
+			flex-direction: row;
+
+
+		}
+
+		.search-header-div-spacing{
+			margin: 15px;
 		}
 
 
+		.object-section2-button{
+			border: none;
+			height:50px;
+			width: 120px;
+			font-size: 15px;
+		}
 
 
 		.search-scrollpane{
@@ -457,8 +465,11 @@
 		}
 
 
+		.show-more-button{
+			display: none;
+		}
 
-
+		
 		.wallButton{
 
 			width: 90px;
@@ -586,6 +597,9 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: center;
+
+			gap: 10px;
+
 		}
 
 		.right-sidebar-2nd-div{
@@ -931,18 +945,15 @@
 			<div class="object-details-section">
 
 				<div class="Section_2">
-					<button class="object-delete-button" id="objectDeleteButton">Remove</button>
+					<button class="object-section2-button" id="objectDeleteButton">Remove</button>
+
+					<div class="object-search-div">
+						<button class="object-section2-button" id="searchButtonItem">Search</button>
+					</div>
+
 				</div>
 
-				<div class="objectMenuButton" id="searchForItem" >Use the field below to search for an amazon item</div>
-				<div class="object-search-div">
-					<input type="text" placeholder="Search for item.." id="objectSearchInput">
-					<button class="object-search-button" id="objectSearchButton">Search</button>
-				</div>
 
-				<div class="object-search-div">
-					<button class="object-search-button" id="searchButtonItem">Search</button>
-				</div>
 
 
 			</div>
@@ -992,10 +1003,20 @@
 
 	<div class="search-div-container" id="searchDivContainer">
 		<div class="search-div-header" id="searchDivHeader">
-			Click here to move
-			<button class="search-container-close-button" id="searchContainerCloseButton">Close</button>
+			<div class="search-header-div-spacing">
+				<input type="text" placeholder="Search for item.." id="objectSearchInput">
+				<button class="object-search-button" id="objectSearchButton">Search</button>
+
+				<button class="search-container-close-button" id="searchContainerCloseButton">Close</button>
+
+
+			</div>
+
 		</div>
-		<div class="search-scrollpane" id="searchScrollPane"></div>
+		<div class="search-scrollpane" id="searchScrollPane">
+			<button class="show-more-button" id="showMoreButton">Show more</button>
+		</div>
+
 	</div>
 
 

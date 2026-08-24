@@ -48,18 +48,3 @@ public class APIAccess {
 
 }
 
-/* this class defines the json that is sent from the front end. it correctly places all the values within the JSON
-    to the class and matches them. */
-class QueryClass {
-    private String query;
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-
-}

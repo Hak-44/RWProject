@@ -36,6 +36,7 @@ var editingObject = [];
 var hasEditingObject = false;
 var isSideBarClicked = false;
 var hasSearchBarBeenClicked = false;
+var isSearchBoxOpened = false;
 
 // outline objects
 var hoveredObject = null;
@@ -184,6 +185,7 @@ const searchDivHeader = document.getElementById('searchDivHeader');
 const searchContainer = document.getElementById('searchDivContainer');
 const searchButtonItem = document.getElementById("searchButtonItem");
 const searchContainerCloseButton = document.getElementById("searchContainerCloseButton")
+const showMoreButton = document.getElementById("showMoreButton")
 
 searchDivHeader.addEventListener('mousedown', mouseDown)
 
@@ -244,11 +246,14 @@ document.getElementById('objectSearchInput').addEventListener('click', function(
 
 searchButtonItem.addEventListener('click', function(){
     searchContainer.style.display = 'flex';
+    searchContainer.style.flexDirection = 'column';
+    isSearchBoxOpened = true;
 
 });
 
 searchContainerCloseButton.addEventListener('click', function(){
     searchContainer.style.display = 'none';
+    isSearchBoxOpened = false;
 
 });
 
@@ -259,7 +264,13 @@ document.getElementById('objectSearchButton').addEventListener('click', function
     searchInput = searchInput + " " +selectedObject.userData.queryPhrase;
     // do the rest of the inputs here if needed.
     console.log("Searching for "+searchInput);
-    SearchForItems(searchInput);
+    SearchForItems(searchInput, false);
+});
+
+
+document.getElementById('showMoreButton').addEventListener('click', function(){
+    var searchInput = "next";
+    SearchForItems(searchInput, true);
 });
 
 
@@ -333,14 +344,22 @@ document.getElementById('objectDeleteButton').addEventListener('click', function
 // });
 
 // creating the json object that will be given after going through the
-function SearchForItems(searchInput){
+function SearchForItems(searchInput, isRequestingNextPage){
 
     const searchJSON = {
         query: searchInput
     }
     console.log("Sending: "+JSON.stringify(searchJSON));
 
-    fetch('/rapidAPI', {
+    var mapMethod;
+    if(!isRequestingNextPage){
+        mapMethod = "/scrapeMethod"
+    }else{
+        mapMethod = "/scrapeContinue"
+        if(searchScrollPane.children.length < 1) return; // this is 1 because the button is always inside the scrollpane
+    }
+
+    fetch(mapMethod, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(searchJSON),
@@ -349,9 +368,12 @@ function SearchForItems(searchInput){
         .then((data) => {
             if(data){
 
-                //DisplaySearchResults(data.data.products);
+                console.log("Done.");
+                console.log(data);
 
-                DisplaySearchResults(data.products);
+                DisplaySearchResults(data);
+
+                //DisplaySearchResults(data.products);
             }
         })
         .catch(error => {
@@ -361,8 +383,6 @@ function SearchForItems(searchInput){
 }
 
 function DisplaySearchResults(items){
-
-
 
     items.forEach(item =>{
         var mainDiv = document.createElement('div');
@@ -376,20 +396,20 @@ function DisplaySearchResults(items){
         var urlLabel = document.createElement('label');
 
         // width of the picture
-        photoSRC.src = item.product_photo;
+        photoSRC.src = item.image;
         photoSRC.width = 128; //180
         photoSRC.height = 128; //256
         photoSRC.id = "itemPhoto";
 
         //inserted the text for the appropriate divs
 
-        descLabel.innerText = item.product_title.toString();
+        descLabel.innerText = item.name.toString();
         descLabel.id = "productDescription";
 
-        priceLabel.innerText = item.product_price.toString();
+        priceLabel.innerText = "£"+item.price.toString();
         priceLabel.id = "productPrice";
 
-        urlLabel.innerText = item.product_url;
+        urlLabel.innerText = item.link;
         urlLabel.id = "productURL";
 
 
@@ -453,6 +473,8 @@ function DisplaySearchResults(items){
     })
 
     searchScrollPane.style.display = 'flex';
+    searchScrollPane.appendChild(showMoreButton); // re-add the button to the bottom of the list
+    showMoreButton.style.display = 'flex';
     console.log("Selected object: "+selectedObject);
 }
 
@@ -671,13 +693,15 @@ export function GetObjectSelected(){
     SelectTheObject();
 }
 
+
 function SelectTheObject(){
     if(hasEditingObject){
         return;
     }
     if(hoveredObject != null){
         activeClick = true;   // counts it as a click
-        searchScrollPane.innerHTML = ''; // clearing the scroll pane for the next object.
+        //searchScrollPane.innerHTML = ''; // clearing the scroll pane for the next object.
+        ClearSearchScrollPane(searchScrollPane, showMoreButton);
         if(selectedObject != hoveredObject){
             // switch it to the new hovered object
             RevertDeselectedObject();
@@ -701,7 +725,7 @@ function SelectTheObject(){
     }else{
         // clicked off the object, so remove it from the selected variable
 
-        if(!hasEditingObject && !isSideBarClicked){ // add the searchBar in here.
+        if(!hasEditingObject && !isSideBarClicked && !isSearchBoxOpened){ // add the searchBar in here.
             activeClick = false;
             RevertDeselectedObject();
             if(selectedObject == null){
@@ -714,6 +738,16 @@ function SelectTheObject(){
 
     }
     console.log("Active click: "+activeClick)
+}
+
+function ClearSearchScrollPane(searchScrollPane, moreButton){
+    Array.from(searchScrollPane.children).forEach(child => {
+        if (child !== moreButton) {
+            child.remove();
+        }
+    });
+
+    showMoreButton.style.display = 'none';
 }
 
 // reverts the current selected object back to normal
@@ -803,7 +837,7 @@ function DisplayRoomTypeOptions(value, typeName){
 
 
 function ShowObjectList(roomTypeValue){
-    objectSecondType = roomTypeValue; // determins whether its kitcken or bedroom etc
+    objectSecondType = roomTypeValue; // determines whether its kitcken or bedroom etc
     console.log()
     loadObjectsInList();   // retrieving the json from the object folder
     objectScrollPane.style.display = 'flex';
